@@ -3,7 +3,7 @@
     <field type="customfooter"
            name="customfooter"
            media="jinbound"
-           showgoproad="0"
+           showgoproad="1"
            jedurl="https://extensions.joomla.org/extension/jinbound"/>
 
     <fieldset name="general"
@@ -182,10 +182,5 @@
                filter="rules"
                component="com_jinbound"
                section="component"/>
-
-        <field name="help_url"
-               type="hidden"
-               default="http://anything-digital.com/jinbound/learn-more/user-manual.html"
-               readonly="true"/>
     </fieldset>
 </config>

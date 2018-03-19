@@ -3,7 +3,3 @@ builder.path=/path/to/AllediaBuilder
 project.AllediaFramework.path=/path/to/AllediaFramework
 project.AllediaInstaller.path=/path/to/AllediaInstaller
 project.AllediaFreeDefaultFiles.path=/path/to/AllediaFreeDefaultFiles
-project.OSMyLicensesManager.path=/path/to/OSMyLicensesManager
-project.OSSystem.path=/path/to/OSSystem
-
-project.hasFreeVersion=0

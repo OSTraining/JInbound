@@ -100,39 +100,11 @@
                        element="allediaframework"
                        downgrade="false">AllediaFramework</extension>
 
-            <extension type="plugin"
-                       group="system"
-                       element="ossystem"
-                       publish="true"
-                       downgrade="false"
-                       ordering="first">OSSystem</extension>
-
-            <extension type="plugin"
-                       group="system"
-                       element="osmylicensesmanager"
-                       publish="true"
-                       downgrade="false"
-                       ordering="last">OSMyLicensesManager</extension>
-
-            <extension type="module"
-                       element="jinbound_cta"
-                       uninstall="true"
-                       client="site">mod_jinbound_cta</extension>
-
-            <extension type="module"
+            <!-- @TODO: Resolve free vs Pro for form module -->
+            <!--extension type="module"
                        element="jinbound_form"
                        uninstall="true"
-                       client="site">mod_jinbound_form</extension>
-
-            <extension type="module"
-                       element="jinbound_popup"
-                       uninstall="true"
-                       client="site">mod_jinbound_popup</extension>
-
-            <extension type="module"
-                       element="jinbound_social_bookmark"
-                       uninstall="true"
-                       client="site">mod_jinbound_social_bookmark</extension>
+                       client="site">mod_jinbound_form</extension-->
 
             <extension type="plugin"
                        group="content"
@@ -147,59 +119,10 @@
                        element="jinbound">plg_system_jinbound</extension>
 
             <extension type="plugin"
-                       group="system"
-                       publish="true"
-                       uninstall="true"
-                       element="jinboundacymailing">plg_system_jinboundacymailing</extension>
-
-            <extension type="plugin"
-                       group="system"
-                       publish="true"
-                       uninstall="true"
-                       element="jinboundanalytics">plg_system_jinboundanalytics</extension>
-
-            <extension type="plugin"
-                       group="system"
-                       publish="true"
-                       uninstall="true"
-                       element="jinboundcaptcha">plg_system_jinboundcaptcha</extension>
-
-            <extension type="plugin"
-                       group="system"
-                       publish="true"
-                       uninstall="true"
-                       element="jinboundfiles">plg_system_jinboundfiles</extension>
-
-            <extension type="plugin"
-                       group="system"
-                       publish="true"
-                       uninstall="true"
-                       element="jinboundleadmap">plg_system_jinboundleadmap</extension>
-
-            <extension type="plugin"
-                       group="system"
-                       publish="true"
-                       uninstall="true"
-                       element="jinboundmailchimp">plg_system_jinboundmailchimp</extension>
-
-            <!-- @TODO: Fix plugin issues -->
-            <!--extension type="plugin"
-                       group="system"
-                       publish="true"
-                       uninstall="true"
-                       element="jinboundsalesforce">plg_system_jinboundsalesforce</extension-->
-
-            <extension type="plugin"
                        group="user"
                        publish="true"
                        uninstall="true"
                        element="jinbound">plg_user_jinbound</extension>
-
-            <!-- @TODO: Recognize templates in builder -->
-            <!--extension type="template"
-                       publish="true"
-                       uninstall="true"
-                        element="jinbound">tpl_jinbound</extension-->
         </relatedExtensions>
 
         <obsolete>
@@ -225,6 +148,6 @@
     <updateservers>
         <server type="extension"
                 priority="1"
-                name="jInbound Pro"><![CDATA[https://deploy.ostraining.com/client/update/pro/stable/com_jinbound]]></server>
+                name="jInbound Pro"><![CDATA[https://deploy.ostraining.com/client/update/free/stable/com_jinbound]]></server>
     </updateservers>
 </extension>
