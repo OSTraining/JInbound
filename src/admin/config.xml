@@ -9,7 +9,8 @@
     <fieldset name="general"
               label="COM_JINBOUND_CONFIG_FIELDSET_GENERAL">
         <field name="unsubscribe"
-               type="list"
+               type="radio"
+               class="btn-group btn-group-yesno"
                label="COM_JINBOUND_UNSUBSCRIBE"
                description="COM_JINBOUND_UNSUBSCRIBE_DESC"
                default="1">
@@ -62,7 +63,8 @@
                description="COM_JINBOUND_CRON_URL_DESC"/>
 
         <field name="debug"
-               type="list"
+               type="radio"
+               class="btn-group btn-group-yesno"
                label="COM_JINBOUND_DEBUG"
                description="COM_JINBOUND_DEBUG_DESC"
                default="0">
@@ -74,7 +76,8 @@
     <fieldset name="frontend"
               label="COM_JINBOUND_CONFIG_FIELDSET_FRONTEND">
         <field name="load_jquery_front"
-               type="list"
+               type="radio"
+               class="btn-group btn-group-yesno"
                label="COM_JINBOUND_LOAD_JQUERY"
                description="COM_JINBOUND_LOAD_JQUERY_DESC"
                default="1">
@@ -83,7 +86,8 @@
         </field>
 
         <field name="load_jquery_ui_front"
-               type="list"
+               type="radio"
+               class="btn-group btn-group-yesno"
                label="COM_JINBOUND_LOAD_JQUERY_UI"
                description="COM_JINBOUND_LOAD_JQUERY_UI_DESC"
                default="1">
@@ -92,7 +96,8 @@
         </field>
 
         <field name="load_bootstrap_front"
-               type="list"
+               type="radio"
+               class="btn-group btn-group-yesno"
                label="COM_JINBOUND_LOAD_BOOTSTRAP"
                description="COM_JINBOUND_LOAD_BOOTSTRAP_DESC"
                default="1">
@@ -104,28 +109,31 @@
     <fieldset name="backend"
               label="COM_JINBOUND_CONFIG_FIELDSET_BACKEND">
         <field name="load_jquery_back"
-               type="list"
+               type="radio"
+               class="btn-group btn-group-yesno"
                label="COM_JINBOUND_LOAD_JQUERY"
                description="COM_JINBOUND_LOAD_JQUERY_DESC"
-               default="1">
+               default="0">
             <option value="1">JYES</option>
             <option value="0">JNO</option>
         </field>
 
         <field name="load_jquery_ui_back"
-               type="list"
+               type="radio"
+               class="btn-group btn-group-yesno"
                label="COM_JINBOUND_LOAD_JQUERY_UI"
                description="COM_JINBOUND_LOAD_JQUERY_UI_DESC"
-               default="1">
+               default="0">
             <option value="1">JYES</option>
             <option value="0">JNO</option>
         </field>
 
         <field name="load_bootstrap_back"
-               type="list"
+               type="radio"
+               class="btn-group btn-group-yesno"
                label="COM_JINBOUND_LOAD_BOOTSTRAP"
                description="COM_JINBOUND_LOAD_BOOTSTRAP_DESC"
-               default="1">
+               default="0">
             <option value="1">JYES</option>
             <option value="0">JNO</option>
         </field>
@@ -135,7 +143,8 @@
     <fieldset name="reports"
               label="COM_JINBOUND_CONFIG_FIELDSET_REPORTS">
         <field name="send_reports"
-               type="list"
+               type="radio"
+               class="btn-group btn-group-yesno"
                label="COM_JINBOUND_SEND_REPORTS"
                description="COM_JINBOUND_SEND_REPORTS_DESC"
                default="1">
@@ -163,8 +172,7 @@
         <field name="report_recipients"
                type="text"
                label="COM_JINBOUND_REPORT_RECIPIENTS"
-               description="COM_JINBOUND_REPORT_RECIPIENTS_DESC"
-               size="100"/>
+               description="COM_JINBOUND_REPORT_RECIPIENTS_DESC"/>
 
         <field name="report_force_admin"
                type="hidden" default="0"
@@ -177,7 +185,6 @@
         <field name="rules"
                type="rules"
                label="JCONFIG_PERMISSIONS_LABEL"
-               class="inputbox"
                validate="rules"
                filter="rules"
                component="com_jinbound"

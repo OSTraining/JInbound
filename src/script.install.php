@@ -241,7 +241,7 @@ class com_JInboundInstallerScript extends AbstractScript
                             case 'load_jquery_back':
                             case 'load_jquery_ui_back':
                             case 'load_bootstrap_back':
-                                $fieldValue = false;
+                                $fieldValue = '0';
                                 break;
 
                             default:
