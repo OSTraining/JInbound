@@ -71,4 +71,34 @@ class JInboundViewDashboard extends JInboundView
             JToolbarHelper::custom('reset', 'refresh.png', 'refresh_f2.png', 'COM_JINBOUND_RESET', false);
         }
     }
+
+    /**
+     * Standard rendering of dashboard buttons
+     * 
+     * @param string $view
+     * @param string $image
+     * @param string $title
+     *
+     * @return string
+     */
+    protected function renderButton($view, $image, $title)
+    {
+        $user = JFactory::getUser();
+
+        $class = 'span3 btn text-center';
+        if ($user->authorise('core.manage', 'com_jinbound.' . $view)) {
+            $href = 'index.php?option=com_jinbound&view=' . $view;
+        } else {
+            $href  = sprintf("javascript:alert('%s');", JText::_('JERROR_ALERTNOAUTHOR'));
+            $class .= ' disabled';
+        }
+
+        $text = sprintf(
+            '<span class="btn-text">%s</span><span class="row text-center">%s</span>',
+            $title,
+            JHtml::_('image', 'jinbound/' . $image, null, 'class="img-rounded"', true)
+        );
+
+        return JHtml::_('link', $href, $text, sprintf('class="%s"', $class));
+    }
 }
