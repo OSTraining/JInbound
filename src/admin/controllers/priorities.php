@@ -19,11 +19,6 @@ defined('JPATH_PLATFORM') or die;
 
 class JInboundControllerPriorities extends JControllerAdmin
 {
-    public function permissions()
-    {
-        JInboundHelperAccess::saveRulesWithRedirect('priority');
-    }
-
     public function getModel($name = 'Priority', $prefix = 'JInboundModel')
     {
         return parent::getModel($name, $prefix, array('ignore_request' => true));

@@ -19,11 +19,6 @@ defined('JPATH_PLATFORM') or die;
 
 class JInboundControllerEmails extends JControllerAdmin
 {
-    public function permissions()
-    {
-        JInboundHelperAccess::saveRulesWithRedirect('email');
-    }
-
     public function getModel($name = 'Email', $prefix = 'JInboundModel')
     {
         return parent::getModel($name, $prefix, array('ignore_request' => true));

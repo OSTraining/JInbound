@@ -21,11 +21,6 @@ jimport('joomla.application.component.controlleradmin');
 
 class JInboundControllerPages extends JControllerAdmin
 {
-    public function permissions()
-    {
-        JInboundHelperAccess::saveRulesWithRedirect('page');
-    }
-
     public function getModel($name = 'Page', $prefix = 'JInboundModel')
     {
         return parent::getModel($name, $prefix, array('ignore_request' => true));

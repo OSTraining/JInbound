@@ -19,11 +19,6 @@ defined('JPATH_PLATFORM') or die;
 
 class JInboundControllerReports extends JControllerAdmin
 {
-    public function permissions()
-    {
-        JInboundHelperAccess::saveRulesWithRedirect('report');
-    }
-
     public function getModel($name = 'Reports', $prefix = 'JInboundModel')
     {
         return parent::getModel($name, $prefix, array('ignore_request' => true));

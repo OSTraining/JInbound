@@ -127,6 +127,7 @@
 
         <obsolete>
             <folder>administrator/components/com_jinbound/libraries/tables</folder>
+            <file>administrator/components/com_jinbound/helpers/access.php</file>
             <file>administrator/language/en-GB/en-GB.com_jinbound.ini</file>
             <file>administrator/language/en-GB/en-GB.com_jinbound.sys.ini</file>
             <file>administrator/language/en-GB/en-GB.pkg_jinbound.sys.ini</file>

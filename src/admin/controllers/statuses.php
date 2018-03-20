@@ -21,11 +21,6 @@ defined('JPATH_PLATFORM') or die;
 
 class JInboundControllerStatuses extends JControllerAdmin
 {
-    public function permissions()
-    {
-        JInboundHelperAccess::saveRulesWithRedirect('status');
-    }
-
     /**
      * @return void
      * @throws Exception

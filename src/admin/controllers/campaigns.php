@@ -19,11 +19,6 @@ defined('JPATH_PLATFORM') or die;
 
 class JInboundControllerCampaigns extends JControllerAdmin
 {
-    public function permissions()
-    {
-        JInboundHelperAccess::saveRulesWithRedirect('campaign');
-    }
-
     public function getModel($name = 'Campaign', $prefix = 'JInboundModel')
     {
         return parent::getModel($name, $prefix, array('ignore_request' => true));
