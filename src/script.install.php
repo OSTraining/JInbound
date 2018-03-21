@@ -1276,6 +1276,13 @@ class com_JInboundInstallerScript extends AbstractScript
                 ->where('element = ' . $db->quote('pkg_jinbound'));
             $db->setQuery($query)->execute();
 
+            // Sub extensions to now removed package
+            $query = $db->getQuery(true)
+                ->update('#__extensions')
+                ->set('package_id = 0')
+                ->where('package_id = ' . $extensionId);
+            $db->setQuery($query)->execute();
+
             // Update site
             $query = $db->getQuery(true)
                 ->delete('#__update_sites')
