@@ -516,6 +516,8 @@ class com_JInboundInstallerScript extends AbstractScript
         $app = JFactory::getApplication();
         $db  = JFactory::getDbo();
 
+        JModelLegacy::addIncludePath($source_path, 'JinboundModel');
+
         try {
             $hasolddata = $db->setQuery('SHOW TABLES LIKE "' . $app->get('dbprefix') . 'jinbound_leads"')->loadResult();
 
@@ -554,130 +556,131 @@ class com_JInboundInstallerScript extends AbstractScript
             return;
         }
 
-        if (empty($oldContacts)) {
-            return;
-        }
-
-        require_once $source_path . '/admin/models/contact.php';
-        require_once $source_path . '/admin/tables/contact.php';
-        require_once $source_path . '/admin/tables/conversion.php';
-
-        /**
-         * Convert old contacts
-         *
-         * @var JInboundModelContact $contactModel
-         * @var JInboundTableContact $contact
-         */
-        $contactModel = JInboundBaseModel::getInstance('Contact', 'JinboundModel');
-
-        foreach ($oldContacts as $oldContact) {
-            $contactData = array(
-                'user_id'          => (int)$oldContact->user_id,
-                'core_contact_id'  => (int)$oldContact->contact_id,
-                'first_name'       => $oldContact->first_name,
-                'last_name'        => $oldContact->last_name,
-                'website'          => $oldContact->webpage,
-                'email'            => $oldContact->email_to,
-                'address'          => $oldContact->address,
-                'suburb'           => $oldContact->suburb,
-                'state'            => $oldContact->state,
-                'country'          => $oldContact->country,
-                'postcode'         => $oldContact->postcode,
-                'telephone'        => $oldContact->telephone,
-                'published'        => $oldContact->published,
-                'created'          => $oldContact->created,
-                'created_by'       => (int)$oldContact->created_by,
-                'modified'         => $oldContact->modified,
-                'modified_by'      => (int)$oldContact->modified_by,
-                'checked_out'      => (int)$oldContact->checked_out,
-                'checked_out_time' => $oldContact->checked_out_time
-            );
-
-            $contact = JTable::getInstance('Contact', 'JInboundTable');
-            try {
-                if (!$contact->bind($contactData)) {
-                    throw new Exception('Cannot migrate contact!');
-                }
-                if (!$contact->check()) {
-                    throw new Exception('Cannot migrate contact!');
-                }
-                if (!$contact->store()) {
-                    throw new Exception('Cannot migrate contact!');
-                }
-            } catch (Exception $e) {
-                $app->enqueueMessage($e->getMessage(), 'error');
-                continue;
-            }
-
+        if (!empty($oldContacts)) {
             /**
-             * Convert old contact data
+             * Convert old contacts
              *
-             * @var JInboundTableConversion $conversion
+             * @var JInboundModelContact $contactModel
+             * @var JInboundTableContact $contact
              */
-            $conversionData = array(
-                'page_id'          => (int)$oldContact->page_id,
-                'contact_id'       => (int)$contact->id,
-                'published'        => (int)$oldContact->published,
-                'created'          => $oldContact->created,
-                'created_by'       => (int)$oldContact->created_by,
-                'modified'         => $oldContact->modified,
-                'modified_by'      => (int)$oldContact->modified_by,
-                'checked_out'      => $oldContact->checked_out,
-                'checked_out_time' => $oldContact->checked_out_time,
-                'formdata'         => (array)json_decode($oldContact->formdata)
-            );
+            $contactModel = JInboundBaseModel::getInstance('Contact', 'JinboundModel');
 
-            $conversion = JTable::getInstance('Conversion', 'JInboundTable');
-            try {
-                if (!$conversion->bind($contactData)) {
-                    throw new Exception('Cannot migrate conversion');
+            foreach ($oldContacts as $oldContact) {
+                $contactData = array(
+                    'user_id'          => (int)$oldContact->user_id,
+                    'core_contact_id'  => (int)$oldContact->contact_id,
+                    'first_name'       => $oldContact->first_name,
+                    'last_name'        => $oldContact->last_name,
+                    'website'          => $oldContact->webpage,
+                    'email'            => $oldContact->email_to,
+                    'address'          => $oldContact->address,
+                    'suburb'           => $oldContact->suburb,
+                    'state'            => $oldContact->state,
+                    'country'          => $oldContact->country,
+                    'postcode'         => $oldContact->postcode,
+                    'telephone'        => $oldContact->telephone,
+                    'published'        => $oldContact->published,
+                    'created'          => $oldContact->created,
+                    'created_by'       => (int)$oldContact->created_by,
+                    'modified'         => $oldContact->modified,
+                    'modified_by'      => (int)$oldContact->modified_by,
+                    'checked_out'      => (int)$oldContact->checked_out,
+                    'checked_out_time' => $oldContact->checked_out_time
+                );
+
+                $contact = JTable::getInstance('Contact', 'JInboundTable');
+                try {
+                    if (!$contact->bind($contactData)) {
+                        throw new Exception('Cannot migrate contact!');
+                    }
+                    if (!$contact->check()) {
+                        throw new Exception('Cannot migrate contact!');
+                    }
+                    if (!$contact->store()) {
+                        throw new Exception('Cannot migrate contact!');
+                    }
+                } catch (Exception $e) {
+                    $app->enqueueMessage($e->getMessage(), 'error');
+                    continue;
                 }
-                if (!$conversion->check()) {
-                    throw new Exception('Cannot migrate conversion');
-                }
-                if (!$conversion->store()) {
-                    throw new Exception('Cannot migrate conversion');
-                }
-                if ($conversion->id && $contact->id) {
-                    $db->setQuery(
-                        $db->getQuery(true)
-                            ->update('#__jinbound_conversions')
-                            ->set(
-                                array(
-                                    'page_id = ' . (int)$conversionData['page_id'],
-                                    'contact_id = ' . (int)$contact->id
+
+                /**
+                 * Convert old contact data
+                 *
+                 * @var JInboundTableConversion $conversion
+                 */
+                $conversionData = array(
+                    'page_id'          => (int)$oldContact->page_id,
+                    'contact_id'       => (int)$contact->id,
+                    'published'        => (int)$oldContact->published,
+                    'created'          => $oldContact->created,
+                    'created_by'       => (int)$oldContact->created_by,
+                    'modified'         => $oldContact->modified,
+                    'modified_by'      => (int)$oldContact->modified_by,
+                    'checked_out'      => $oldContact->checked_out,
+                    'checked_out_time' => $oldContact->checked_out_time,
+                    'formdata'         => (array)json_decode($oldContact->formdata)
+                );
+
+                $conversion = JTable::getInstance('Conversion', 'JInboundTable');
+                try {
+                    if (!$conversion->bind($contactData)) {
+                        throw new Exception('Cannot migrate conversion');
+                    }
+                    if (!$conversion->check()) {
+                        throw new Exception('Cannot migrate conversion');
+                    }
+                    if (!$conversion->store()) {
+                        throw new Exception('Cannot migrate conversion');
+                    }
+                    if ($conversion->id && $contact->id) {
+                        $db->setQuery(
+                            $db->getQuery(true)
+                                ->update('#__jinbound_conversions')
+                                ->set(
+                                    array(
+                                        'page_id = ' . (int)$conversionData['page_id'],
+                                        'contact_id = ' . (int)$contact->id
+                                    )
                                 )
-                            )
-                            ->where('id = ' . (int)$conversion->id)
-                    )
-                        ->execute();
+                                ->where('id = ' . (int)$conversion->id)
+                        )
+                            ->execute();
 
-                } else {
-                    throw new Exception('Could not find contact or conversion ids');
+                    } else {
+                        throw new Exception('Could not find contact or conversion ids');
+                    }
+
+                } catch (Exception $e) {
+                    $app->enqueueMessage($e->getMessage(), 'error');
+                    continue;
                 }
 
-            } catch (Exception $e) {
-                $app->enqueueMessage($e->getMessage(), 'error');
-                continue;
+                $contactModel->status($contact->id, $oldContact->campaign_id, $oldContact->status_id);
+                $contactModel->priority($contact->id, $oldContact->campaign_id, $oldContact->priority_id);
+                $campaignData = (object)array(
+                    'contact_id'  => $contact->id,
+                    'campaign_id' => $oldContact->campaign_id,
+                    'enabled'     => 1
+                );
+                $db->insertObject('#__jinbound_contacts_campaigns', $campaignData);
             }
 
-            $contactModel->status($contact->id, $oldContact->campaign_id, $oldContact->status_id);
-            $contactModel->priority($contact->id, $oldContact->campaign_id, $oldContact->priority_id);
-            $campaignData = (object)array(
-                'contact_id'  => $contact->id,
-                'campaign_id' => $oldContact->campaign_id,
-                'enabled'     => 1
-            );
-            $db->insertObject('#__jinbound_contacts_campaigns', $campaignData);
+            try {
+                $db->setQuery(
+                    'INSERT INTO #__jinbound_landing_pages_hits'
+                    . ' SELECT NOW() AS day, id AS page_id, hits FROM #__jinbound_pages'
+                )
+                    ->execute();
+
+            } catch (Exception $e) {
+                // ignore this
+            }
         }
 
         try {
             $db->setQuery('DROP TABLE IF EXISTS #__jinbound_leads')->execute();
-            $db->setQuery(
-                'INSERT INTO #__jinbound_landing_pages_hits'
-                . ' SELECT NOW() AS day, id AS page_id, hits FROM #__jinbound_pages'
-            )
-                ->execute();
+            $db->setQuery('DROP TABLE IF EXISTS #__jinbound_contact_details')->execute();
 
         } catch (Exception $e) {
             $app->enqueueMessage($e->getMessage(), 'error');
