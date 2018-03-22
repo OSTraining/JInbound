@@ -241,91 +241,6 @@ class JInboundModelReports extends JInboundListModel
         return $pages;
     }
 
-    /**
-     * Gets the total number of active leads
-     *
-     * @return integer
-     */
-    public function getLeadCount()
-    {
-        $this->getDbo()->setQuery($this->getDbo()->getQuery(true)
-            ->select('COUNT(Lead.id)')
-            ->from('#__jinbound_leads AS Lead')
-            ->leftJoin('#__jinbound_lead_statuses AS Status ON Lead.status_id = Status.id')
-            ->where('(Status.active = 1 OR Status.active IS NULL)')// users with no status are probably new and something went wonky
-            ->where('Lead.published = 1')
-        );
-
-        try {
-            $count = $this->getDbo()->loadResult();
-        } catch (Exception $e) {
-            JFactory::getApplication()->enqueueMessage($e->getMessage(), 'error');
-            $count = 0;
-        }
-
-        return (int)$count;
-    }
-
-    public function getRecentLeads()
-    {
-        $this->getDbo()->setQuery($this->getDbo()->getQuery(true)
-            ->select('Lead.id AS id')
-            ->select('Contact.id AS contact_id')
-            ->select('Page.id AS page_id')
-            ->select('Contact.name AS name')
-            ->select('Lead.created AS date')
-            ->select('Lead.formdata AS formdata')
-            ->select('Page.formname AS formname')
-            ->select('Contact.webpage AS website')
-            ->from('#__jinbound_leads AS Lead')
-            ->leftJoin('#__contact_details AS Contact ON Contact.id = Lead.contact_id')
-            ->leftJoin('#__jinbound_pages AS Page ON Page.id = Lead.page_id')
-            ->where('Lead.published = 1')
-            ->where('Page.published = 1')
-            ->group('Contact.id')
-            ->group('Lead.id')
-            ->order('Lead.created ASC')
-        );
-
-        try {
-            $leads = $this->getDbo()->loadObjectList();
-        } catch (Exception $e) {
-            JFactory::getApplication()->enqueueMessage($e->getMessage(), 'error');
-            $leads = array();
-        }
-
-        return $leads;
-    }
-
-    public function getTopLandingPages()
-    {
-        $this->getDbo()->setQuery($this->getDbo()->getQuery(true)
-            ->select('Page.id AS id')
-            ->select('Lead.id AS lead_id')
-            ->select('Page.name AS name')
-            ->select('Page.hits AS hits')
-            ->select('COUNT(Lead.id) AS conversions')
-            ->select('IF(Page.hits > 0, (COUNT(Lead.id) / Page.hits) * 100, 0) AS conversion_rate')
-            ->from('#__jinbound_pages AS Page')
-            ->leftJoin('#__jinbound_statuses AS Status ON Status.final = 1')
-            ->leftJoin('#__jinbound_leads AS Lead ON Lead.page_id = Lead.id AND Lead.status_id = Status.id')
-            ->where('Lead.published = 1')
-            ->where('Page.published = 1')
-            ->group('Page.id')
-            ->order('conversion_rate DESC')
-            ->order('Page.hits DESC')
-        );
-
-        try {
-            $pages = $this->getDbo()->loadObjectList();
-        } catch (Exception $e) {
-            JFactory::getApplication()->enqueueMessage($e->getMessage(), 'error');
-            $pages = array();
-        }
-
-        return $pages;
-    }
-
     public function getConversionCount()
     {
         static $count;
@@ -532,7 +447,7 @@ class JInboundModelReports extends JInboundListModel
         static $rate;
 
         if (is_null($rate)) {
-            $count = (int)$this->getContactsCount(); //$this->getLeadCount();
+            $count = (int)$this->getContactsCount();
             $hits  = (int)$this->getVisitCount();
             if (0 < $hits) {
                 $rate = ($count / $hits) * 100;

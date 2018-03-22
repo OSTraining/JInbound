@@ -205,15 +205,6 @@ class JInboundViewReports extends JInboundListView
     }
 
     /**
-     * @return mixed
-     * @throws Exception
-     */
-    public function getRecentLeads()
-    {
-        return $this->callModelMethod('getRecentContacts');
-    }
-
-    /**
      * @param string $method
      * @param array  $state
      *
@@ -262,15 +253,6 @@ class JInboundViewReports extends JInboundListView
     public function getLeadCount()
     {
         return $this->callModelMethod('getContactsCount');
-    }
-
-    /**
-     * @return mixed
-     * @throws Exception
-     */
-    public function getTopLandingPages()
-    {
-        return $this->callModelMethod('getTopPages');
     }
 
     /**

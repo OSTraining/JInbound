@@ -44,7 +44,6 @@ class JInboundController extends JInboundBaseController
             'TRUNCATE TABLE #__jinbound_emails_records',
             'TRUNCATE TABLE #__jinbound_emails_versions',
             'TRUNCATE TABLE #__jinbound_landing_pages_hits',
-            'TRUNCATE TABLE #__jinbound_leads',
             'TRUNCATE TABLE #__jinbound_notes',
             'TRUNCATE TABLE #__jinbound_subscriptions',
             'TRUNCATE TABLE #__jinbound_tracks',
@@ -54,12 +53,10 @@ class JInboundController extends JInboundBaseController
 
         foreach ($queries as $query) {
             try {
-                $db->setQuery($query)->query();
+                $db->setQuery($query)->execute();
+
             } catch (Exception $e) {
-                // this query should not generate an error
-                if ('TRUNCATE TABLE #__jinbound_leads' !== $query) {
-                    $errors[] = $e->getMessage();
-                }
+                $errors[] = $e->getMessage();
             }
         }
         if (!empty($errors)) {
