@@ -185,6 +185,7 @@ class com_JInboundInstallerScript extends AbstractScript
                     $this->checkEmailVersions();
                     $this->fixMissingLanguageDefaults();
                     $this->cleanupMissingRecords();
+                    $this->checkCorePlugins();
                     break;
             }
 
@@ -1051,4 +1052,36 @@ class com_JInboundInstallerScript extends AbstractScript
             $db->setQuery($query)->execute();
         }
     }
+
+    /**
+     * Make sure all the core plugins are enabled
+     *
+     * @return void
+     */
+    protected function checkCorePlugins()
+    {
+        $db = JFactory::getDbo();
+
+        $query = $db->getQuery(true)
+            ->select('extension_id, enabled')
+            ->from('#__extensions')
+            ->where(
+                array(
+                    'enabled <> 1',
+                    'type = '  . $db->quote('plugin'),
+                    'element = ' . $db->quote('jinbound'),
+                    sprintf(
+                        'folder IN (%s)',
+                        join(',', array_map(array($db, 'quote'), array('system', 'user', 'content')))
+                    )
+                )
+            );
+
+        $disabledCore = $db->setQuery($query)->loadObjectList();
+        foreach ($disabledCore as $plugin) {
+            $plugin->enabled = 1;
+            $db->updateObject('#__extensions', $plugin, array('extension_id'));
+        }
+    }
+
 }
