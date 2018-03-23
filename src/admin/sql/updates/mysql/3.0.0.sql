@@ -1,5 +1,5 @@
 -- MySQL Workbench Synchronization
--- Generated: 2018-03-23 12:41
+-- Generated: 2018-03-23 13:28
 -- Model: New Model
 -- Version: 1.0
 -- Project: Name of the project
@@ -189,6 +189,7 @@ ALTER TABLE `#__jinbound_reports_emails`
 
 ALTER TABLE `#__jinbound_subscriptions`
   CHARACTER SET = utf8mb4 , COLLATE = utf8mb4_unicode_ci ,
+  CHANGE COLUMN `contact_id` `contact_id` INT(11) NOT NULL COMMENT 'FK to #__jinbound_contacts.id' ,
   ADD INDEX `fk_contacts_idx` (`contact_id` ASC);
 
 ALTER TABLE `#__jinbound_tracks`
