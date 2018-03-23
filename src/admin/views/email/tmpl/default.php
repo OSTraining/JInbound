@@ -32,55 +32,57 @@ JText::script('JGLOBAL_VALIDATION_FORM_FAILED');
         campaign: '<?php echo JInboundHelperFilter::escape_js($this->emailtags->campaign); ?>',
         report  : '<?php echo JInboundHelperFilter::escape_js($this->emailtags->report); ?>'
     };
+
     Joomla.emailtest = function(form) {
         <?php echo $this->form->getField('htmlbody')->save(); ?>
-        var sendto = prompt(Joomla.JText._('COM_JINBOUND_ENTER_EMAIL_RECIPIENT'));
-        var url = 'index.php?option=com_jinbound&task=email.test';
-        var token = '<?php echo JSession::getFormToken(); ?>';
-        var data = {
-            to         : sendto
-            , fromname : document.getElementById('jform_fromname').value
-            , fromemail: document.getElementById('jform_fromemail').value
-            , subject  : document.getElementById('jform_subject').value
-            , htmlbody : document.getElementById('jform_htmlbody').value
-            , plainbody: document.getElementById('jform_plainbody').value
-            , type     : jQuery('#jform_type').find(':selected').val()
-        };
+        var sendto = prompt(Joomla.JText._('COM_JINBOUND_ENTER_EMAIL_RECIPIENT')),
+            url    = 'index.php?option=com_jinbound&task=email.test',
+            token  = '<?php echo JSession::getFormToken(); ?>',
+            data   = {
+                to       : sendto,
+                fromname : document.getElementById('jform_fromname').value,
+                fromemail: document.getElementById('jform_fromemail').value,
+                subject  : document.getElementById('jform_subject').value,
+                htmlbody : document.getElementById('jform_htmlbody').value,
+                plainbody: document.getElementById('jform_plainbody').value,
+                type     : jQuery('#jform_type').find(':selected').val()
+            };
         data[token] = 1;
+
         var success = function(response) {
-            alert(Joomla.JText._('Done' == response ? 'COM_JINBOUND_EMAIL_SENT' : 'COM_JINBOUND_EMAIL_NOT_SENT'));
+            if (response.code) {
+                alert(Joomla.JText._('COM_JINBOUND_EMAIL_NOT_SENT') + '\n' + response.code + ': ' + response.message);
+            } else {
+                alert(Joomla.JText._('COM_JINBOUND_EMAIL_SENT'));
+            }
         };
-        if ('undefined' === typeof jQuery) {
-            var r = new Request.HTML({
-                url        : url
-                , method   : 'POST'
-                , data     : data
-                , onSuccess: success
-            }).send();
-        }
-        else {
-            jQuery.ajax(url, {
-                type     : 'POST'
-                , data   : data
-                , success: success
-            });
-        }
+
+        jQuery.ajax(url, {
+            type    : 'POST',
+            data    : data,
+            dataType: 'json',
+            success : success,
+            error   : function($xhr, status, error) {
+                alert(status + '\n' + error);
+            }
+        });
     };
     Joomla.submitbutton = function(task) {
         var form = document.getElementById('adminForm');
         if ('email.cancel' === task) {
             Joomla.submitform(task, form);
-        }
-        else if ('email.test' === task) {
+
+        } else if ('email.test' === task) {
             Joomla.emailtest(form);
-        }
-        else if (!document.formvalidator.isValid(form)) {
+
+        } else if (!document.formvalidator.isValid(form)) {
             alert(Joomla.JText._('JGLOBAL_VALIDATION_FORM_FAILED'));
-        }
-        else {
+
+        } else {
             Joomla.submitform(task, form);
         }
     };
+
     (function($) {
         $(document).ready(function() {
             $('#jform_type').change(function() {
@@ -105,8 +107,8 @@ JText::script('JGLOBAL_VALIDATION_FORM_FAILED');
                     t2.show();
                     l.empty().html(window.jinboundemailtags.report);
                 }
-            });
-            $('#jform_type').trigger('change');
+            })
+                .trigger('change');
         });
     })(jQuery);
 </script>

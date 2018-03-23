@@ -19,8 +19,20 @@ defined('_JEXEC') or die;
 
 class JInboundViewEmail extends JInboundItemView
 {
-    function display($tpl = null, $safeparams = false)
+    /**
+     * @var object
+     */
+    protected $emailtags = null;
+
+    /**
+     * @param string $tpl
+     *
+     * @return void
+     * @throws Exception
+     */
+    public function display($tpl = null)
     {
+        /** @var JInboundModelReports $reports_model */
         $reports_model = JInboundBaseModel::getInstance('Reports', 'JInboundModel');
         $reports_tags  = $reports_model->getReportEmailTags();
 
@@ -33,20 +45,18 @@ class JInboundViewEmail extends JInboundItemView
             $reports_tips .= '</ul>';
         }
 
-        $this->emailtags           = new stdClass();
-        $this->emailtags->campaign = JText::_('COM_JINBOUND_TIPS_JFORM_EMAIL_TIPS');
-        $this->emailtags->report   = $reports_tips;
+        $this->emailtags = (object)array(
+            'campaign' => JText::_('COM_JINBOUND_TIPS_JFORM_EMAIL_TIPS'),
+            'report'   => $reports_tips
+        );
 
-        return parent::display($tpl, $safeparams);
+        parent::display($tpl);
     }
 
     public function addToolBar()
     {
         parent::addToolBar();
-        $icon = 'send';
-        if (JInbound::version()->isCompatible('3.0.0')) {
-            $icon = 'mail';
-        }
-        JToolbarHelper::custom('email.test', "{$icon}.png", "{$icon}_f2.png", 'COM_JINBOUND_EMAIL_TEST', false);
+
+        JToolbarHelper::custom('email.test', 'mail.png', 'mail_f2.png', 'COM_JINBOUND_EMAIL_TEST', false);
     }
 }
