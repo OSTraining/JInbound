@@ -1,5 +1,5 @@
 -- MySQL Workbench Synchronization
--- Generated: 2018-03-23 11:26
+-- Generated: 2018-03-23 12:41
 -- Model: New Model
 -- Version: 1.0
 -- Project: Name of the project
@@ -32,7 +32,8 @@ ALTER TABLE `#__jinbound_contacts`
   CHANGE COLUMN `checked_out` `checked_out` INT(11) NULL DEFAULT NULL COMMENT 'Locking column to prevent simultaneous updates' ,
   CHANGE COLUMN `checked_out_time` `checked_out_time` DATETIME NULL DEFAULT NULL COMMENT 'Date and Time record was checked out' ,
   ADD INDEX `fk_users_idx` (`user_id` ASC),
-  ADD INDEX `fk_assets_idx` (`asset_id` ASC);
+  ADD INDEX `fk_assets_idx` (`asset_id` ASC),
+  ADD INDEX `fk_contacts` (`core_contact_id` ASC);
 
 ALTER TABLE `#__jinbound_contacts_campaigns`
   CHARACTER SET = utf8mb4 , COLLATE = utf8mb4_unicode_ci ,
@@ -203,7 +204,6 @@ DROP TABLE IF EXISTS `#__jinbound_stages` ;
 DROP TABLE IF EXISTS `#__jinbound_leads` ;
 
 DROP TABLE IF EXISTS `#__jinbound_contacts_followers` ;
-
 
 SET SQL_MODE=@OLD_SQL_MODE;
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
