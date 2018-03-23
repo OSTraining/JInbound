@@ -843,7 +843,6 @@ class com_JInboundInstallerScript extends AbstractScript
      */
     protected function cleanupMissingRecords()
     {
-        $app = JFactory::getApplication();
         $db  = JFactory::getDbo();
 
         try {
@@ -890,6 +889,13 @@ class com_JInboundInstallerScript extends AbstractScript
      */
     public function checkAssets()
     {
+        // Let's first get rid of crappy old broken assets
+        $db = JFactory::getDbo();
+        $query = $db->getQuery(true)
+            ->delete('#__assets')
+            ->where('name LIKE ' . $db->quote('#__jinbound%'));
+        $db->setQuery($query)->execute();
+
         /** @var JTableAsset $root */
         $root = JTable::getInstance('Asset');
         $root->loadByName('com_jinbound');
