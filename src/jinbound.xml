@@ -161,6 +161,6 @@
     <updateservers>
         <server type="extension"
                 priority="1"
-                name="jInbound Pro"><![CDATA[https://deploy.ostraining.com/client/update/free/stable/com_jinbound]]></server>
+                name="jInbound Free"><![CDATA[https://deploy.ostraining.com/client/update/free/stable/com_jinbound]]></server>
     </updateservers>
 </extension>
