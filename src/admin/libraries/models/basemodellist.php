@@ -30,18 +30,14 @@ class JInboundListModel extends JModelList
      *
      * @var        string
      */
-    public $_context = JInbound::COM;
+    public $_context = 'com_jinbound';
 
     /**
      * The category context (allows other extensions to derived from this model).
      *
      * @var        string
      */
-    protected $_extension = JInbound::COM;
-
-    private $_parent = null;
-
-    private $_items = null;
+    protected $_extension = 'com_jinbound';
 
     private $_registryColumns = null;
 
