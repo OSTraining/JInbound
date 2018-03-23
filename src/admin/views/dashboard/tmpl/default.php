@@ -150,5 +150,5 @@ $jserror = "javascript:alert('" . JText::_('JERROR_ALERTNOAUTHOR') . "');";
 <?php
 echo $this->loadTemplate('footer');
 
-//echo $this->reports->script;
+echo $this->reports->script;
 

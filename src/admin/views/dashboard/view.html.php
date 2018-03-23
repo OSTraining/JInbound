@@ -17,48 +17,43 @@
 
 defined('JPATH_PLATFORM') or die;
 
-require_once JINB_ADMIN . '/views/reports/view.html.php';
-
 class JInboundViewDashboard extends JInboundView
 {
-    protected $feeds = array(
-        'feed' => array('url' => 'https://jinbound.com/blog/feed/rss.html', 'showDescription' => false),
-        'news' => array('url' => 'https://jinbound.com/news/?format=feed', 'showDescription' => false)
-    );
-
-    function display($tpl = null, $safeparams = false)
+    /**
+     * @param string $tpl
+     *
+     * @return void
+     * @throws Exception
+     */
+    public function display($tpl = null)
     {
         $app = JFactory::getApplication();
 
         // get original data for layout and template
-        $tmpl   = $app->input->get('tmpl');
-        $layout = $app->input->get('layout');
+        $tmpl   = $app->input->getCmd('tmpl');
+        $layout = $app->input->getCmd('layout');
 
         // get a reports view & load it's output
+        require_once realpath(__DIR__ . '/../reports/view.html.php');
+
         $app->input->set('tmpl', 'component');
         $app->input->set('layout', 'default');
         $app->setUserState('list.limit', 10);
         $app->setUserState('list.start', 0);
         $reportView = new JInboundViewReports();
 
-        $this->reports               = new stdClass;
-        $this->reports->glance       = $reportView->loadTemplate(null, 'glance');
-        $this->reports->script       = $reportView->loadTemplate('script', 'default');
-        $this->reports->top_pages    = $reportView->loadTemplate('pages', 'top');
-        $this->reports->recent_leads = $reportView->loadTemplate('leads', 'recent');
-
-        // instead of loading the RSS initially, allow the urls to be loaded via ajax
-        $this->feed = (object)$this->feeds['feed'];
-        $this->news = (object)$this->feeds['news'];
+        $this->reports = (object)array(
+            'glance'       => $reportView->loadTemplate(null, 'glance'),
+            'script'       => $reportView->loadTemplate('script', 'default'),
+            'top_pages'    => $reportView->loadTemplate('pages', 'top'),
+            'recent_leads' => $reportView->loadTemplate('leads', 'recent')
+        );
 
         // reset template and layout data
         $app->input->set('tmpl', $tmpl);
         $app->input->set('layout', $layout);
 
-        // apply plugin update info
-        $this->updates = JDispatcher::getInstance()->trigger('onJinboundDashboardUpdate');
-
-        return parent::display($tpl, $safeparams);
+        parent::display($tpl);
     }
 
     /**
@@ -74,7 +69,7 @@ class JInboundViewDashboard extends JInboundView
 
     /**
      * Standard rendering of dashboard buttons
-     * 
+     *
      * @param string $view
      * @param string $image
      * @param string $title
