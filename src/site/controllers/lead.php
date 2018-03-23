@@ -239,23 +239,15 @@ class JInboundControllerLead extends JInboundBaseController
         }
         // some of these may not be set
         foreach (array(
-                     'address'   => array('address')
-                 ,
-                     'suburb'    => array('suburb', 'city')
-                 ,
-                     'state'     => array('state')
-                 ,
-                     'country'   => array('country')
-                 ,
-                     'postcode'  => array('postcode', 'zip', 'zipcode', 'zip_code')
-                 ,
-                     'telephone' => array('telephone', 'phone', 'phone_number', 'phonenumber', 'number')
-                 ,
-                     'company'   => array('company', 'companyname', 'company_name')
-                 ,
+                     'address'   => array('address'),
+                     'suburb'    => array('suburb', 'city'),
+                     'state'     => array('state'),
+                     'country'   => array('country'),
+                     'postcode'  => array('postcode', 'zip', 'zipcode', 'zip_code'),
+                     'telephone' => array('telephone', 'phone', 'phone_number', 'phonenumber', 'number'),
+                     'company'   => array('company', 'companyname', 'company_name'),
                      'website'   => array('webpage', 'website', 'web', 'url')
                  ) as $var => $keys) {
-            // pull the data from the table
             $$var = '';
             if ($contact->id) {
                 $$var = $contact->$var;

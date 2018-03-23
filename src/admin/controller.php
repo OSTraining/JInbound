@@ -48,7 +48,7 @@ class JInboundController extends JInboundBaseController
             'TRUNCATE TABLE #__jinbound_subscriptions',
             'TRUNCATE TABLE #__jinbound_tracks',
             'TRUNCATE TABLE #__jinbound_users_tracks',
-            'UPDATE #__jinbound_pages SET hits = 0 WHERE 1'
+            'UPDATE #__jinbound_pages SET hits = 0'
         );
 
         foreach ($queries as $query) {
