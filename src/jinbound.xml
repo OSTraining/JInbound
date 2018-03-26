@@ -134,6 +134,7 @@
             <folder>administrator/components/com_jinbound/views/stages</folder>
 
             <file>administrator/components/com_jinbound/helpers/access.php</file>
+            <file>administrator/components/com_jinbound/models/forms/lead.xml</file>
             <file>administrator/components/com_jinbound/models/lead.php</file>
             <file>administrator/components/com_jinbound/models/leads.php</file>
             <file>administrator/components/com_jinbound/models/stage.php</file>
