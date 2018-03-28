@@ -118,18 +118,6 @@ abstract class JInbound
     }
 
     /**
-     * static method to register a helper
-     *
-     * @param string $helper
-     *
-     * @deprecated v3.0.0 Helper classes autoloaded now
-     */
-    public static function registerHelper($helper)
-    {
-        JLoader::register('JInboundHelper' . ucwords($helper), JInboundHelperPath::helper($helper));
-    }
-
-    /**
      * static method to register a library
      *
      * @param string $class
@@ -227,26 +215,5 @@ abstract class JInbound
         $date = JFactory::getDate($utc_date, 'UTC');
         $date->setTimezone(new DateTimeZone($timezone));
         return $date->format('Y-m-d H:i:s', true, false);
-    }
-}
-
-if (class_exists('JHelperContent')) {
-    class JinboundHelper extends JHelperContent
-    {
-        public static $extension = 'com_jinbound';
-
-        /**
-         * Configure the Linkbar.
-         *
-         * @param   string $vName The name of the active view.
-         *
-         * @return  void
-         */
-        public static function addSubmenu($vName)
-        {
-            JInbound::registerLibrary('JInboundView', 'views/baseview');
-            $comView = new JInboundView();
-            $comView->addMenuBar();
-        }
     }
 }
