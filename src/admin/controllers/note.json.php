@@ -17,8 +17,6 @@
 
 defined('JPATH_PLATFORM') or die;
 
-JInbound::registerLibrary('JInboundFormController', 'controllers/basecontrollerform');
-
 class JInboundControllerNote extends JInboundFormController
 {
     public function delete()
