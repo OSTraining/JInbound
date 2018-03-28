@@ -111,10 +111,10 @@ class JInboundController extends JInboundBaseController
 
             $app = JFactory::getApplication();
 
-            /** @var ConfigModelApplication $model */
             JLoader::registerPrefix('Config', JPATH_ROOT . '/components/com_config');
             JModelLegacy::addIncludePath(JPATH_ADMINISTRATOR . '/components/com_config/model', 'ConfigModel');
 
+            /** @var ConfigModelApplication $model */
             $model = JModelLegacy::getInstance('Application', 'ConfigModel');
 
             $permission = array(

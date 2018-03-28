@@ -19,6 +19,10 @@ defined('JPATH_PLATFORM') or die;
 
 class JInboundControllerNote extends JInboundFormController
 {
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function delete()
     {
         JSession::checkToken() or die(JText::_('JINVALID_TOKEN'));
