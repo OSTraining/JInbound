@@ -27,10 +27,26 @@ if (file_exists(__DIR__ . '/admin/library/Installer/AbstractScript.php')) {
     require_once __DIR__ . '/library/Installer/AbstractScript.php';
 }
 
-jimport('joomla.form.form');
-
 class com_JInboundInstallerScript extends AbstractScript
 {
+    /**
+     * com_JInboundInstallerScript constructor.
+     *
+     * @param JInstallerAdapter $parent
+     *
+     * @return void
+     * @throws Exception
+     */
+    public function __construct(JInstallerAdapter $parent)
+    {
+        parent::__construct($parent);
+
+        // We need to undo an old compatibility registration that throws warnings on upgrades
+        if (!$this->validatePreviousVersion('3.0.3b2')) {
+            JLoader::register('JResponseJson', JPATH_LIBRARIES . '/src/Response/JsonResponse.php');
+        }
+    }
+
     /**
      * @param JInstallerAdapter $parent
      *
