@@ -55,24 +55,40 @@ class plgSystemJInbound extends JPlugin
         parent::__construct($subject, $config);
         $this->loadLanguage();
 
-        if (!defined('JINB_LOADED')) {
+        if (static::$app === null) {
+            static::$app = JFactory::getApplication();
+        }
+        if ($this->isEnabled()) {
+            JFactory::getLanguage()->load('com_jinbound', JPATH_ADMINISTRATOR . '/components/com_jinbound');
+        }
+    }
+
+    /**
+     * @param bool $warn
+     *
+     * @return bool
+     * @throws Exception
+     */
+    protected function isEnabled($warn = false)
+    {
+        if (static::$app === null) {
+            static::$app = JFactory::getApplication();
+        }
+
+        if (!defined('JINB_LOADED') && static::$app->input->getCmd('option') != 'com_install') {
             $path = JPATH_ADMINISTRATOR . '/components/com_jinbound/include.php';
             if (is_file($path)) {
                 require_once $path;
             }
         }
 
-        if (static::$app === null) {
-            static::$app     = JFactory::getApplication();
-            static::$enabled = defined('JINB_LOADED');
+        static::$enabled = defined('JINB_LOADED');
 
-            if (static::$enabled) {
-                JFactory::getLanguage()->load('com_jinbound', JPATH_ADMINISTRATOR . '/components/com_jinbound');
-
-            } else {
-                static::$app->enqueueMessage(JText::_('PLG_SYSTEM_JINBOUND_COMPONENT_NOT_INSTALLED'));
-            }
+        if ($warn && !static::$enabled) {
+            static::$app->enqueueMessage(JText::_('PLG_SYSTEM_JINBOUND_COMPONENT_NOT_INSTALLED'));
         }
+
+        return static::$enabled;
     }
 
     /**
@@ -172,9 +188,10 @@ class plgSystemJInbound extends JPlugin
     public function onAfterDispatch()
     {
         static::profile('BeforeDispatch');
-        if (!static::$enabled) {
+        if (!$this->isEnabled()) {
             return;
         }
+
         $opt = static::$app->input->get('option', '', 'cmd');
         if (static::$app->isClient('administrator')) {
             $this->onAfterDispatchAdmin($opt);
@@ -211,19 +228,19 @@ class plgSystemJInbound extends JPlugin
      */
     protected function onAfterDispatchAdminCategories()
     {
-        // we want to add some extras to com_categories
-        if (static::$enabled && static::$app->input->getCmd('extension') == 'com_jinbound') {
-            // add css
-            $doc = JFactory::getDocument();
-            if (method_exists($doc, 'addStyleSheet')) {
-                $doc->addStyleSheet(JInboundHelperUrl::media() . '/css/admin.categories.css');
-            }
-            }
+        // Extras for com_categories
+        if ($this->isEnabled(true) && static::$app->input->getCmd('extension') == 'com_jinbound') {
+            JHtml::_('stylesheet', 'com_jinbound/admin.categories.css', array('relative' => true));
+        }
     }
 
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function onAfterRoute()
     {
-        if (!static::$enabled || static::$app->isClient('administrator')) {
+        if (!$this->isEnabled() || static::$app->isClient('administrator')) {
             return;
         }
         static::profile('BeforeRoute');
@@ -354,10 +371,12 @@ class plgSystemJInbound extends JPlugin
     /**
      * Alter the response body before sending to the client
      *
+     * @return void
+     * @throws Exception
      */
     public function onAfterRender()
     {
-        if (!static::$enabled || static::$app->isClient('administrator')) {
+        if (!$this->isEnabled() || static::$app->isClient('administrator')) {
             return;
         }
 
