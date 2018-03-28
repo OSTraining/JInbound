@@ -127,6 +127,7 @@
         </relatedExtensions>
 
         <obsolete>
+            <folder>administrator/components/com_jinbound/libraries/compat</folder>
             <folder>administrator/components/com_jinbound/libraries/tables</folder>
             <folder>administrator/components/com_jinbound/views/lead</folder>
             <folder>administrator/components/com_jinbound/views/leads</folder>

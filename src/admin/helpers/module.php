@@ -15,6 +15,8 @@
  * may be added to this header as long as no information is deleted.
  */
 
+use Joomla\Registry\Registry;
+
 defined('JPATH_PLATFORM') or die;
 
 abstract class JInboundHelperModule
@@ -51,9 +53,8 @@ abstract class JInboundHelperModule
             throw new UnexpectedValueException('Module not found (' . $module->id . ', ' . $id . ')');
         }
         // fix the params
-        if (!is_a($module->params, 'Registry')) {
-            $registry       = JInbound::registry($module->params);
-            $module->params = $registry;
+        if (!$module->params instanceof Registry) {
+            $module->params = new Registry($module->params);
         }
         // set return url if desired
         if (!empty($return)) {

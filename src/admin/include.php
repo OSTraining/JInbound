@@ -72,8 +72,7 @@ if (!defined('JINB_LOADED')) {
         'JInboundPageController' => JINB_LIBRARY . '/controllers/basecontrollerpage.php',
         'JInboundPluginView'     => JINB_LIBRARY . '/views/pluginview.php',
         'JInboundRssView'        => JINB_LIBRARY . '/views/rssview.php',
-        'JInboundTable'          => JINB_LIBRARY . '/table.php',
-        'JResponseJson'          => JINB_LIBRARY . '/compat/response/json.php'
+        'JInboundTable'          => JINB_LIBRARY . '/table.php'
     );
 
     foreach ($libraryClasses as $className => $file) {
