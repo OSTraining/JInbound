@@ -46,7 +46,7 @@ class JInboundViewPage extends JInboundItemView
         $doc = JFactory::getDocument();
 
         if (!empty($this->item->metatitle)) {
-            $doc->setTitle($this->item->metatitle);
+            $this->setTitle($this->item->metatitle);
         }
 
         if (!empty($this->item->metadescription)) {

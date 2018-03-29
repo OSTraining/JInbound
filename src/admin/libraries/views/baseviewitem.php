@@ -15,6 +15,8 @@
  * may be added to this header as long as no information is deleted.
  */
 
+use Joomla\Registry\Registry;
+
 defined('JPATH_PLATFORM') or die;
 
 class JInboundItemView extends JInboundView
@@ -62,19 +64,70 @@ class JInboundItemView extends JInboundView
         // stub
     }
 
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function setDocument()
     {
-        jimport('joomla.filesystem.file');
-        $isNew    = ($this->item->id < 1);
-        $document = JFactory::getDocument();
-        $title    = strtoupper(JInbound::COM . '_' . $this->_name);
-        if ('contact' === $this->_name) {
-            $title = strtoupper(JInbound::COM . '_LEAD');
+        $app = JFactory::getApplication();
+
+        if ($app->isClient('site')) {
+            $menus = $app->getMenu();
+            if ($menu = $menus->getActive()) {
+                $this->params->def('page_heading', $this->params->get('page_title', $menu->title));
+            }
+
+
+            if ($this->params->get('menu-meta_description')) {
+                $this->document->setDescription($this->params->get('menu-meta_description'));
+            }
+
+            if ($this->params->get('menu-meta_keywords')) {
+                $this->document->setMetadata('keywords', $this->params->get('menu-meta_keywords'));
+            }
+
+            if ($this->params->get('robots')) {
+                $this->document->setMetadata('robots', $this->params->get('robots'));
+            }
+
+            $this->setTitle();
         }
-        $title .= '_' . ($isNew ? 'CREATING' : 'EDITING');
-        $document->setTitle(JText::_($title));
     }
 
+    /**
+     * @param string $title
+     *
+     * @throws Exception
+     */
+    protected function setTitle($title = null)
+    {
+        $app = JFactory::getApplication();
+
+        if ($app->isClient('site')) {
+            /** @var Registry $params */
+            $params = $app->getParams();
+
+            $title = $title ?: $params->get('page_title', '');
+
+            if (empty($title)) {
+                $title = $app->get('sitename');
+
+            } elseif ($app->get('sitename_pagetitles', 0) == 1) {
+                $title = JText::sprintf('JPAGETITLE', $app->get('sitename'), $title);
+
+            } elseif ($app->get('sitename_pagetitles', 0) == 2) {
+                $title = JText::sprintf('JPAGETITLE', $title, $app->get('sitename'));
+            }
+
+            $this->document->setTitle($title);
+        }
+    }
+
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function addToolBar()
     {
         // only fire in administrator
