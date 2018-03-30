@@ -32,7 +32,30 @@ class JInboundPluginView extends JInboundView
     /**
      * @var string
      */
-    public $download_url = null;
+    protected $maxmindDBUrl = null;
+
+    /**
+     * @var string
+     */
+    protected $maxmindDB = null;
+
+    /**
+     * JInboundPluginView constructor.
+     *
+     * @param array $config
+     *
+     * @return void
+     * @throws Exception
+     */
+    public function __construct(array $config = array())
+    {
+        parent::__construct($config);
+
+        $this->maxmindDownloadUrl = empty($config['maxmindDownloadUrl']) ? null : $config['maxmindDownloadUrl'];
+        $this->data               = empty($config['data']) ? null : $config['data'];
+        $this->maxmindDBUrl       = empty($config['maxmindDBUrl']) ? null : $config['maxmindDBUrl'];
+        $this->maxmindDB          = empty($config['maxmindDB']) ? null : $config['maxmindDB'];
+    }
 
     /**
      * @param string $property
