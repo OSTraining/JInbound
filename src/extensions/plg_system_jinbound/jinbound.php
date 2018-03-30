@@ -364,7 +364,7 @@ class plgSystemJInbound extends JPlugin
         $theURI = JUri::getInstance();
 
         return $full
-            ? $theURI->toString(array('scheme', 'host', 'port'))
+            ? $theURI->toString()
             : $theURI->toString(array('path', 'query', 'fragment'));
     }
 
@@ -392,6 +392,7 @@ class plgSystemJInbound extends JPlugin
                 $url
             );
         }
+
         // add cookie script
         if (static::$setCookie) {
             $cookie = JInboundHelperFilter::escape(static::getCookieValue());
@@ -407,9 +408,8 @@ class plgSystemJInbound extends JPlugin
             static::$app->setBody($body);
         }
 
-        static::profile('BeforeTrack');
-
         $this->recordUserTrack();
+
         static::profile('AfterRender');
     }
 
@@ -418,6 +418,8 @@ class plgSystemJInbound extends JPlugin
      */
     protected function recordUserTrack()
     {
+        static::profile('BeforeTrack');
+
         $db           = JFactory::getDbo();
         $ip           = static::getIp();
         $session      = session_id();
@@ -429,16 +431,16 @@ class plgSystemJInbound extends JPlugin
         }
 
         $track = (object)array(
-            'id'               => $db->quote($id),
-            'cookie'           => $db->quote(static::getCookieValue()),
-            'detected_user_id' => $db->quote($detecteduser),
-            'current_user_id'  => $db->quote(JFactory::getUser()->get('id')),
-            'user_agent'       => $db->quote(static::getUserAgent()),
-            'created'          => $db->quote(JFactory::getDate()->toSql()),
-            'ip'               => $db->quote($ip),
-            'session_id'       => $db->quote($session),
-            'type'             => $db->quote(strtoupper(filter_input(INPUT_SERVER, 'REQUEST_METHOD'))),
-            'url'              => $db->quote(static::getURI())
+            'id'               => $id,
+            'cookie'           => static::getCookieValue(),
+            'detected_user_id' => $detecteduser,
+            'current_user_id'  => JFactory::getUser()->id,
+            'user_agent'       => static::getUserAgent(),
+            'created'          => JFactory::getDate()->toSql(),
+            'ip'               => $ip,
+            'session_id'       => $session,
+            'type'             => static::getServerVar('REQUEST_METHOD'),
+            'url'              => static::getURI()
         );
 
         static::profile('BeforeInsertTrack');
