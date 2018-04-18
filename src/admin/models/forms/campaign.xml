@@ -1,69 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <form>
-	<fieldset
-        name="default"
-        label="COM_JINBOUND_CAMPAIGN_FIELDSET_DEFAULT"
-    >
-		<field name="id" type="hidden" default="0" readonly="true"/>
-		<field
-            id="name" name="name"
-            type="text"
-            label="COM_JINBOUND_CAMPAIGN_NAME"
-            description="COM_JINBOUND_CAMPAIGN_NAME_DESC"
-            class="input-block-level"
-            size="30"
-            required="true"
-        />
+    <fieldset name="default"
+              label="COM_JINBOUND_CAMPAIGN_FIELDSET_DEFAULT">
+        <field name="id"
+               type="hidden"
+               default="0"
+               readonly="true"/>
 
-	</fieldset>
-	<fieldset
-        name="content"
-        label="COM_JINBOUND_CAMPAIGN_FIELDSET_DEFAULT"
-    >
-		<field
-            id="published" name="published"
-            type="jinbound.published"
-            label="JPUBLISHED"
-            description="COM_JINBOUND_CAMPAIGN_PUBLISHED_DESC"
-            default="1"
-        />
+        <field name="name"
+               type="text"
+               label="COM_JINBOUND_CAMPAIGN_NAME"
+               description="COM_JINBOUND_CAMPAIGN_NAME_DESC"
+               class="input-xxlarge input-large-text"
+               required="true"/>
+    </fieldset>
 
-		<field
-            id="conversion_url" name="conversion_url"
-            type="text"
-            label="COM_JINBOUND_GOAL_COMPLETION_PARAMETERS"
-            description="COM_JINBOUND_GOAL_COMPLETION_PARAMETERS_DESC"
-            class="input-block-level"
-        />
+    <fieldset name="content"
+              label="COM_JINBOUND_CAMPAIGN_FIELDSET_DEFAULT">
+        <field name="published"
+               type="jinbound.published"
+               label="JPUBLISHED"
+               description="COM_JINBOUND_CAMPAIGN_PUBLISHED_DESC"
+               default="1"/>
 
-		<field
-            id="greedy" name="greedy"
-            type="radio"
-            label="COM_JINBOUND_GREEDY_CAMPAIGN"
-            description="COM_JINBOUND_GREEDY_CAMPAIGN_DESC"
-            class="radio btn-group btn-group-yesno"
-            default="0"
-        >
-			<option value="1">JYES</option>
-			<option value="0">JNO</option>
-		</field>
+        <field name="conversion_url"
+               type="text"
+               label="COM_JINBOUND_GOAL_COMPLETION_PARAMETERS"
+               description="COM_JINBOUND_GOAL_COMPLETION_PARAMETERS_DESC"/>
 
-	</fieldset>
-	<fields name="params">
-		<fieldset
-            name="notes"
-            label="COM_JINBOUND_CAMPAIGN_FIELDSET_NOTES"
-        >
-			<field
-                name="notes"
-                type="editor"
-                filter="JComponentHelper::filterText"
-                label="COM_JINBOUND_CAMPAIGN_NOTES"
-                description="COM_JINBOUND_CAMPAIGN_NOTES_DESC"
-                class="input-block-level"
-                cols="60" rows="12"
-                buttons="0"
-            />
-		</fieldset>
-	</fields>
+        <field name="greedy"
+               type="radio"
+               label="COM_JINBOUND_GREEDY_CAMPAIGN"
+               description="COM_JINBOUND_GREEDY_CAMPAIGN_DESC"
+               class="btn-group btn-group-yesno"
+               default="0">
+            <option value="1">JYES</option>
+            <option value="0">JNO</option>
+        </field>
+    </fieldset>
+
+    <fields name="params">
+        <fieldset name="notes"
+                  label="COM_JINBOUND_CAMPAIGN_FIELDSET_NOTES">
+            <field name="notes"
+                   type="editor"
+                   filter="JComponentHelper::filterText"
+                   label="COM_JINBOUND_CAMPAIGN_NOTES"
+                   description="COM_JINBOUND_CAMPAIGN_NOTES_DESC"
+                   rows="12"
+                   buttons="0"/>
+        </fieldset>
+    </fields>
 </form>
