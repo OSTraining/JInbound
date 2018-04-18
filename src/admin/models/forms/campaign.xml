@@ -22,10 +22,9 @@
     >
 		<field
             id="published" name="published"
-            type="jinboundpublished"
+            type="jinbound.published"
             label="JPUBLISHED"
             description="COM_JINBOUND_CAMPAIGN_PUBLISHED_DESC"
-            class="input-block-level"
             default="1"
         />
 

@@ -31,10 +31,9 @@
     >
 		<field
             id="published" name="published"
-            type="jinboundpublished"
+            type="jinbound.published"
             label="COM_JINBOUND_PUBLISHED"
             description="COM_JINBOUND_PUBLISHED_DESC"
-            class="inputbox"
         />
 		<field
             id="formfields" name="formfields"

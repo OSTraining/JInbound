@@ -40,7 +40,7 @@
     <fieldset name="content"
               label="COM_JINBOUND_FIELD_FIELDSET_CONTENT">
         <field name="published"
-               type="jinboundpublished"
+               type="jinbound.published"
                label="COM_JINBOUND_PUBLISHED"
                description="COM_JINBOUND_PUBLISHED_DESC"/>
 

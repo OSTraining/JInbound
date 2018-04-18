@@ -125,10 +125,9 @@
 
 		<field
             id="published" name="published"
-            type="jinboundpublished"
+            type="jinbound.published"
             label="COM_JINBOUND_PUBLISHED"
             description="COM_JINBOUND_PUBLISHED_DESC"
-            class="input-medium"
             default="1"
         />
 	</fieldset>

@@ -15,22 +15,34 @@
  * may be added to this header as long as no information is deleted.
  */
 
-defined('JPATH_PLATFORM') or die;
+defined('JPATH_PLATFORM') or die();
 
-jimport('joomla.form.formfield');
-jimport('joomla.form.helper');
-JFormHelper::loadFieldClass('list');
+JFormHelper::loadFieldClass('Radio');
 
-class JFormFieldJinboundPublished extends JFormFieldList
+class JinboundFormFieldPublished extends JFormFieldRadio
 {
     public $type = 'Jinboundpublished';
 
+    public function setup(\SimpleXMLElement $element, $value, $group = null)
+    {
+        if (parent::setup($element, $value, $group)) {
+            if (!$this->class) {
+                $this->class = 'btn-group btn-group-yesno';
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
     protected function getOptions()
     {
-        // list of published types
-        $list   = array();
-        $list[] = JHtml::_('select.option', 0, JText::_('COM_JINBOUND_UNPUBLISHED'));
-        $list[] = JHtml::_('select.option', 1, JText::_('COM_JINBOUND_PUBLISHED'));
-        return array_merge(parent::getOptions(), $list);
+        $options = array(
+            JHtml::_('select.option', 1, JText::_('COM_JINBOUND_PUBLISHED')),
+            JHtml::_('select.option', 0, JText::_('COM_JINBOUND_UNPUBLISHED'))
+        );
+
+        return array_merge(parent::getOptions(), $options);
     }
 }
