@@ -26,11 +26,16 @@ abstract class JInboundHelperStatus
         if (is_null($default)) {
             $db = JFactory::getDbo();
 
-            $default = $db->setQuery($db->getQuery(true)
-                ->select($db->quoteName('id'))
-                ->from('#__jinbound_lead_statuses')
-                ->where($db->quoteName('default') . ' = 1')
-                ->where($db->quoteName('published') . ' = 1')
+            $default = $db->setQuery(
+                $db->getQuery(true)
+                    ->select($db->quoteName('id'))
+                    ->from('#__jinbound_lead_statuses')
+                    ->where(
+                        array(
+                            $db->quoteName('default') . ' = 1',
+                            $db->quoteName('published') . ' = 1'
+                        )
+                    )
             )->loadResult();
 
             if (is_null($default)) {
@@ -48,11 +53,16 @@ abstract class JInboundHelperStatus
         if (is_null($final)) {
             $db = JFactory::getDbo();
 
-            $final = $db->setQuery($db->getQuery(true)
-                ->select($db->quoteName('id'))
-                ->from('#__jinbound_lead_statuses')
-                ->where($db->quoteName('final') . ' = 1')
-                ->where($db->quoteName('published') . ' = 1')
+            $final = $db->setQuery(
+                $db->getQuery(true)
+                    ->select($db->quoteName('id'))
+                    ->from('#__jinbound_lead_statuses')
+                    ->where(
+                        array(
+                            $db->quoteName('final') . ' = 1',
+                            $db->quoteName('published') . ' = 1'
+                        )
+                    )
             )->loadResult();
 
             if (is_null($final)) {
@@ -65,42 +75,37 @@ abstract class JInboundHelperStatus
 
     public static function setContactStatusForCampaign($status_id, $contact_id, $campaign_id, $user_id = null)
     {
-        $dispatcher = JDispatcher::getInstance();
+        $dispatcher = JEventDispatcher::getInstance();
         $db         = JFactory::getDbo();
-        $date       = JFactory::getDate()->toSql();
+
         // before we save the status, check if this user has this status already - don't duplicate the last status!
-        $current = $db->setQuery($db->getQuery(true)
-            ->select($db->quoteName('status_id'))
-            ->from('#__jinbound_contacts_statuses')
-            ->where($db->quoteName('campaign_id') . '=' . $db->quote($campaign_id))
-            ->where($db->quoteName('contact_id') . '=' . $db->quote($contact_id))
-            ->order($db->quoteName('created') . ' DESC')
+        $current = $db->setQuery(
+            $db->getQuery(true)
+                ->select($db->quoteName('status_id'))
+                ->from('#__jinbound_contacts_statuses')
+                ->where(
+                    array(
+                        $db->quoteName('campaign_id') . '=' . $db->quote($campaign_id),
+                        $db->quoteName('contact_id') . '=' . $db->quote($contact_id)
+                    )
+                )
+                ->order($db->quoteName('created') . ' DESC')
         )->loadResult();
+
         if ((int)$current === (int)$status_id) {
             // just pretend lol
             return true;
         }
+
         // save the status
-        $value = $db->setQuery($db->getQuery(true)
-            ->insert('#__jinbound_contacts_statuses')
-            ->columns(array(
-                'status_id'
-            ,
-                'campaign_id'
-            ,
-                'contact_id'
-            ,
-                'created'
-            ,
-                'created_by'
-            ))
-            ->values($db->quote($status_id)
-                . ', ' . $db->quote($campaign_id)
-                . ', ' . $db->quote($contact_id)
-                . ', ' . $db->quote($date)
-                . ', ' . $db->quote(JFactory::getUser($user_id)->get('id'))
-            )
-        )->query();
+        $insertObject = (object)array(
+            'status_id' => $status_id,
+            'campaign_id' => $campaign_id,
+            'contact_id' => $contact_id,
+            'created' => JFactory::getDate()->toSql(),
+            'created_by' => JFactory::getUser($user_id)->get('id')
+        );
+        $success = $db->insertObject('#__jinbound_contacts_statuses', $insertObject);
 
         $result = $dispatcher->trigger('onJInboundChangeState', array(
                 'com_jinbound.contact.status',

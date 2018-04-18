@@ -27,16 +27,20 @@ class JInboundControllerContact extends JInboundBaseController
     private function _changeContact($how)
     {
         $app      = JFactory::getApplication();
-        $id       = $app->input->get('id');
-        $campaign = $app->input->get('campaign_id');
-        $value    = $app->input->get('value');
+        $id       = $app->input->getInt('id');
+        $campaign = $app->input->getInt('campaign_id');
+        $value    = $app->input->getInt('value');
         $model    = $this->getModel('Contact', 'JInboundModel', array('ignore_request' => true));
+
         $result   = $model->$how($id, $campaign, $value);
+
         $list     = array();
-        if ('priority' == $how) {
-            $list = JInboundHelperContact::getContactPriorities($id);
-        } else {
-            if ('status' == $how) {
+        switch ($how) {
+            case 'priority':
+                $list = JInboundHelperContact::getContactPriorities($id);
+                break;
+
+            case 'status':
                 $statuses  = JInboundHelperContact::getContactStatuses($id);
                 $campaigns = JInboundHelperContact::getContactCampaigns($id);
                 $list      = array();
@@ -47,9 +51,10 @@ class JInboundControllerContact extends JInboundBaseController
                         }
                     }
                 }
-            }
+                break;
         }
-        $plugin_results = JDispatcher::getInstance()
+
+        $plugin_results = JEventDispatcher::getInstance()
             ->trigger('onJInboundAfterJsonChangeState', array(
                 $how,
                 $id,
@@ -57,21 +62,18 @@ class JInboundControllerContact extends JInboundBaseController
                 $value,
                 $result
             ));
+
         echo json_encode(array(
-            'success' => $result
-        ,
-            'list'    => $list
-        ,
+            'success' => $result,
+            'list'    => $list,
             'request' => array(
-                'contact_id'  => $id
-            ,
-                'campaign_id' => $campaign
-            ,
+                'contact_id'  => $id,
+                'campaign_id' => $campaign,
                 "{$how}_id"   => $value
-            )
-        ,
+            ),
             'plugin'  => $plugin_results
         ));
+
         jexit();
     }
 
