@@ -19,7 +19,6 @@ defined('JPATH_PLATFORM') or die;
 
 class JInboundControllerLead extends JInboundBaseController
 {
-    public    $_context = 'com_jinbound.page';
     protected $context  = 'com_jinbound.page';
 
     public function save()

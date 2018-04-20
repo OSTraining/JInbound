@@ -25,12 +25,7 @@ defined('JPATH_PLATFORM') or die;
  */
 class JInboundModelPriority extends JInboundAdminModel
 {
-    /**
-     * Model context string.
-     *
-     * @var        string
-     */
-    public $_context = 'com_jinbound.priority';
+    public $context = 'com_jinbound.priority';
 
     public function getForm($data = array(), $loadData = true)
     {

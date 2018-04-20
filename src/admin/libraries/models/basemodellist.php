@@ -25,12 +25,7 @@ defined('JPATH_PLATFORM') or die;
  */
 class JInboundListModel extends JModelList
 {
-    /**
-     * Model context string.
-     *
-     * @var        string
-     */
-    public $_context = 'com_jinbound';
+    public $context = 'com_jinbound';
 
     /**
      * The category context (allows other extensions to derived from this model).
@@ -99,15 +94,6 @@ class JInboundListModel extends JModelList
         } catch (Exception $e) {
             return array($default);
         }
-    }
-
-    /**
-     * give public read access to the model's context
-     *
-     */
-    public function getContext()
-    {
-        return (string)$this->_context;
     }
 
     public function appendAuthorToQuery(&$query, $tablename, $created_by = 'created_by')

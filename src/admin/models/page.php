@@ -25,12 +25,7 @@ defined('JPATH_PLATFORM') or die;
  */
 class JInboundModelPage extends JInboundAdminModel
 {
-    /**
-     * Model context string.
-     *
-     * @var        string
-     */
-    public $_context = 'com_jinbound.page';
+    public $context = 'com_jinbound.page';
 
     private $_registryColumns = array('formbuilder');
 

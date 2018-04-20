@@ -25,12 +25,6 @@ defined('JPATH_PLATFORM') or die;
  */
 class JInboundModelCampaigns extends JInboundListModel
 {
-    /**
-     * Model context string.
-     *
-     * @var        string
-     */
-    public    $_context = 'com_jinbound.campaigns';
     protected $context  = 'com_jinbound.campaigns';
 
     /**

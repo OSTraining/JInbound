@@ -25,12 +25,7 @@ defined('JPATH_PLATFORM') or die;
  */
 class JInboundModelEmail extends JInboundAdminModel
 {
-    /**
-     * Model context string.
-     *
-     * @var        string
-     */
-    public $_context = 'com_jinbound.email';
+    public $context = 'com_jinbound.email';
 
     public function getForm($data = array(), $loadData = true)
     {

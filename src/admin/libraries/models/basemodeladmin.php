@@ -19,6 +19,8 @@ defined('JPATH_PLATFORM') or die;
 
 class JInboundAdminModel extends JModelAdmin
 {
+    protected $context = 'com_jinbound';
+
     public $option = JInbound::COM;
 
     private $_registryColumns = null;
@@ -47,15 +49,6 @@ class JInboundAdminModel extends JModelAdmin
         parent::cleanCache($this->option);
         parent::cleanCache('_system');
         parent::cleanCache($group, $client_id);
-    }
-
-    /**
-     * give public read access to the model's context
-     *
-     */
-    public function getContext()
-    {
-        return (string)$this->_context;
     }
 
     protected function loadFormData()

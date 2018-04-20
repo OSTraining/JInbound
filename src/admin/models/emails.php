@@ -25,13 +25,7 @@ defined('JPATH_PLATFORM') or die;
  */
 class JInboundModelEmails extends JInboundListModel
 {
-    /**
-     * Model context string.
-     *
-     * @var        string
-     */
-    public    $_context = 'com_jinbound.emails';
-    protected $context  = 'com_jinbound.emails';
+    public    $context = 'com_jinbound.emails';
 
     public function __construct($config = array())
     {

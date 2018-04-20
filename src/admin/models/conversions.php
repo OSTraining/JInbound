@@ -25,12 +25,6 @@ defined('JPATH_PLATFORM') or die;
  */
 class JInboundModelConversions extends JInboundListModel
 {
-    /**
-     * Model context string.
-     *
-     * @var        string
-     */
-    public    $_context = 'com_jinbound.conversions';
     protected $context  = 'com_jinbound.conversions';
 
     /**

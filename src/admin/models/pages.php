@@ -25,12 +25,6 @@ defined('JPATH_PLATFORM') or die;
  */
 class JInboundModelPages extends JInboundListModel
 {
-    /**
-     * Model context string.
-     *
-     * @var        string
-     */
-    public    $_context = 'com_jinbound.pages';
     protected $context  = 'com_jinbound.pages';
 
     private $_registryColumns = array('formbuilder');

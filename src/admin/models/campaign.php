@@ -15,35 +15,35 @@
  * may be added to this header as long as no information is deleted.
  */
 
-defined('JPATH_PLATFORM') or die;
+defined('JPATH_PLATFORM') or die();
 
-/**
- * This models supports retrieving a location.
- *
- * @package        jInbound
- * @subpackage     com_jinbound
- */
 class JInboundModelCampaign extends JInboundAdminModel
 {
-    /**
-     * Model context string.
-     *
-     * @var        string
-     */
-    public $_context = 'com_jinbound.campaign';
+    public $context = 'com_jinbound.campaign';
 
+    /**
+     * @param array $data
+     * @param bool  $loadData
+     *
+     * @return JForm
+     */
     public function getForm($data = array(), $loadData = true)
     {
         // Get the form.
-        $form = $this->loadForm($this->option . '.' . $this->name, $this->name,
-            array('control' => 'jform', 'load_data' => $loadData));
-        if (empty($form)) {
-            return false;
+        $form = $this->loadForm(
+            $this->option . '.' . $this->name,
+            $this->name,
+            array('control' => 'jform', 'load_data' => $loadData)
+        );
+
+        if ($form) {
+            if (!JFactory::getUser()->authorise('core.edit.state', 'com_jinbound.campaign')) {
+                $form->setFieldAttribute('published', 'readonly', 'true');
+            }
+
+            return $form;
         }
-        // check published permissions
-        if (!JFactory::getUser()->authorise('core.edit.state', 'com_jinbound.campaign')) {
-            $form->setFieldAttribute('published', 'readonly', 'true');
-        }
-        return $form;
+
+        return null;
     }
 }
