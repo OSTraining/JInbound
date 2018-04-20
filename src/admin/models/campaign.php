@@ -25,7 +25,7 @@ class JInboundModelCampaign extends JInboundAdminModel
      * @param array $data
      * @param bool  $loadData
      *
-     * @return JForm
+     * @return JForm|boolean
      */
     public function getForm($data = array(), $loadData = true)
     {
@@ -44,6 +44,6 @@ class JInboundModelCampaign extends JInboundAdminModel
             return $form;
         }
 
-        return null;
+        return false;
     }
 }
