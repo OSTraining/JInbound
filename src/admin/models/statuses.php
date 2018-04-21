@@ -15,41 +15,22 @@
  * may be added to this header as long as no information is deleted.
  */
 
-defined('JPATH_PLATFORM') or die;
+defined('JPATH_PLATFORM') or die();
 
-/**
- * This models supports retrieving lists of statuses.
- *
- * @package        jInbound
- * @subpackage     com_jinbound
- */
 class JInboundModelStatuses extends JInboundListModel
 {
-    protected $context  = 'com_jinbound.statuses';
+    protected $context = 'com_jinbound.statuses';
 
-    /**
-     * Constructor.
-     *
-     * @param       array   An optional associative array of configuration settings.
-     *
-     * @see         JController
-     */
-    function __construct($config = array())
+    public function __construct($config = array())
     {
         if (empty($config['filter_fields'])) {
             $config['filter_fields'] = array(
-                'Status.name'
-            ,
-                'Status.published'
-            ,
-                'Status.default'
-            ,
-                'Status.active'
-            ,
-                'Status.final'
-            ,
-                'Status.ordering'
-            ,
+                'Status.name',
+                'Status.published',
+                'Status.default',
+                'Status.active',
+                'Status.final',
+                'Status.ordering',
                 'Status.description'
             );
         }
@@ -57,22 +38,28 @@ class JInboundModelStatuses extends JInboundListModel
         parent::__construct($config);
     }
 
+    /**
+     * @return JDatabaseQuery
+     */
     protected function getListQuery()
     {
-        // Create a new query object.
         $db = $this->getDbo();
-        // main query
+
         $query = $db->getQuery(true)
-            // Select the required fields from the table.
             ->select('Status.*')
             ->from('#__jinbound_lead_statuses AS Status');
-        // add author to query
+
         $this->appendAuthorToQuery($query, 'Status');
-        $this->filterSearchQuery($query, $this->getState('filter.search'), 'Status', 'id',
-            array('name', 'description'));
+
+        $this->filterSearchQuery(
+            $query,
+            $this->getState('filter.search'),
+            'Status',
+            'id',
+            array('name', 'description')
+        );
         $this->filterPublished($query, $this->getState('filter.published'), 'Status');
 
-        // Add the list ordering clause.
         $listOrdering = $this->getState('list.ordering', 'Status.name');
         $listDirn     = $db->escape($this->getState('list.direction', 'ASC'));
         $query->order($db->escape($listOrdering) . ' ' . $listDirn);

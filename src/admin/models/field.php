@@ -26,23 +26,17 @@ defined('JPATH_PLATFORM') or die;
 class JInboundModelField extends JInboundAdminModel
 {
     /**
-     * Model context string.
-     *
-     * @var        string
+     * @var string
      */
     protected $context = 'com_jinbound.field';
 
     /**
-     * The event to trigger after saving the data.
-     *
-     * @var    string
+     * @var string
      */
     protected $event_after_save = 'onJInboundAfterSave';
 
     /**
-     * The event to trigger before saving the data.
-     *
-     * @var    string
+     * @var string
      */
     protected $event_before_save = 'onJInboundBeforeSave';
 
@@ -54,11 +48,15 @@ class JInboundModelField extends JInboundAdminModel
     public function getForm($data = array(), $loadData = true)
     {
         // Get the form.
-        $form = $this->loadForm($this->option . '.' . $this->name, $this->name,
-            array('control' => 'jform', 'load_data' => $loadData));
-        if (empty($form)) {
-            return false;
+        $form = $this->loadForm(
+            $this->option . '.' . $this->name,
+            $this->name,
+            array('control' => 'jform', 'load_data' => $loadData)
+        );
+
+        if ($form) {
+            return $form;
         }
-        return $form;
+        return false;
     }
 }

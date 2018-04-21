@@ -17,24 +17,23 @@
 
 defined('JPATH_PLATFORM') or die;
 
-/**
- * This models supports retrieving a note
- *
- * @package        jInbound
- * @subpackage     com_jinbound
- */
 class JInboundModelNote extends JInboundAdminModel
 {
-    public $context = 'com_jinbound.note';
+    protected $context = 'com_jinbound.note';
 
     public function getForm($data = array(), $loadData = true)
     {
         // Get the form.
-        $form = $this->loadForm($this->option . '.' . $this->name, $this->name,
-            array('control' => 'jform', 'load_data' => $loadData));
-        if (empty($form)) {
-            return false;
+        $form = $this->loadForm(
+            $this->option . '.' . $this->name,
+            $this->name,
+            array('control' => 'jform', 'load_data' => $loadData)
+        );
+
+        if ($form) {
+            return $form;
         }
-        return $form;
+
+        return false;
     }
 }

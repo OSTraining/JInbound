@@ -25,23 +25,17 @@ defined('JPATH_PLATFORM') or die;
  */
 class JInboundModelCampaigns extends JInboundListModel
 {
+    /**
+     * @var string
+     */
     protected $context  = 'com_jinbound.campaigns';
 
-    /**
-     * Constructor.
-     *
-     * @param       array   An optional associative array of configuration settings.
-     *
-     * @see         JController
-     */
-    function __construct($config = array())
+    public function __construct($config = array())
     {
         if (empty($config['filter_fields'])) {
             $config['filter_fields'] = array(
-                'Campaign.name'
-            ,
-                'Campaign.published'
-            ,
+                'Campaign.name',
+                'Campaign.published',
                 'Campaign.created'
             );
         }
@@ -81,6 +75,4 @@ class JInboundModelCampaigns extends JInboundListModel
 
         return $query;
     }
-
-
 }

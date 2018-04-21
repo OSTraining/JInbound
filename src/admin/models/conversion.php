@@ -26,9 +26,7 @@ defined('JPATH_PLATFORM') or die;
 class JInboundModelConversion extends JInboundAdminModel
 {
     /**
-     * Model context string.
-     *
-     * @var        string
+     * @var string
      */
     protected $context = 'com_jinbound.conversion';
 }

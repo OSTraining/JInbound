@@ -15,48 +15,26 @@
  * may be added to this header as long as no information is deleted.
  */
 
-defined('JPATH_PLATFORM') or die;
+defined('JPATH_PLATFORM') or die();
 
-/**
- * This models supports retrieving lists of tracks.
- *
- * @package        jInbound
- * @subpackage     com_jinbound
- */
 class JInboundModelTracks extends JInboundListModel
 {
     /**
-     * Model context string.
-     *
-     * @var        string
+     * @var string
      */
     protected $context = 'com_jinbound.tracks';
 
-    /**
-     * Constructor.
-     *
-     * @param       array   An optional associative array of configuration settings.
-     *
-     * @see         JController
-     */
-    function __construct($config = array())
+    public function __construct($config = array())
     {
         if (empty($config['filter_fields'])) {
             $config['filter_fields'] = array(
-                'Track.id'
-            ,
-                'Track.cookie'
-            ,
-                'Track.user_agent'
-            ,
-                'Track.created'
-            ,
-                'Track.ip'
-            ,
-                'Track.session_id'
-            ,
-                'Track.type'
-            ,
+                'Track.id',
+                'Track.cookie',
+                'Track.user_agent',
+                'Track.created',
+                'Track.ip',
+                'Track.session_id',
+                'Track.type',
                 'Track.url'
             );
         }
@@ -65,44 +43,44 @@ class JInboundModelTracks extends JInboundListModel
     }
 
     /**
-     * Method to auto-populate the model state.
+     * @param string $ordering
+     * @param string $direction
      *
-     * Note. Calling getState in this method will result in recursion.
+     * @return void
+     * @throws Exception
      */
     protected function populateState($ordering = null, $direction = null)
     {
         parent::populateState($ordering, $direction);
-        // load the filter values
+
         $filters = $this->getUserStateFromRequest($this->context . '.filter', 'filter', array(), 'array');
         $this->setState('filter', $filters);
 
-        $app    = JFactory::getApplication();
+        $app = JFactory::getApplication();
+
         $format = $app->input->get('format', '', 'cmd');
         $end    = ('json' == $format ? '.json' : '');
 
         foreach (array('start', 'end') as $var) {
             $value = array_key_exists($var, $filters)
                 ? $filters[$var]
-                : $this->getUserStateFromRequest($this->context . '.filter.' . $var . $end, 'filter_' . $var, '',
-                    'string');
+                : $this->getUserStateFromRequest(
+                    $this->context . '.filter.' . $var . $end,
+                    'filter_' . $var,
+                    '',
+                    'string'
+                );
             $this->setState('filter.' . $var, $value);
         }
     }
 
     /**
-     * Method to get a store id based on model configuration state.
+     * @param string $id
      *
-     * This is necessary because the model is used by the component and
-     * different modules that might need different sets of data or different
-     * ordering requirements.
-     *
-     * @param    string $id A prefix for the store id.
-     *
-     * @return    string        A store id.
+     * @return string
      */
     protected function getStoreId($id = '')
     {
-        // Compile the store id.
         $id .= ':' . serialize($this->getState('filter.start'));
         $id .= ':' . serialize($this->getState('filter.end'));
 
@@ -111,44 +89,39 @@ class JInboundModelTracks extends JInboundListModel
 
     protected function getListQuery()
     {
-        // Create a new query object.
         $db = $this->getDbo();
 
-        // select columns
         $query = $db->getQuery(true)
             ->select('Track.*')
             ->from('#__jinbound_tracks AS Track');
 
-        // filter query
-        $this->filterSearchQuery($query, $this->getState('filter.search'), 'Track', 'id', array(
+        $this->filterSearchQuery(
+            $query,
+            $this->getState('filter.search'),
+            'Track',
             'id',
-            'cookie',
-            'user_agent',
-            'url',
-            'ip'
-        ));
+            array('id', 'cookie', 'user_agent', 'url', 'ip')
+        );
 
-        $value = $this->getState('filter.start');
-        if (!empty($value)) {
+        if ($value = $this->getState('filter.start')) {
             try {
                 $date = new DateTime($value);
+                if ($date) {
+                    $query->where('Track.created > ' . $db->quote($date->format('Y-m-d h:i:s')));
+                }
+
             } catch (Exception $e) {
-                $date = false;
-            }
-            if ($date) {
-                $query->where('Track.created > ' . $db->quote($date->format('Y-m-d h:i:s')));
             }
         }
 
-        $value = $this->getState('filter.end');
-        if (!empty($value)) {
+        if ($value = $this->getState('filter.end')) {
             try {
                 $date = new DateTime($value);
+                if ($date) {
+                    $query->where('Track.created < ' . $db->quote($date->format('Y-m-d h:i:s')));
+                }
+
             } catch (Exception $e) {
-                $date = false;
-            }
-            if ($date) {
-                $query->where('Track.created < ' . $db->quote($date->format('Y-m-d h:i:s')));
             }
         }
 

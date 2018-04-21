@@ -25,35 +25,23 @@ defined('JPATH_PLATFORM') or die;
  */
 class JInboundModelContacts extends JInboundListModel
 {
-    protected $context  = 'com_jinbound.contacts';
-
     /**
-     * Constructor.
-     *
-     * @param       array   An optional associative array of configuration settings.
-     *
-     * @see         JController
+     * @var string
      */
-    function __construct($config = array())
+    protected $context = 'com_jinbound.contacts';
+
+    public function __construct($config = array())
     {
         if (empty($config['filter_fields'])) {
             $config['filter_fields'] = array(
-                'Contact.published'
-            ,
-                'latest'
-            ,
-                'full_name'
-            ,
-                'Contact.email'
-            ,
-                'Contact.created'
-            ,
-                'Priority.name'
-            ,
-                'Priority.name'
-            ,
-                'Campaign.name'
-            ,
+                'Contact.published',
+                'latest',
+                'full_name',
+                'Contact.email',
+                'Contact.created',
+                'Priority.name',
+                'Priority.name',
+                'Campaign.name',
                 'Status.name'
             );
         }
@@ -61,18 +49,20 @@ class JInboundModelContacts extends JInboundListModel
         parent::__construct($config);
     }
 
+    /**
+     * @return object[]
+     */
     public function getItems()
     {
         $items = parent::getItems();
         if (!empty($items)) {
-            $db = JFactory::getDbo();
             foreach ($items as &$item) {
                 $item->conversions        = JInboundHelperContact::getContactConversions($item->id);
                 $item->campaigns          = JInboundHelperContact::getContactCampaigns($item->id);
                 $item->previous_campaigns = JInboundHelperContact::getContactCampaigns($item->id, true);
                 $item->statuses           = JInboundHelperContact::getContactStatuses($item->id);
                 $item->priorities         = JInboundHelperContact::getContactPriorities($item->id);
-                // add forms
+
                 $item->forms = array();
                 if (!empty($item->conversions)) {
                     foreach ($item->conversions as $conversion) {
@@ -80,13 +70,16 @@ class JInboundModelContacts extends JInboundListModel
                     }
                 }
 
-                // tracks can be very... heavy
                 $item->tracks = array();
             }
         }
+
         return $items;
     }
 
+    /**
+     * @return object[]
+     */
     public function getCampaignsOptions()
     {
         $query = $this->getDbo()->getQuery(true)
@@ -94,7 +87,10 @@ class JInboundModelContacts extends JInboundListModel
             ->from('#__jinbound_campaigns AS Campaign')
             ->where('Campaign.published = 1')
             ->group('Campaign.id');
-        return $this->getOptionsFromQuery($query, JText::_('COM_JINBOUND_SELECT_CAMPAIGN'));
+
+        $options = $this->getOptionsFromQuery($query, JText::_('COM_JINBOUND_SELECT_CAMPAIGN'));
+
+        return $options;
     }
 
     public function getPagesOptions()

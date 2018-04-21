@@ -19,7 +19,10 @@ defined('JPATH_PLATFORM') or die();
 
 class JInboundModelCampaign extends JInboundAdminModel
 {
-    public $context = 'com_jinbound.campaign';
+    /**
+     * @var string
+     */
+    protected $context = 'com_jinbound.campaign';
 
     /**
      * @param array $data

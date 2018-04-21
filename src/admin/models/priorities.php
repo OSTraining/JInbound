@@ -17,33 +17,20 @@
 
 defined('JPATH_PLATFORM') or die;
 
-/**
- * This models supports retrieving lists of locations.
- *
- * @package        jInbound
- * @subpackage     com_jinbound
- */
 class JInboundModelPriorities extends JInboundListModel
 {
-    protected $context  = 'com_jinbound.priorities';
-
     /**
-     * Constructor.
-     *
-     * @param       array   An optional associative array of configuration settings.
-     *
-     * @see         JController
+     * @var string
      */
-    function __construct($config = array())
+    protected $context = 'com_jinbound.priorities';
+
+    public function __construct($config = array())
     {
         if (empty($config['filter_fields'])) {
             $config['filter_fields'] = array(
-                'Priority.name'
-            ,
-                'Priority.status'
-            ,
-                'Priority.ordering'
-            ,
+                'Priority.name',
+                'Priority.status',
+                'Priority.ordering',
                 'Priority.description'
             );
         }
@@ -53,27 +40,28 @@ class JInboundModelPriorities extends JInboundListModel
 
     protected function getListQuery()
     {
-        // Create a new query object.
         $db = $this->getDbo();
 
-        // main query
         $query = $db->getQuery(true)
-            // Select the required fields from the table.
             ->select('Priority.*')
             ->from('#__jinbound_priorities AS Priority');
-        // add author to query
+
         $this->appendAuthorToQuery($query, 'Priority');
-        $this->filterSearchQuery($query, $this->getState('filter.search'), 'Priority', 'id',
-            array('name', 'description'));
+
+        $this->filterSearchQuery(
+            $query,
+            $this->getState('filter.search'),
+            'Priority',
+            'id',
+            array('name', 'description')
+        );
+
         $this->filterPublished($query, $this->getState('filter.published'), 'Priority');
 
-        // Add the list ordering clause.
         $listOrdering = $this->getState('list.ordering', 'Priority.name');
         $listDirn     = $db->escape($this->getState('list.direction', 'ASC'));
         $query->order($db->escape($listOrdering) . ' ' . $listDirn);
 
         return $query;
     }
-
-
 }
