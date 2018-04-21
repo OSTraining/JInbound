@@ -44,7 +44,15 @@ class JInboundAdminModel extends JModelAdmin
         return JTable::getInstance($type, $prefix, $config);
     }
 
-    function cleanCache($group = null, $client_id = 0)
+    /**
+     * @return string
+     */
+    public function getContext()
+    {
+        return (string)$this->context;
+    }
+
+    protected function cleanCache($group = null, $client_id = 0)
     {
         parent::cleanCache($this->option);
         parent::cleanCache('_system');

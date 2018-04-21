@@ -123,7 +123,7 @@ class JInboundView extends JInboundBaseView
     /**
      * @var string
      */
-    public $context = null;
+    protected $context = null;
 
     /**
      * @var Registry
@@ -181,7 +181,7 @@ class JInboundView extends JInboundBaseView
             $model = $this->getModel();
 
             $this->state         = $model->getState();
-            $this->context       = $this->get('Context');
+            $this->context       = $model->getContext();
             $this->params        = $this->state->get('params') ?: new Registry(); // these are page params only... ?
             $this->raw           = ($this->app->input->getCmd('format') == 'raw');
             $this->cparams       = JComponentHelper::getParams('com_jinbound');

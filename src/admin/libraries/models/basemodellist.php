@@ -332,6 +332,14 @@ class JInboundListModel extends JModelList
         }
     }
 
+    /**
+     * @return string
+     */
+    public function getContext()
+    {
+        return (string)$this->context;
+    }
+
     public function getActiveFilters()
     {
         if (method_exists('JModelList', 'getActiveFilters')) {
