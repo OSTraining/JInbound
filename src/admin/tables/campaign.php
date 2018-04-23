@@ -27,11 +27,11 @@ class JInboundTableCampaign extends JInboundTable
     public function load($keys = null, $reset = true)
     {
         $load = parent::load($keys, $reset);
+
         if (is_string($this->params)) {
-            $registry = new JRegistry;
-            $registry->loadString($this->params);
-            $this->params = $registry;
+            $this->params = json_decode($this->params);
         }
+
         return $load;
     }
 
