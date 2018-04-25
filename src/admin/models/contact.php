@@ -29,17 +29,19 @@ JPluginHelper::importPlugin('jinbound');
 class JInboundModelContact extends JInboundAdminModel
 {
     /**
-     * Model context string.
-     *
-     * @var        string
+     * @var string
      */
     protected $context = 'com_jinbound.contact';
 
     public function getForm($data = array(), $loadData = true)
     {
         // Get the form.
-        $form = $this->loadForm($this->option . '.' . $this->name, $this->name,
-            array('control' => 'jform', 'load_data' => $loadData));
+        $form = $this->loadForm(
+            $this->option . '.' . $this->name,
+            $this->name,
+            array('control' => 'jform', 'load_data' => $loadData)
+        );
+
         if (empty($form)) {
             return false;
         }
@@ -64,9 +66,9 @@ class JInboundModelContact extends JInboundAdminModel
     /**
      * set the lead status details for an item
      *
-     * @param unknown_type $contact_id
-     * @param unknown_type $campaign_id
-     * @param unknown_type $status_id
+     * @param int $contact_id
+     * @param int $campaign_id
+     * @param int $status_id
      *
      * @return mixed
      */
@@ -76,45 +78,32 @@ class JInboundModelContact extends JInboundAdminModel
     }
 
     /**
-     * set the lead priority details
+     * @param int $contact_id
+     * @param int $campaign_id
+     * @param int $priority_id
+     * @param int $creator
      *
-     * @param unknown_type $id
-     * @param unknown_type $value
-     *
-     * @return mixed
+     * @return bool
      */
     public function priority($contact_id, $campaign_id, $priority_id, $creator = null)
     {
-        $dispatcher = JDispatcher::getInstance();
+        $dispatcher = JEventDispatcher::getInstance();
 
         $db = JFactory::getDbo();
 
-        // some info for the status and priority
-        $created = JFactory::getDate()->toSql();
-        $creator = JFactory::getUser($creator)->get('id');
-        // save the status
-        $return = $db->setQuery($db->getQuery(true)
-            ->insert('#__jinbound_contacts_priorities')
-            ->columns(array(
-                'priority_id'
-            ,
-                'campaign_id'
-            ,
-                'contact_id'
-            ,
-                'created'
-            ,
-                'created_by'
-            ))
-            ->values($db->quote($priority_id)
-                . ', ' . $db->quote($campaign_id)
-                . ', ' . $db->quote($contact_id)
-                . ', ' . $db->quote($created)
-                . ', ' . $db->quote($creator)
-            )
-        )->query();
+        $insertObject = (object)array(
+            'priority_id' => $priority_id,
+            'campaign_id' => $campaign_id,
+            'contact_id'  => $contact_id,
+            'created'     => JFactory::getDate()->toSql(),
+            'created_by'  => JFactory::getUser($creator)->id
+        );
 
-        $result = $dispatcher->trigger('onJInboundChangeState', array(
+        $return = $db->insertObject('#__jinbound_contacts_priorities', $insertObject);
+
+        $result = $dispatcher->trigger(
+            'onJInboundChangeState',
+            array(
                 'com_jinbound.contact.priority',
                 $campaign_id,
                 array($contact_id),
@@ -122,7 +111,7 @@ class JInboundModelContact extends JInboundAdminModel
             )
         );
 
-        if (is_array($result) && !empty($result) && in_array(false, $result, true)) {
+        if (is_array($result) && in_array(false, $result, true)) {
             return false;
         }
 
@@ -130,38 +119,48 @@ class JInboundModelContact extends JInboundAdminModel
     }
 
     /**
-     * get lead notes
+     * @param int $id
      *
-     * @param unknown_type $id
+     * @return object[]
      */
     public function getNotes($id = null)
     {
         if (property_exists($this, 'item') && $this->item && $this->item->id == $id) {
             $item = $this->item;
+
         } else {
             $item = $this->getItem($id);
         }
+
         $db = JFactory::getDbo();
 
         try {
-            $notes = $db->setQuery($db->getQuery(true)
-                ->select('Note.id, Note.created, Note.text, User.name AS author')
-                ->from('#__jinbound_notes AS Note')
-                ->leftJoin('#__users AS User ON User.id = Note.created_by')
-                ->where('Note.published = 1')
-                ->where('Note.lead_id = ' . (int)$item->id)
-                ->group('Note.id')
+            $notes = $db->setQuery(
+                $db->getQuery(true)
+                    ->select('Note.id, Note.created, Note.text, User.name AS author')
+                    ->from('#__jinbound_notes AS Note')
+                    ->leftJoin('#__users AS User ON User.id = Note.created_by')
+                    ->where(
+                        array(
+                            'Note.published = 1',
+                            'Note.lead_id = ' . (int)$item->id
+                        )
+                    )
+                    ->group('Note.id')
             )->loadObjectList();
-            if (!is_array($notes) || empty($notes)) {
-                throw new Exception('Empty');
-            }
+
         } catch (Exception $e) {
-            $notes = array();
+            // ignore
         }
 
-        return $notes;
+        return (array)$notes;
     }
 
+    /**
+     * @param int $id
+     *
+     * @return bool|JObject
+     */
     public function getItem($id = null)
     {
         $item = parent::getItem($id);
@@ -185,12 +184,14 @@ class JInboundModelContact extends JInboundAdminModel
 
         // add tracks
         try {
-            $item->tracks = $db->setQuery($db->getQuery(true)
-                ->select('Track.*')
-                ->from('#__jinbound_tracks AS Track')
-                ->where('Track.cookie = ' . $db->quote($item->cookie))
-                ->order('Track.created DESC')
+            $item->tracks = $db->setQuery(
+                $db->getQuery(true)
+                    ->select('Track.*')
+                    ->from('#__jinbound_tracks AS Track')
+                    ->where('Track.cookie = ' . $db->quote($item->cookie))
+                    ->order('Track.created DESC')
             )->loadObjectList();
+
         } catch (Exception $e) {
             $item->tracks = array();
         }

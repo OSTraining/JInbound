@@ -25,7 +25,10 @@ defined('JPATH_PLATFORM') or die;
  */
 class JInboundListModel extends JModelList
 {
-    public $context = 'com_jinbound';
+    /**
+     * @var string
+     */
+    protected $context = 'com_jinbound';
 
     /**
      * The category context (allows other extensions to derived from this model).
@@ -34,19 +37,25 @@ class JInboundListModel extends JModelList
      */
     protected $_extension = 'com_jinbound';
 
-    private $_registryColumns = null;
+    /**
+     * @var string[]
+     */
+    protected $registryColumns = null;
 
+    /**
+     * @return object[]
+     */
     public function getItems()
     {
         $items = parent::getItems();
         // if we have no columns to alter, we're done
-        if (!is_array($this->_registryColumns) || empty($this->_registryColumns)) {
+        if (!is_array($this->registryColumns) || empty($this->registryColumns)) {
             return $items;
         }
         // alter items, if any, to convert json data to registries
         if (is_array($items) && !empty($items)) {
             foreach ($items as $idx => $item) {
-                foreach ($this->_registryColumns as $col) {
+                foreach ($this->registryColumns as $col) {
                     if (!property_exists($item, $col)) {
                         continue;
                     }
@@ -77,96 +86,130 @@ class JInboundListModel extends JModelList
         return $list;
     }
 
+    /**
+     * @param string|JDatabaseQuery $query
+     * @param string                $defaultText
+     *
+     * @return object[]
+     */
     public function getOptionsFromQuery($query, $defaultText)
     {
-        $default = json_decode(json_encode(array(
-            'value' => ''
-        ,
-            'text'  => $defaultText
-        )));
-        // Create a new query object.
-        $db = $this->getDbo();
-        $db->setQuery($query);
+        $default = json_decode(
+            json_encode(
+                array(
+                    'value' => '',
+                    'text'  => $defaultText
+                )
+            )
+        );
+
         try {
-            $options = $db->loadObjectList();
+            $db      = $this->getDbo();
+            $options = $db->setQuery($query)->loadObjectList();
+
             array_unshift($options, $default);
-            return $options;
+
         } catch (Exception $e) {
-            return array($default);
+            $options = array($default);
         }
+
+        return $options;
     }
 
-    public function appendAuthorToQuery(&$query, $tablename, $created_by = 'created_by')
+    /**
+     * @param JDatabaseQuery $query
+     * @param string         $tableName
+     * @param string         $created_by
+     */
+    public function appendAuthorToQuery(JDatabaseQuery $query, $tableName, $created_by = 'created_by')
     {
-        // clean our table name
-        $tablename = JFilterInput::getInstance()->clean($tablename, 'cmd');
-        // get our dbo for cleaning texts
         $db = JFactory::getDbo();
-        // clean the created_by column
-        $created_by = $db->quoteName($created_by);
-        // our default names for guest & system
-        $guest  = JText::_('COM_JINBOUND_AUTHOR_GUEST');
-        $system = JText::_('COM_JINBOUND_AUTHOR_SYSTEM');
-        // full column selection
-        $column = $tablename . '.' . $created_by;
-        // join over author
+
+        $tableName  = JFilterInput::getInstance()->clean($tableName, 'cmd');
+        $guest      = JText::_('COM_JINBOUND_AUTHOR_GUEST');
+        $system     = JText::_('COM_JINBOUND_AUTHOR_SYSTEM');
+
+        $column = $db->quoteName($tableName . '.' . $created_by);
+
         $query
-            ->select('IF(' . $column . '=0,' . $db->Quote($guest) . ',IF(' . $column . '=-1,' . $db->Quote($system) . ',Author.name)) AS author_name')
-            ->select('IF(' . $column . '=0,' . $db->Quote(strtolower($guest)) . ',IF(' . $column . '=-1,' . $db->Quote(strtolower($system)) . ',Author.username)) AS author_username')
+            ->select(
+                array(
+                    sprintf(
+                        'IF(%s=0,%s,IF(%s=-1,%s,Author.name)) AS author_name',
+                        $column,
+                        $db->quote($guest),
+                        $column,
+                        $db->quote($system)
+                    ),
+                    sprintf(
+                        'IF(%s=0,%s,IF(%s=-1,%s,Author.username)) AS author_username',
+                        $column,
+                        $db->quote(strtolower($guest)),
+                        $column,
+                        $db->quote(strtolower($system))
+                    )
+                )
+            )
             ->leftJoin("#__users AS Author ON Author.id = {$column}");
     }
 
-    public function filterSearchQuery(&$query, $search, $tablename, $pk = 'id', $columns = array())
+    /**
+     * @param JDatabaseQuery $query
+     * @param string         $search
+     * @param string         $tableName
+     * @param string         $pk
+     * @param string[]       $columns
+     */
+    public function filterSearchQuery(JDatabaseQuery $query, $search, $tableName, $pk = 'id', $columns = array())
     {
-        // clean our variables
-        $filter    = JFilterInput::getInstance();
-        $tablename = $filter->clean($tablename, 'cmd');
-        $pk        = $filter->clean($pk, 'cmd');
-        // get our dbo for cleaning texts
-        $db = JFactory::getDbo();
         if (empty($search)) {
             return;
         }
-        // search by primary key
-        if (0 === stripos($search, $pk . ':')) {
-            $query->where($tablename . '.' . $pk . ' = ' . (int)substr($search, 3));
+
+        $db     = JFactory::getDbo();
+        $filter = JFilterInput::getInstance();
+
+        $tableName = $filter->clean($tableName, 'cmd');
+        $pk        = $filter->clean($pk, 'cmd');
+
+        if (stripos($search, $pk . ':') === 0) {
+            $query->where($tableName . '.' . $pk . ' = ' . (int)substr($search, 3));
+
             return;
         }
-        // search by column text
-        $search = $db->quote('%' . (method_exists($db, 'escape') ? $db->escape($search, true) : $db->getEscaped($search,
-                true)) . '%', false);
-        $where  = array();
-        if (!empty($columns)) {
-            foreach ($columns as &$column) {
+
+        $search = $db->quote('%' . $search . '%');
+
+        if ((array)$columns) {
+            $where = array();
+            foreach ($columns as $column) {
                 $column  = $filter->clean($column, 'cmd');
-                $where[] = (false === strpos($column, '.') ? $tablename . '.' : '') . $column . ' LIKE ' . $search;
+                $column  = (strpos($column, '.') === false ? $tableName . '.' : '') . $column;
+                $where[] = sprintf('%s LIKE %s', $db->quoteName($column), $search);
             }
-            $query->where('(' . implode(' OR ', $where) . ')');
+
+            $query->where(sprintf('(%s)', implode(' OR ', $where)));
         }
     }
 
-    public function filterPublished(&$query, $status, $tablename, $column = 'published')
+    /**
+     * @param JDatabaseQuery $query
+     * @param string         $status
+     * @param string         $tableName
+     * @param string         $column
+     */
+    public function filterPublished(JDatabaseQuery $query, $status, $tableName, $column = 'published')
     {
-        // clean our variables
-        $filter    = JFilterInput::getInstance();
-        $tablename = $filter->clean($tablename, 'cmd');
+        $filter = JFilterInput::getInstance();
+
+        $tableName = $filter->clean($tableName, 'cmd');
         $column    = $filter->clean($column, 'cmd');
-        $col       = $tablename . '.' . $column;
-        // get our dbo for cleaning texts
-        $db = JFactory::getDbo();
-        // search by column text
-        switch ($status) {
-            default:
-            case '':
-                $query->where("($col = 1 OR $col = 0)");
-                break;
-            case 0:
-            case 1:
-            case 2:
-            case -1:
-            case -2:
-                $query->where("$col = $status");
-                break;
+        $col       = $tableName . '.' . $column;
+
+        if ($status == '') {
+            $query->where(sprintf('(%1$s = 1 OR %1$s = 0)', $col));
+        } else {
+            $query->where("$col = $status");
         }
     }
 
@@ -211,153 +254,6 @@ class JInboundListModel extends JModelList
     }
 
     /**
-     * Method to get a form object.
-     *
-     * @param   string  $name    The name of the form.
-     * @param   string  $source  The form source. Can be XML string if file flag is set to false.
-     * @param   array   $options Optional array of options for the form creation.
-     * @param   boolean $clear   Optional argument to force load a new form.
-     * @param   string  $xpath   An optional xpath to search for the fields.
-     *
-     * @return  mixed  JForm object on success, False on error.
-     *
-     * @see     JForm
-     * @since   3.2
-     */
-    protected function loadForm($name, $source = null, $options = array(), $clear = false, $xpath = false)
-    {
-        // Handle the optional arguments.
-        $options['control'] = JArrayHelper::getValue($options, 'control', false);
-
-        // Create a signature hash.
-        $hash = md5($source . serialize($options));
-
-        // Check if we can use a previously loaded form.
-        if (isset($this->_forms[$hash]) && !$clear) {
-            return $this->_forms[$hash];
-        }
-
-        // Get the form.
-        JForm::addFormPath(JPATH_COMPONENT . '/models/forms');
-        JForm::addFieldPath(JPATH_COMPONENT . '/models/fields');
-
-        try {
-            $form = JForm::getInstance($name, $source, $options, false, $xpath);
-
-            if (isset($options['load_data']) && $options['load_data']) {
-                // Get the data for the form.
-                $data = $this->loadFormData();
-            } else {
-                $data = array();
-            }
-
-            // Allow for additional modification of the form, and events to be triggered.
-            // We pass the data because plugins may require it.
-            $this->preprocessForm($form, $data);
-
-            // Load the data into the form after the plugins have operated.
-            $form->bind($data);
-        } catch (Exception $e) {
-            $this->setError($e->getMessage());
-
-            return false;
-        }
-
-        // Store the form for later.
-        $this->_forms[$hash] = $form;
-
-        return $form;
-    }
-
-    /**
-     * Method to get the data that should be injected in the form.
-     *
-     * @return    mixed    The data for the form.
-     *
-     * @since    3.2
-     */
-    protected function loadFormData()
-    {
-        // Check the session for previously entered form data.
-        $data = JFactory::getApplication()->getUserState($this->context);
-
-        if (!is_object($data)) {
-            $data = new stdClass();
-        }
-
-        // Pre-fill the list options
-        if (!property_exists($data, 'list')) {
-            $data->list = array(
-                'direction' => $this->state->{'list.direction'},
-                'limit'     => $this->state->{'list.limit'},
-                'ordering'  => $this->state->{'list.ordering'},
-                'start'     => $this->state->{'list.start'}
-            );
-        }
-
-        return $data;
-    }
-
-    /**
-     * Method to allow derived classes to preprocess the form.
-     *
-     * @param   JForm  $form  A JForm object.
-     * @param   mixed  $data  The data expected for the form.
-     * @param   string $group The name of the plugin group to import (defaults to "content").
-     *
-     * @return  void
-     *
-     * @since   3.2
-     * @throws  Exception if there is an error in the form event.
-     */
-    protected function preprocessForm(JForm $form, $data, $group = 'content')
-    {
-        // Import the appropriate plugin group.
-        JPluginHelper::importPlugin($group);
-
-        // Get the dispatcher.
-        $dispatcher = JDispatcher::getInstance();
-
-        // Trigger the form preparation event.
-        $results = $dispatcher->trigger('onContentPrepareForm', array($form, $data));
-
-        // Check for errors encountered while preparing the form.
-        if (count($results) && in_array(false, $results, true)) {
-            // Get the last error.
-            $error = $dispatcher->getError();
-
-            if (!($error instanceof Exception)) {
-                throw new Exception($error);
-            }
-        }
-    }
-
-    /**
-     * @return string
-     */
-    public function getContext()
-    {
-        return (string)$this->context;
-    }
-
-    public function getActiveFilters()
-    {
-        if (method_exists('JModelList', 'getActiveFilters')) {
-            return parent::getActiveFilters();
-        }
-        return array();
-    }
-
-    public function getFilterForm($data = array(), $loadData = true)
-    {
-        $formFile = JPATH_ADMINISTRATOR . '/components/com_jinbound/models/forms/filter_' . $this->name . '.xml';
-        if (method_exists('JModelList', 'getFilterForm') && JFile::exists($formFile)) {
-            return parent::getFilterForm($data, $loadData);
-        }
-        return null;
-    }
-
-    /**
      * Method to auto-populate the model state.
      *
      * Note. Calling getState in this method will result in recursion.
@@ -365,6 +261,7 @@ class JInboundListModel extends JModelList
     protected function populateState($ordering = null, $direction = null)
     {
         parent::populateState($ordering, $direction);
+
         // @deprecated
         $this->setState('filter.extension', $this->_extension);
         // force some state based on user permissions
@@ -390,7 +287,6 @@ class JInboundListModel extends JModelList
             ? $filters['search']
             : $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search', '', 'string');
         $this->setState('filter.search', $search);
-
     }
 
     /**
@@ -400,18 +296,25 @@ class JInboundListModel extends JModelList
      * different modules that might need different sets of data or different
      * ordering requirements.
      *
-     * @param    string $id A prefix for the store id.
+     * @param string $id A prefix for the store id.
      *
-     * @return    string        A store id.
+     * @return string        A store id.
      */
     protected function getStoreId($id = '')
     {
-        // Compile the store id.
         $id .= ':' . $this->getState('filter.extension');
         $id .= ':' . $this->getState('filter.published');
         $id .= ':' . $this->getState('filter.search');
         $id .= ':' . serialize($this->getState('filter'));
 
         return parent::getStoreId($id);
+    }
+
+    /**
+     * @return string
+     */
+    public function getContext()
+    {
+        return (string)$this->context;
     }
 }

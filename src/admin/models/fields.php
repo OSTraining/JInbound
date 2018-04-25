@@ -26,22 +26,16 @@ defined('JPATH_PLATFORM') or die;
 class JInboundModelFields extends JInboundListModel
 {
     /**
-     * Model context string.
-     *
-     * @var        string
+     * @var string
      */
     protected $context = 'com_jinbound.fields';
 
     /**
      * The category context (allows other extensions to derived from this model).
      *
-     * @var        string
+     * @var string
      */
     protected $_extension = 'com_jinbound';
-
-    private $_parent = null;
-
-    private $_items = null;
 
     /**
      * Constructor.
@@ -50,20 +44,15 @@ class JInboundModelFields extends JInboundListModel
      *
      * @see         JController
      */
-    function __construct($config = array())
+    public function __construct($config = array())
     {
         if (empty($config['filter_fields'])) {
             $config['filter_fields'] = array(
-                'Field.id'
-            ,
-                'Field.title'
-            ,
-                'Field.type'
-            ,
-                'Field.formtype'
-            ,
-                'Field.created_by'
-            ,
+                'Field.id',
+                'Field.title',
+                'Field.type',
+                'Field.formtype',
+                'Field.created_by',
                 'Field.published'
             );
         }
@@ -72,16 +61,17 @@ class JInboundModelFields extends JInboundListModel
     }
 
     /**
-     * Method to auto-populate the model state.
+     * @param string $ordering
+     * @param string $direction
      *
-     * Note. Calling getState in this method will result in recursion.
+     * @throws Exception
      */
     protected function populateState($ordering = null, $direction = null)
     {
         parent::populateState($ordering, $direction);
 
         // force only published fields on frontend
-        if (!JFactory::getApplication()->isAdmin()) {
+        if (!JFactory::getApplication()->isClient('administrator')) {
             $this->setState('filter.published', 1);
         }
 
@@ -89,19 +79,12 @@ class JInboundModelFields extends JInboundListModel
     }
 
     /**
-     * Method to get a store id based on model configuration state.
+     * @param string $id
      *
-     * This is necessary because the model is used by the component and
-     * different modules that might need different sets of data or different
-     * ordering requirements.
-     *
-     * @param    string $id A prefix for the store id.
-     *
-     * @return    string        A store id.
+     * @return string
      */
     protected function getStoreId($id = '')
     {
-        // Compile the store id.
         $id .= ':' . $this->getState('filter.extension');
         $id .= ':' . $this->getState('filter.published');
         $id .= ':' . $this->getState('filter.access');
@@ -112,28 +95,21 @@ class JInboundModelFields extends JInboundListModel
 
     protected function getListQuery()
     {
-        // Create a new query object.
         $db = $this->getDbo();
 
-        // main query
         $query = $db->getQuery(true)
-            // Select the required fields from the table.
             ->select($this->getState('list.select', 'Field.*'))
             ->from('#__jinbound_fields AS Field');
-        // add author to query
+
         $this->appendAuthorToQuery($query, 'Field');
 
-        // Filter by published state
         $published = $this->getState('filter.published');
-        if (is_numeric($published)) {
+        if ($published == '') {
+            $query->where('(Field.published = 0 OR Field.published = 1)');
+        } elseif (is_numeric($published)) {
             $query->where('Field.published = ' . (int)$published);
-        } else {
-            if ($published == '') {
-                $query->where('(Field.published = 0 OR Field.published = 1)');
-            }
         }
 
-        // Filter by search.
         $this->filterSearchQuery($query, $this->getState('filter.search'), 'Field', 'id', array('title', 'name'));
 
         $type = $this->getState('filter.formtype');
@@ -141,14 +117,12 @@ class JInboundModelFields extends JInboundListModel
             $query->where('Field.formtype = ' . (int)$type);
         }
 
-        // Add the list ordering clause.
         $listOrdering = $this->getState('list.ordering', 'Field.title');
         $listDirn     = $db->escape($this->getState('list.direction', 'ASC'));
         $query->order($db->escape($listOrdering) . ' ' . $listDirn);
 
-        // Group by filter
         $query->group('Field.id');
+
         return $query;
     }
-
 }

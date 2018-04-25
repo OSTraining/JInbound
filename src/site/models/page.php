@@ -15,13 +15,18 @@
  * may be added to this header as long as no information is deleted.
  */
 
+use Joomla\Utilities\ArrayHelper;
+
 defined('JPATH_PLATFORM') or die;
 
 class JInboundModelPage extends JInboundAdminModel
 {
-    protected $context  = 'com_jinbound.page';
+    /**
+     * @var string
+     */
+    protected $context = 'com_jinbound.page';
 
-    private $_registryColumns = array('formbuilder');
+    protected $data = null;
 
     /**
      * @param array $data
@@ -56,7 +61,15 @@ class JInboundModelPage extends JInboundAdminModel
         return $form;
     }
 
-    public function addFieldsToForm(&$fields, &$form, $label)
+    /**
+     * @param object[] $fields
+     * @param JForm    $form
+     * @param string   $label
+     *
+     * @return void
+     * @throws Exception
+     */
+    public function addFieldsToForm($fields, $form, $label)
     {
         // our custom fields should not have the following as extras
         $banned = array('name', 'type', 'default', 'label', 'description', 'class', 'classname');
@@ -156,20 +169,18 @@ class JInboundModelPage extends JInboundAdminModel
         $form->bind($formData);
     }
 
+    /**
+     * @return object
+     * @throws Exception
+     */
     protected function loadFormData()
     {
-        if (!property_exists($this, 'data')) {
-            $this->data = null;
+        if ($this->data === null) {
+            $app = JFactory::getApplication();
+
+            $this->data = ArrayHelper::toObject((array)$app->getUserState('com_jinbound.page.data', array()));
         }
-        if (empty($this->data)) {
-            $this->data = new stdClass;
-            $app        = JFactory::getApplication();
-            // Override the base user data with any data in the session.
-            $temp = (array)$app->getUserState('com_jinbound.page.data', array());
-            foreach ($temp as $k => $v) {
-                $this->data->$k = $v;
-            }
-        }
+
         return $this->data;
     }
 }

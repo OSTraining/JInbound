@@ -29,11 +29,8 @@ require_once dirname(__FILE__) . '/pages.php';
  */
 class JInboundModelReports extends JInboundListModel
 {
-
     /**
-     * Model context string.
-     *
-     * @var        string
+     * @var string
      */
     protected $context = 'com_jinbound.reports';
 
@@ -49,74 +46,99 @@ class JInboundModelReports extends JInboundListModel
     );
 
     /**
-     * Gets a list of recent contacts
-     *
-     * @return array
+     * @return object[]
+     * @throws Exception
      */
     public function getRecentContacts()
     {
-        $app       = JFactory::getApplication();
-        $input     = $app->input;
-        $start     = $input->get('filter_start', '', 'string');
-        $end       = $input->get('filter_end', '', 'string');
-        $campaign  = $input->get('filter_campaign', '', 'string');
-        $page      = $input->get('filter_page', '', 'string');
-        $status    = $input->get('filter_status', '', 'string');
-        $priority  = $input->get('filter_priority', '', 'string');
-        $published = $input->get('filter_published', '', 'string');
-        $query     = $this->getDbo()->getQuery(true)
-            ->select('Contact.id AS id')
-            ->select('Contact.created AS date')
-            ->select('CONCAT_WS(' . $this->getDbo()->quote(' ') . ', Contact.first_name, Contact.last_name) AS name')
-            ->select('Conversion.formdata AS formdata')
-            ->select('Page.id AS page_id')
-            ->select('Page.formname AS formname')
-            ->select('Contact.website AS website')
+        $app   = JFactory::getApplication();
+        $db    = $this->getDbo();
+        $input = $app->input;
+
+        $start     = $input->getString('filter_start');
+        $end       = $input->getString('filter_end');
+        $campaign  = $input->getString('filter_campaign');
+        $page      = $input->getString('filter_page');
+        $status    = $input->getString('filter_status');
+        $priority  = $input->getString('filter_priority');
+        $published = $input->getString('filter_published');
+
+        $query = $db->getQuery(true)
+            ->select(
+                array(
+                    'Contact.id AS id',
+                    'Contact.created AS date',
+                    'CONCAT_WS(' . $db->quote(' ') . ', Contact.first_name, Contact.last_name) AS name',
+                    'Conversion.formdata AS formdata',
+                    'Page.id AS page_id',
+                    'Page.formname AS formname',
+                    'Contact.website AS website'
+                )
+            )
             ->from('#__jinbound_contacts AS Contact')
             ->leftJoin('#__jinbound_conversions AS Conversion ON Contact.id = Conversion.contact_id')
             ->leftJoin('#__jinbound_pages AS Page ON Conversion.page_id = Page.id')
-            ->where('Contact.published = 1')
-            ->where('Conversion.published = 1')
-            ->where('Page.published = 1')
-            ->group('Contact.id')
-            ->group('Conversion.id')
+            ->where(
+                array(
+                    'Contact.published = 1',
+                    'Conversion.published = 1',
+                    'Page.published = 1'
+                )
+            )
+            ->group(
+                array(
+                    'Contact.id',
+                    'Conversion.id'
+                )
+            )
             ->order('Contact.created ASC');
 
-        if (!empty($campaign)) {
-            $query->where('Contact.id IN (('
-                . $this->getDbo()->getQuery(true)
-                    ->select('ContactCampaign.contact_id')
-                    ->from('#__jinbound_contacts_campaigns AS ContactCampaign')
-                    ->where('ContactCampaign.campaign_id = ' . (int)$campaign)
-                    ->where('ContactCampaign.enabled = 1')
-                . '))');
+        if ($campaign) {
+            $query->where(
+                sprintf(
+                    'Contact.id IN (%s)',
+                    $db->getQuery(true)
+                        ->select('ContactCampaign.contact_id')
+                        ->from('#__jinbound_contacts_campaigns AS ContactCampaign')
+                        ->where(
+                            array(
+                                'ContactCampaign.campaign_id = ' . (int)$campaign,
+                                'ContactCampaign.enabled = 1'
+                            )
+                        )
+                )
+            );
         }
 
-        if (!empty($page)) {
+        if ($page) {
             $query->where('Page.id = ' . (int)$page);
         }
 
-        if (!empty($status)) {
+        if ($status) {
             // join in only the latest status
-            $query->leftJoin('('
-                . $this->getDbo()->getQuery(true)
-                    ->select('s1.*')
-                    ->from('#__jinbound_contacts_statuses AS s1')
-                    ->leftJoin('#__jinbound_contacts_statuses AS s2 ON s1.contact_id = s2.contact_id AND s1.campaign_id = s2.campaign_id AND s1.created < s2.created')
-                    ->where('s2.contact_id IS NULL')
-                . ') AS ContactStatus ON ContactStatus.campaign_id = Page.campaign AND ContactStatus.contact_id = Contact.id'
+            $query->leftJoin(
+                sprintf(
+                    '(%s) AS ContactStatus ON ContactStatus.campaign_id = Page.campaign AND ContactStatus.contact_id = Contact.id',
+                    $db->getQuery(true)
+                        ->select('s1.*')
+                        ->from('#__jinbound_contacts_statuses AS s1')
+                        ->leftJoin('#__jinbound_contacts_statuses AS s2 ON s1.contact_id = s2.contact_id AND s1.campaign_id = s2.campaign_id AND s1.created < s2.created')
+                        ->where('s2.contact_id IS NULL')
+                )
             )->where('ContactStatus.status_id = ' . (int)$status);
         }
 
         if (!empty($priority)) {
             // join in only the latest priority
-            $query->leftJoin('('
-                . $this->getDbo()->getQuery(true)
-                    ->select('p1.*')
-                    ->from('#__jinbound_contacts_priorities AS p1')
-                    ->leftJoin('#__jinbound_contacts_priorities AS p2 ON p1.contact_id = p2.contact_id AND p1.campaign_id = p2.campaign_id AND p1.created < p2.created')
-                    ->where('p2.contact_id IS NULL')
-                . ') AS ContactPriority ON ContactPriority.campaign_id = Page.campaign AND ContactPriority.contact_id = Contact.id'
+            $query->leftJoin(
+                sprintf(
+                    '(%s) AS ContactPriority ON ContactPriority.campaign_id = Page.campaign AND ContactPriority.contact_id = Contact.id',
+                    $db->getQuery(true)
+                        ->select('p1.*')
+                        ->from('#__jinbound_contacts_priorities AS p1')
+                        ->leftJoin('#__jinbound_contacts_priorities AS p2 ON p1.contact_id = p2.contact_id AND p1.campaign_id = p2.campaign_id AND p1.created < p2.created')
+                        ->where('p2.contact_id IS NULL')
+                )
             )->where('ContactPriority.priority_id = ' . (int)$priority);
         }
 
@@ -124,34 +146,38 @@ class JInboundModelReports extends JInboundListModel
             $query->where('Contact.published = ' . (int)$published);
         }
 
-        if (!empty($start)) {
+        if ($start) {
             try {
                 $start = new DateTime($start);
                 if ($start) {
-                    $query->where('Conversion.created > ' . $this->getDbo()->quote($start->format('Y-m-d h:i:s')));
+                    $query->where('Conversion.created > ' . $db->quote($start->format('Y-m-d h:i:s')));
                 }
+
             } catch (Exception $e) {
                 $app->enqueueMessage($e->getMessage(), 'error');
             }
         }
 
-        if (!empty($end)) {
+        if ($end) {
             try {
                 $end = new DateTime($end);
                 if ($end) {
-                    $query->where('Conversion.created > ' . $this->getDbo()->quote($end->format('Y-m-d h:i:s')));
+                    $query->where('Conversion.created < ' . $db->quote($end->format('Y-m-d h:i:s')));
                 }
+
             } catch (Exception $e) {
                 $app->enqueueMessage($e->getMessage(), 'error');
             }
         }
 
         try {
-            $contacts = $this->getDbo()->setQuery($query)->loadObjectList();
+            $contacts = $db->setQuery($query)->loadObjectList();
+
         } catch (Exception $e) {
             $app->enqueueMessage($e->getMessage(), 'error');
             $contacts = array();
         }
+
         return $contacts;
     }
 

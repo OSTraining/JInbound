@@ -17,35 +17,46 @@
 
 defined('JPATH_PLATFORM') or die;
 
-/**
- * This models supports retrieving a location.
- *
- * @package        jInbound
- * @subpackage     com_jinbound
- */
 class JInboundModelPriority extends JInboundAdminModel
 {
-    public $context = 'com_jinbound.priority';
+    /**
+     * @var string
+     */
+    protected $context = 'com_jinbound.priority';
 
+    /**
+     * @param array $data
+     * @param bool  $loadData
+     *
+     * @return bool|JForm
+     * @throws Exception
+     */
     public function getForm($data = array(), $loadData = true)
     {
-        // Get the form.
-        $form = $this->loadForm($this->option . '.' . $this->name, $this->name,
-            array('control' => 'jform', 'load_data' => $loadData));
+        $form = $this->loadForm(
+            $this->option . '.' . $this->name,
+            $this->name,
+            array('control' => 'jform', 'load_data' => $loadData)
+        );
+
         if (empty($form)) {
             return false;
         }
-        if (!JFactory::getApplication()->isAdmin()) {
-            // set the frontend locations to be auto-published
+
+        $app = JFactory::getApplication();
+        $user = JFactory::getUser();
+
+        if (!$app->isClient('administrator')) {
             $form->setFieldAttribute('published', 'type', 'hidden');
             $form->setFieldAttribute('published', 'default', '1');
             $form->setValue('published', '1');
-        } // check published permissions
-        else {
-            if (!JFactory::getUser()->authorise('core.edit.state', 'com_jinbound.priority')) {
+
+        } else {
+            if (!$user->authorise('core.edit.state', 'com_jinbound.priority')) {
                 $form->setFieldAttribute('published', 'readonly', 'true');
             }
         }
+
         return $form;
     }
 }

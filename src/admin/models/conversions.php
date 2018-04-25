@@ -25,16 +25,12 @@ defined('JPATH_PLATFORM') or die;
  */
 class JInboundModelConversions extends JInboundListModel
 {
-    protected $context  = 'com_jinbound.conversions';
-
     /**
-     * Constructor.
-     *
-     * @param       array   An optional associative array of configuration settings.
-     *
-     * @see         JController
+     * @var string
      */
-    function __construct($config = array())
+    protected $context = 'com_jinbound.conversions';
+
+    public function __construct($config = array())
     {
         if (empty($config['filter_fields'])) {
             $config['filter_fields'] = array(

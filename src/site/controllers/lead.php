@@ -19,8 +19,15 @@ defined('JPATH_PLATFORM') or die;
 
 class JInboundControllerLead extends JInboundBaseController
 {
+    /**
+     * @var string
+     */
     protected $context  = 'com_jinbound.page';
 
+    /**
+     * @return void
+     * @throws Exception
+     */
     public function save()
     {
         $app        = JFactory::getApplication();

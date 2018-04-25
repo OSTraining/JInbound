@@ -19,7 +19,7 @@ defined('JPATH_PLATFORM') or die;
 
 $user       = JFactory::getUser();
 $userId     = $user->get('id');
-$context    = JInbound::COM . '.contact.' . $this->item->id;
+$context    = 'com_jinbound.contact.' . $this->item->id;
 $canEdit    = $user->authorise('core.edit', $context);
 $canCheckin = $user->authorise('core.manage',
         'com_checkin') || $this->item->checked_out == $userId || $this->item->checked_out == 0;

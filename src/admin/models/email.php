@@ -15,6 +15,8 @@
  * may be added to this header as long as no information is deleted.
  */
 
+use Joomla\String\StringHelper;
+
 defined('JPATH_PLATFORM') or die;
 
 /**
@@ -25,26 +27,41 @@ defined('JPATH_PLATFORM') or die;
  */
 class JInboundModelEmail extends JInboundAdminModel
 {
-    public $context = 'com_jinbound.email';
+    /**
+     * @var string
+     */
+    protected $context = 'com_jinbound.email';
 
+    /**
+     * @param array $data
+     * @param bool  $loadData
+     *
+     * @return bool|JForm
+     * @throws Exception
+     */
     public function getForm($data = array(), $loadData = true)
     {
-        // Get the form.
-        $form = $this->loadForm($this->option . '.' . $this->name, $this->name,
-            array('control' => 'jform', 'load_data' => $loadData));
+        $form = $this->loadForm(
+            $this->option . '.' . $this->name,
+            $this->name,
+            array('control' => 'jform', 'load_data' => $loadData)
+        );
+
         if (empty($form)) {
             return false;
         }
 
-        // remove the sidebar stuff if layout isn't "a" or empty
-        $template = strtolower(JFactory::getApplication()->input->get('set', $form->getValue('layout', 'A'), 'cmd'));
+        $app = JFactory::getApplication();
+        $user = JFactory::getUser();
+
+        $template = strtolower($app->input->get('set', $form->getValue('layout', 'A'), 'cmd'));
         if (!empty($template) && 'a' !== $template) {
-            if (1 == JString::strlen($template)) {
-                $template = JString::strtoupper($template);
+            if (StringHelper::strlen($template) == 1) {
+                $template = StringHelper::strtoupper($template);
             }
             $form->setValue('layout', null, $template);
         }
-        // check published permissions
+
         if (!JFactory::getUser()->authorise('core.edit.state', 'com_jinbound.email')) {
             $form->setFieldAttribute('published', 'readonly', 'true');
         }

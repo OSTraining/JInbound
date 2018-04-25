@@ -15,6 +15,8 @@
  * may be added to this header as long as no information is deleted.
  */
 
+use Joomla\String\StringHelper;
+
 defined('JPATH_PLATFORM') or die;
 
 /**
@@ -25,31 +27,40 @@ defined('JPATH_PLATFORM') or die;
  */
 class JInboundModelPage extends JInboundAdminModel
 {
-    public $context = 'com_jinbound.page';
+    protected $context = 'com_jinbound.page';
 
-    private $_registryColumns = array('formbuilder');
-
+    /**
+     * @param array $data
+     * @param bool  $loadData
+     *
+     * @return bool|JForm
+     * @throws Exception
+     */
     public function getForm($data = array(), $loadData = true)
     {
-        // Get the form.
-        $form = $this->loadForm($this->option . '.' . $this->name, $this->name,
-            array('control' => 'jform', 'load_data' => $loadData));
-        if (empty($form)) {
+        $form = $this->loadForm(
+            $this->option . '.' . $this->name,
+            $this->name,
+            array('control' => 'jform', 'load_data' => $loadData)
+        );
+
+        if (!$form) {
             return false;
         }
 
+        $app = JFactory::getApplication();
+        $user = JFactory::getUser();
+
         // remove the sidebar stuff if layout isn't "a" or empty
-        $template = strtolower(JFactory::getApplication()->input->get('set', $form->getValue('layout', 'A'), 'cmd'));
+        $template = strtolower($app->input->get('set', $form->getValue('layout', 'A'), 'cmd'));
         if (!empty($template) && 'a' !== $template) {
-            // single length value - defined template
-            if (1 == JString::strlen($template)) {
-                // upper case
-                $template = JString::strtoupper($template);
+            if (StringHelper::strlen($template) == 1) {
+                $template = StringHelper::strtoupper($template);
             }
             $form->setValue('layout', null, $template);
         }
-        // check published permissions
-        if (!JFactory::getUser()->authorise('core.edit.state', 'com_jinbound.page')) {
+
+        if (!$user->authorise('core.edit.state', 'com_jinbound.page')) {
             $form->setFieldAttribute('published', 'readonly', 'true');
         }
 

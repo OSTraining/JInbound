@@ -19,21 +19,38 @@ defined('JPATH_PLATFORM') or die;
 
 class JInboundAdminModel extends JModelAdmin
 {
+    /**
+     * @var string
+     */
     protected $context = 'com_jinbound';
 
-    public $option = JInbound::COM;
+    public $option = 'com_jinbound';
 
-    private $_registryColumns = null;
+    /**
+     * @var string[]
+     */
+    protected $registryColumns = null;
 
+    /**
+     * @param array $data
+     * @param bool  $loadData
+     *
+     * @return bool|JForm
+     */
     public function getForm($data = array(), $loadData = true)
     {
         // Get the form.
-        $form = $this->loadForm(JInbound::COM . '.' . $this->name, $this->name,
-            array('control' => 'jform', 'load_data' => $loadData));
-        if (empty($form)) {
-            return false;
+        $form = $this->loadForm(
+            'com_jinbound.' . $this->name,
+            $this->name,
+            array('control' => 'jform', 'load_data' => $loadData)
+        );
+
+        if ($form) {
+            return $form;
         }
-        return $form;
+
+        return false;
     }
 
     public function getTable($type = null, $prefix = 'JInboundTable', $config = array())
@@ -59,31 +76,46 @@ class JInboundAdminModel extends JModelAdmin
         parent::cleanCache($group, $client_id);
     }
 
+    /**
+     * @return bool|JObject
+     * @throws Exception
+     */
     protected function loadFormData()
     {
-        $data = JFactory::getApplication()
-            ->getUserState(JInbound::COM . '.edit.' . strtolower($this->name) . '.data', array());
+        $data = JFactory::getApplication()->getUserState(
+            'com_jinbound.edit.' . strtolower($this->name) . '.data',
+            array()
+        );
         if (empty($data)) {
             $data = $this->getItem();
         }
+
         return $data;
     }
 
+    /**
+     * @param null $id
+     *
+     * @return bool|JObject
+     */
     public function getItem($id = null)
     {
         $item = parent::getItem($id);
         // if we have no columns to alter, we're done
-        if (!is_array($this->_registryColumns) || empty($this->_registryColumns)) {
+        if (!is_array($this->registryColumns) || empty($this->registryColumns)) {
             return $item;
         }
-        foreach ($this->_registryColumns as $col) {
+
+        foreach ($this->registryColumns as $col) {
             if (!property_exists($item, $col)) {
                 continue;
             }
+
             $registry = new JRegistry();
             $registry->loadString($item->$col);
             $item->$col = $registry;
         }
+
         return $item;
     }
 }
