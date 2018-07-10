@@ -19,7 +19,14 @@ defined('JPATH_PLATFORM') or die;
 
 class JInboundController extends JInboundBaseController
 {
-    function display($cachable = false, $urlparams = false)
+    /**
+     * @param bool     $cachable
+     * @param string[] $urlparams
+     *
+     * @return JControllerLegacy
+     * @throws Exception
+     */
+    public function display($cachable = false, $urlparams = false)
     {
         $app  = JFactory::getApplication();
         $view = $app->input->get('view', 'page', 'cmd');
@@ -39,7 +46,8 @@ class JInboundController extends JInboundBaseController
             }
             $app->setUserState('com_jinbound.page.data', $state);
         }
-        return parent::display($cachable);
+
+        return parent::display($cachable, $urlparams);
     }
 
     /**
@@ -47,7 +55,7 @@ class JInboundController extends JInboundBaseController
      *
      * TODO
      */
-    function cron()
+    public function cron()
     {
         $out = JInbound::config("debug", 0);
         // send reports emails
@@ -88,7 +96,7 @@ class JInboundController extends JInboundBaseController
      * Disables all emails sent from jinbound to this user
      *
      */
-    function unsubscribe()
+    public function unsubscribe()
     {
         $app  = JFactory::getApplication();
         $db   = JFactory::getDbo();
@@ -144,7 +152,7 @@ class JInboundController extends JInboundBaseController
         jexit();
     }
 
-    function landingpageurl()
+    public function landingpageurl()
     {
         $id   = JFactory::getApplication()->input->get('id', array(), 'array');
         $data = array('links' => array());
