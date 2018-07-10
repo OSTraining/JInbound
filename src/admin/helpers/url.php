@@ -65,9 +65,9 @@ abstract class JInboundHelperUrl
     /**
      * static method to generate a JInbound url based on "view"
      *
-     * @param unknown_type $view
-     * @param unknown_type $sef
-     * @param unknown_type $extra
+     * @param string $view
+     * @param bool   $sef
+     * @param array  $extra
      */
     public static function view($view, $sef = true, $extra = array())
     {
@@ -81,8 +81,10 @@ abstract class JInboundHelperUrl
     /**
      * creates an internal (Joomla) url string
      *
-     * @param unknown_type $params
-     * @param unknown_type $sef
+     * @param array $params
+     * @param bool  $sef
+     *
+     * @return string
      */
     public static function _($params = array(), $sef = true)
     {
@@ -128,14 +130,17 @@ abstract class JInboundHelperUrl
         if ($sef) {
             $url = JRoute::_($url, false);
         }
+
         return $url;
     }
 
     /**
-     * private class method to find an Itemid
-     * code mostly borrowed from a core route helper
+     * private class method to find an Itemid code mostly borrowed from a core route helper
      *
-     * @param $needles
+     * @param array $needles
+     *
+     * @return int
+     * @throws Exception
      */
     public static function findItemid($needles = null)
     {
