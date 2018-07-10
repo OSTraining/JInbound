@@ -18,18 +18,25 @@
 defined('JPATH_PLATFORM') or die;
 
 $fieldsets = $this->form->getFieldsets();
+if (isset($fieldsets['default'])) {
+    unset($fieldsets['default']);
+}
 
-if (!empty($fieldsets) && !(1 == count($fieldsets) && array_key_exists('default', $fieldsets))) :
+if ($fieldsets) :
     ?>
-
     <div id="jinbound_default_tabset">
-        <?php echo JHtml::_('jinbound.startTabSet', 'jinbound_default_tabs',
-            array('active' => (isset($this->default_tab) ? $this->default_tab : 'content_tab'))); ?>
-        <?php foreach ($fieldsets as $name => $fieldset) : if ('default' == $name) {
-            continue;
-        } ?>
-            <?php echo JHtml::_('jinbound.addTab', 'jinbound_default_tabs', $name . '_tab',
-                JText::_('COM_JINBOUND_' . $this->getName() . '_FIELDSET_' . $name, true)); ?>
+        <?php
+        echo JHtml::_(
+            'jinbound.startTabSet',
+            'jinbound_default_tabs',
+            array('active' => (isset($this->default_tab) ? $this->default_tab : 'content_tab'))
+        );
+
+        foreach ($fieldsets as $name => $fieldset) :
+            $label = $fieldset->label
+                ?: sprintf('COM_JINBOUND_%s_FIELDSET_%s', $this->getName(), $name);
+            echo JHtml::_('jinbound.addTab', 'jinbound_default_tabs', $name . '_tab', JText::_($label, true));
+            ?>
             <fieldset class="container-fluid">
                 <div class="row-fluid">
                     <div class="span8">
@@ -39,6 +46,7 @@ if (!empty($fieldsets) && !(1 == count($fieldsets) && array_key_exists('default'
                             $label = trim($field->label . '');
                             if (empty($label)) :
                                 echo $field->input;
+
                             else :
                                 $this->_currentField = $field;
                                 echo $this->loadTemplate('edit_field');
@@ -49,17 +57,23 @@ if (!empty($fieldsets) && !(1 == count($fieldsets) && array_key_exists('default'
                         endforeach;
                         ?>
                     </div>
-                    <?php if (!empty($well)) : ?>
+                    <?php
+                    if (!empty($well)) :
+                        ?>
                         <div class="span4 well">
                             <?php echo $well; ?>
                         </div>
-                    <?php endif; ?>
+                        <?php
+                    endif;
+                    ?>
                 </div>
             </fieldset>
-            <?php echo JHtml::_('jinbound.endTab'); ?>
-        <?php endforeach; ?>
-        <?php echo JHtml::_('jinbound.endTabSet'); ?>
+            <?php
+            echo JHtml::_('jinbound.endTab');
+        endforeach;
+
+        echo JHtml::_('jinbound.endTabSet');
+        ?>
     </div>
 <?php
-
 endif;
