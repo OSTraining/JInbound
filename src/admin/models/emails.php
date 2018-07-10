@@ -25,7 +25,7 @@ defined('JPATH_PLATFORM') or die;
  */
 class JInboundModelEmails extends JInboundListModel
 {
-    public    $context = 'com_jinbound.emails';
+    public $context = 'com_jinbound.emails';
 
     public function __construct($config = array())
     {
@@ -49,7 +49,7 @@ class JInboundModelEmails extends JInboundListModel
      */
     public function send()
     {
-        $dispatcher = JDispatcher::getInstance();
+        $dispatcher = JEventDispatcher::getInstance();
         $this->sendCampaignEmails();
         $dispatcher->trigger('onJInboundSend');
     }
