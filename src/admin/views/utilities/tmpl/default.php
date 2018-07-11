@@ -23,7 +23,7 @@ defined('JPATH_PLATFORM') or die;
         <div class="span12">
             <ul class="unstyled">
                 <li><a href="<?php echo JInboundHelperUrl::_(array('option'    => 'com_categories',
-                                                                   'extension' => JInbound::COM
+                                                                   'extension' => JInboundHelper::COM
                     )); ?>"><?php echo JText::_('COM_CATEGORIES'); ?></a></li>
                 <li><a href="<?php echo JInboundHelperUrl::view('campaigns',
                         false); ?>"><?php echo JText::_('COM_JINBOUND_CAMPAIGNS_MANAGER'); ?></a></li>

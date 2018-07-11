@@ -26,7 +26,7 @@ defined('JPATH_PLATFORM') or die;
                 <?php if (!empty($this->item->conversions)) : ?>
                     <?php foreach (array_reverse($this->item->conversions) as $i => $data) : ?>
                         <?php echo JHtml::_('jinbound.addSlide', 'leadSlider',
-                            JInbound::userDate($data->created) . ' | ' . $data->page_name, 'leadslider-' . $i); ?>
+                            JInboundHelper::userDate($data->created) . ' | ' . $data->page_name, 'leadslider-' . $i); ?>
                         <table class="table table-striped">
                             <?php if (array_key_exists('lead', $data->formdata)) {
                                 foreach ($data->formdata['lead'] as $key => $value) : ?>

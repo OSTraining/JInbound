@@ -26,8 +26,8 @@ class JInboundViewContacts extends JInboundJsonListView
             foreach ($this->items as &$item) {
                 $item->url      = JInboundHelperUrl::edit('contact', $item->id);
                 $item->page_url = JInboundHelperUrl::edit('page', $item->latest_conversion_page_id);
-                $item->created  = JInbound::userDate($item->created);
-                $item->latest   = JInbound::userDate($item->latest);
+                $item->created  = JInboundHelper::userDate($item->created);
+                $item->latest   = JInboundHelper::userDate($item->latest);
             }
             // do not send track info in json format
             // TODO just don't pull the data in the model

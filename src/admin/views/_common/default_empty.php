@@ -18,7 +18,7 @@
 defined('JPATH_PLATFORM') or die;
 
 if (JFactory::getUser()
-    ->authorise('core.create', JInbound::COM . '.' . JInboundInflector::singularize($this->viewName))) :
+    ->authorise('core.create', JInboundHelper::COM . '.' . JInboundInflector::singularize($this->viewName))) :
     ?>
     <div class="jinbound-empty">
         <div class="row">

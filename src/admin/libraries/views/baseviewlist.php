@@ -183,16 +183,16 @@ class JInboundListView extends JInboundView
         if (is_null($set)) {
             $single       = strtolower(JInboundInflector::singularize($this->_name));
             $user         = JFactory::getUser();
-            $canCreate    = $user->authorise('core.create', JInbound::COM . ".$single");
-            $canDelete    = $user->authorise('core.delete', JInbound::COM . ".$single");
-            $canEdit      = $user->authorise('core.edit', JInbound::COM . ".$single");
-            $canEditOwn   = $user->authorise('core.edit.own', JInbound::COM . ".$single");
-            $canEditState = $user->authorise('core.edit.state', JInbound::COM . ".$single");
+            $canCreate    = $user->authorise('core.create', JInboundHelper::COM . ".$single");
+            $canDelete    = $user->authorise('core.delete', JInboundHelper::COM . ".$single");
+            $canEdit      = $user->authorise('core.edit', JInboundHelper::COM . ".$single");
+            $canEditOwn   = $user->authorise('core.edit.own', JInboundHelper::COM . ".$single");
+            $canEditState = $user->authorise('core.edit.state', JInboundHelper::COM . ".$single");
             // set the toolbar title
-            $title = strtoupper(JInbound::COM . '_' . $this->_name . '_MANAGER');
+            $title = strtoupper(JInboundHelper::COM . '_' . $this->_name . '_MANAGER');
             $class = 'jinbound-' . strtolower($this->_name);
             if ('contacts' === $this->_name) {
-                $title = strtoupper(JInbound::COM . '_LEADS_MANAGER');
+                $title = strtoupper(JInboundHelper::COM . '_LEADS_MANAGER');
                 $class = 'jinbound-leads';
             }
             if ($canCreate) {

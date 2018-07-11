@@ -108,7 +108,7 @@ $useTabs     = $permissions && JFactory::getUser()->authorise('core.admin', 'com
         </div>
     </div>
 <?php
-if (JInbound::config("debug", 0)) :
+if (JInboundHelper::config("debug", 0)) :
     ?>
     <div class="row-fluid">
         <h3>State</h3>

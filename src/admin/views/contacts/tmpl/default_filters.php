@@ -17,7 +17,7 @@
 
 defined('JPATH_PLATFORM') or die;
 
-$floatButtons = JInbound::version()->isCompatible('3.0');
+$floatButtons = JInboundHelper::version()->isCompatible('3.0');
 
 $clearScript = "document.getElementById('filter_search').value='';jQuery('#filter-bar').find('select,input').val('');this.form.submit();";
 

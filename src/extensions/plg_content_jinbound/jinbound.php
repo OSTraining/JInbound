@@ -70,7 +70,7 @@ class plgContentJInbound extends JPlugin
     {
         if (static::$enabled
             && strpos($context, 'com_jinbound') === 0
-            && JInbound::config("debug", 0)
+            && JInboundHelper::config("debug", 0)
         ) {
             JFactory::getApplication()->enqueueMessage(__METHOD__ . ' ' . $context);
         }
@@ -92,7 +92,7 @@ class plgContentJInbound extends JPlugin
     {
         if (static::$enabled
             && strpos($context, 'com_jinbound') === 0
-            && JInbound::config("debug", 0)
+            && JInboundHelper::config("debug", 0)
         ) {
             JFactory::getApplication()->enqueueMessage(__METHOD__ . ' ' . $context);
         }
@@ -111,7 +111,7 @@ class plgContentJInbound extends JPlugin
     {
         if (static::$enabled
             && strpos($context, 'com_jinbound') === 0
-            && JInbound::config("debug", 0)
+            && JInboundHelper::config("debug", 0)
         ) {
             JFactory::getApplication()->enqueueMessage(__METHOD__ . ' ' . $context);
         }
@@ -132,7 +132,7 @@ class plgContentJInbound extends JPlugin
     {
         if (static::$enabled
             && strpos($context, 'com_jinbound') === 0
-            && JInbound::config("debug", 0)
+            && JInboundHelper::config("debug", 0)
         ) {
             JFactory::getApplication()->enqueueMessage(__METHOD__ . ' ' . $context);
         }
@@ -152,7 +152,7 @@ class plgContentJInbound extends JPlugin
     {
         if (static::$enabled
             && strpos($context, 'com_jinbound') === 0
-            && JInbound::config("debug", 0)
+            && JInboundHelper::config("debug", 0)
         ) {
             JFactory::getApplication()->enqueueMessage(__METHOD__ . ' ' . $context);
         }
@@ -179,7 +179,7 @@ class plgContentJInbound extends JPlugin
             return '';
         }
 
-        if (JInbound::config("debug", 0)) {
+        if (JInboundHelper::config("debug", 0)) {
             JFactory::getApplication()->enqueueMessage(__METHOD__ . ' ' . $context);
         }
 
@@ -215,7 +215,7 @@ class plgContentJInbound extends JPlugin
     {
         if (static::$enabled
             && strpos($context, 'com_jinbound') === 0
-            && JInbound::config("debug", 0)
+            && JInboundHelper::config("debug", 0)
         ) {
             JFactory::getApplication()->enqueueMessage(__METHOD__ . ' ' . $context);
         }
@@ -243,7 +243,7 @@ class plgContentJInbound extends JPlugin
         $app = JFactory::getApplication();
         $db  = JFactory::getDbo();
 
-        if (JInbound::config("debug", 0)) {
+        if (JInboundHelper::config("debug", 0)) {
             $app->enqueueMessage(__METHOD__ . ' ' . $context);
         }
 

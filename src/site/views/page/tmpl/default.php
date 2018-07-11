@@ -76,7 +76,7 @@ defined('JPATH_PLATFORM') or die;
         <?php endif; ?>
     <?php endif; ?>
 
-    <?php if (JInbound::config("debug", 0)) : ?>
+    <?php if (JInboundHelper::config("debug", 0)) : ?>
         <pre><?php echo htmlspecialchars(print_r($this->item, 1)); ?></pre>
         <pre><?php echo htmlspecialchars(print_r($this->form, 1)); ?></pre>
     <?php endif; ?>

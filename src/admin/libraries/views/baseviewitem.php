@@ -50,7 +50,7 @@ class JInboundItemView extends JInboundView
             $this->item->id = 0;
         }
 
-        $this->canDo = JInbound::getActions();
+        $this->canDo = JInboundHelper::getActions();
 
         $this->prepareItem();
 
@@ -144,15 +144,15 @@ class JInboundItemView extends JInboundView
         if ($this->item && property_exists($this->item, 'checked_out')) {
             $checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $userId);
         }
-        $canCreate  = $user->authorise('core.create', JInbound::COM . ".$name");
-        $canEdit    = $user->authorise('core.edit', JInbound::COM . ".$name");
-        $canEditOwn = $user->authorise('core.edit.own', JInbound::COM . ".$name");
+        $canCreate  = $user->authorise('core.create', JInboundHelper::COM . ".$name");
+        $canEdit    = $user->authorise('core.edit', JInboundHelper::COM . ".$name");
+        $canEditOwn = $user->authorise('core.edit.own', JInboundHelper::COM . ".$name");
 
         // set the toolbar title
-        $title = strtoupper(JInbound::COM . '_' . $this->_name . '_MANAGER');
+        $title = strtoupper(JInboundHelper::COM . '_' . $this->_name . '_MANAGER');
         $class = 'jinbound-' . strtolower($this->_name);
         if ('contact' === $this->_name) {
-            $title = strtoupper(JInbound::COM . '_LEAD_MANAGER');
+            $title = strtoupper(JInboundHelper::COM . '_LEAD_MANAGER');
             $class = 'jinbound-contact';
         }
         $title .= '_' . ($checkedOut ? 'VIEW' : ($isNew ? 'ADD' : 'EDIT'));

@@ -62,7 +62,7 @@ class JInboundViewDashboard extends JInboundView
     public function addToolBar()
     {
         parent::addToolBar();
-        if (JFactory::getUser()->authorise('core.admin', JInbound::COM)) {
+        if (JFactory::getUser()->authorise('core.admin', JInboundHelper::COM)) {
             JToolbarHelper::custom('reset', 'refresh.png', 'refresh_f2.png', 'COM_JINBOUND_RESET', false);
         }
     }

@@ -385,7 +385,7 @@ class plgSystemJInbound extends JPlugin
         $body = static::$app->getBody();
 
         $add = '';
-        if (intval(JInbound::config()->def('cron_type', '')) == 0) {
+        if (intval(JInboundHelper::config()->def('cron_type', '')) == 0) {
             $url = JInboundHelperFilter::escape(JInboundHelperUrl::task('cron', false));
             $add .= sprintf(
                 '<iframe src="%s" style="width:1px;height:1px;position:absolute;left:-999px;border:0px"></iframe>',

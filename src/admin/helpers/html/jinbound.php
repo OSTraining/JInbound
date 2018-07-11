@@ -51,7 +51,7 @@ abstract class JHtmlJInbound
             }
         }
 
-        echo JHtmlJInbound::_stateSelect('priority', $id, $campaign_id, $priority_id, $options, $canChange);
+        echo JHtmlJInboundHelper::_stateSelect('priority', $id, $campaign_id, $priority_id, $options, $canChange);
     }
 
     static private function _stateSelect($state, $id, $campaign_id, $value, $options, $canChange)
@@ -90,7 +90,7 @@ abstract class JHtmlJInbound
             }
         }
 
-        echo JHtmlJInbound::_stateSelect('status', $id, $campaign_id, $status_id, $options, $canChange);
+        echo JHtmlJInboundHelper::_stateSelect('status', $id, $campaign_id, $status_id, $options, $canChange);
     }
 
     public static function leadupdate()
@@ -272,7 +272,7 @@ EOF;
 
     public static function startSlider($selector = 'myAccordian', $params = array())
     {
-        if (JInbound::version()->isCompatible('3.1.0')) {
+        if (JInboundHelper::version()->isCompatible('3.1.0')) {
             JHtml::_('bootstrap.framework');
             return JHtml::_('bootstrap.startAccordion', $selector, $params);
         } else {
@@ -282,7 +282,7 @@ EOF;
 
     public static function endSlider()
     {
-        if (JInbound::version()->isCompatible('3.1.0')) {
+        if (JInboundHelper::version()->isCompatible('3.1.0')) {
             return JHtml::_('bootstrap.endTabSet');
         } else {
             return JHtml::_('sliders.end');
@@ -291,7 +291,7 @@ EOF;
 
     public static function addSlide($selector, $text, $id, $class = '')
     {
-        if (JInbound::version()->isCompatible('3.1.0')) {
+        if (JInboundHelper::version()->isCompatible('3.1.0')) {
             return JHtml::_('bootstrap.addSlide', $selector, $text, $id, $class);
         } else {
             return JHtml::_('sliders.panel', $text, $id);
@@ -300,7 +300,7 @@ EOF;
 
     public static function endSlide()
     {
-        if (JInbound::version()->isCompatible('3.1.0')) {
+        if (JInboundHelper::version()->isCompatible('3.1.0')) {
             return JHtml::_('bootstrap.endSlide');
         } else {
             return '';
@@ -309,7 +309,7 @@ EOF;
 
     public static function startTabSet($tabSetName, $options = array())
     {
-        if (JInbound::version()->isCompatible('3.1.0')) {
+        if (JInboundHelper::version()->isCompatible('3.1.0')) {
             JHtml::_('bootstrap.framework');
             return JHtml::_('bootstrap.startTabSet', $tabSetName, $options);
         } else {
@@ -319,7 +319,7 @@ EOF;
 
     public static function addTab($tabSetName, $tabName, $tabLabel)
     {
-        if (JInbound::version()->isCompatible('3.1.0')) {
+        if (JInboundHelper::version()->isCompatible('3.1.0')) {
             return JHtml::_('bootstrap.addTab', $tabSetName, $tabName, $tabLabel);
         } else {
             return JHtml::_('tabs.panel', $tabLabel, $tabName);
@@ -328,7 +328,7 @@ EOF;
 
     public static function endTab()
     {
-        if (JInbound::version()->isCompatible('3.1.0')) {
+        if (JInboundHelper::version()->isCompatible('3.1.0')) {
             return JHtml::_('bootstrap.endTab');
         } else {
             return '';
@@ -337,7 +337,7 @@ EOF;
 
     public static function endTabSet()
     {
-        if (JInbound::version()->isCompatible('3.1.0')) {
+        if (JInboundHelper::version()->isCompatible('3.1.0')) {
             return JHtml::_('bootstrap.endTabSet');
         } else {
             return JHtml::_('tabs.end');

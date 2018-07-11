@@ -91,7 +91,7 @@ abstract class JInboundHelperUrl
         // start building
         $urlparams = array();
         // always have com first
-        $urlparams['option'] = JInbound::COM;
+        $urlparams['option'] = JInboundHelper::COM;
         if (isset($params['option'])) {
             $urlparams['option'] = $params['option'];
             unset($params['option']);
@@ -99,7 +99,7 @@ abstract class JInboundHelperUrl
         $urlparams = array_merge($urlparams, $params);
         // check our new array to see if we're handling our own urls (from com_jinbound)
         // if so, we need to fetch the appropriate Itemid and add this to the url
-        if (JInbound::COM == $urlparams['option']) {
+        if (JInboundHelper::COM == $urlparams['option']) {
             // here comes some fun - we can't just call this method without constructing a needles array :(
             $needles = null;
             // jinbound only has one frontend view, so if there's an ID add the Itemid along with it

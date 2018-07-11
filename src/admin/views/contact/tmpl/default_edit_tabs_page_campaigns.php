@@ -59,7 +59,7 @@ $canChange  = $user->authorise('core.edit.state', $context) && $canCheckin;
                                     <div class="row-fluid">
                                         <div class="span4 status-name"><?php echo $this->escape($status->name); ?></div>
                                         <div
-                                            class="span3 status-date"><?php echo JInbound::userDate($status->created); ?></div>
+                                            class="span3 status-date"><?php echo JInboundHelper::userDate($status->created); ?></div>
                                         <div
                                             class="span4 status-author"><?php echo $this->escape($status->created_by_name); ?></div>
                                     </div>
@@ -95,7 +95,7 @@ $canChange  = $user->authorise('core.edit.state', $context) && $canCheckin;
                         <?php foreach ($this->item->statuses[$campaign->id] as $status) : ?>
                             <div class="row-fluid">
                                 <div class="span6"><?php echo $this->escape($status->name); ?></div>
-                                <div class="span3"><?php echo JInbound::userDate($status->created); ?></div>
+                                <div class="span3"><?php echo JInboundHelper::userDate($status->created); ?></div>
                                 <div class="span2"><?php echo $this->escape($status->created_by); ?></div>
                             </div>
                         <?php endforeach; ?>

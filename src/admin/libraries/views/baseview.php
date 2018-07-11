@@ -162,7 +162,7 @@ class JInboundView extends JInboundBaseView
         $profiler->mark('onJInboundViewDisplayStart');
 
         $this->viewClass = 'jinbound_component';
-        if (JInbound::version()->isCompatible('3.0.0')) {
+        if (JInboundHelper::version()->isCompatible('3.0.0')) {
             $this->viewClass .= ' jinbound_bootstrap';
         } else {
             $this->viewClass .= ' jinbound_legacy';
@@ -210,10 +210,10 @@ class JInboundView extends JInboundBaseView
         if ($this->app->isClient('administrator')) {
             // set the default title
             $name = ('contacts' === $this->_name ? 'leads' : $this->_name);
-            JToolBarHelper::title(JText::_(strtoupper(JInbound::COM . '_' . $name)), 'jinbound-' . strtolower($name));
+            JToolBarHelper::title(JText::_(strtoupper(JInboundHelper::COM . '_' . $name)), 'jinbound-' . strtolower($name));
 
-            if (JFactory::getUser()->authorise('core.manage', JInbound::COM)) {
-                JToolBarHelper::preferences(JInbound::COM);
+            if (JFactory::getUser()->authorise('core.manage', JInboundHelper::COM)) {
+                JToolBarHelper::preferences(JInboundHelper::COM);
             }
 
             JToolBarHelper::divider();
@@ -262,14 +262,14 @@ class JInboundView extends JInboundBaseView
 
         foreach ($subMenuItems as $sub => $txt) {
             $single = JInboundInflector::singularize($sub);
-            if (!JFactory::getUser()->authorise('core.manage', JInbound::COM . '.' . $single)) {
+            if (!JFactory::getUser()->authorise('core.manage', JInboundHelper::COM . '.' . $single)) {
                 continue;
             }
-            $label  = JText::_(strtoupper(JInbound::COM . "_$txt"));
+            $label  = JText::_(strtoupper(JInboundHelper::COM . "_$txt"));
             $href   = JInboundHelperUrl::_(array('view' => $sub));
-            $active = ($vName == $sub && JInbound::COM == $option);
+            $active = ($vName == $sub && JInboundHelper::COM == $option);
             if ('statuses' === $sub) {
-                if (JInbound::version()->isCompatible('3.0.0')) {
+                if (JInboundHelper::version()->isCompatible('3.0.0')) {
                     $this->addSubMenuEntry('<hr style="padding:0;margin:0"/>', 'javascript:', false);
                 }
                 $this->addSubMenuEntry(
@@ -327,7 +327,7 @@ class JInboundView extends JInboundBaseView
 
         $doc    = JFactory::getDocument();
         $canAdd = method_exists($doc, 'addStyleSheet');
-        JInbound::loadJsFramework();
+        JInboundHelper::loadJsFramework();
 
         // we don't want to run this whole function in admin,
         // but there's still a bit we need - specifically, styles for header icons

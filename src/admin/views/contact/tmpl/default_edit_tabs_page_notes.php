@@ -29,7 +29,7 @@ defined('JPATH_PLATFORM') or die;
                     <tbody>
                     <?php if (!empty($this->notes)) : foreach ($this->notes as $note) : ?>
                         <tr>
-                            <td><span class="label"><?php echo JInbound::userDate($note->created); ?></span></td>
+                            <td><span class="label"><?php echo JInboundHelper::userDate($note->created); ?></span></td>
                             <td class="note"><?php echo $this->escape($note->author); ?></td>
                             <td class="note"><?php echo $this->escape($note->text); ?></td>
                         </tr>

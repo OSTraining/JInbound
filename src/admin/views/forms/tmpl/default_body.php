@@ -24,7 +24,7 @@ $listDirn           = $this->state->get('list.direction');
 $saveOrder          = ($listOrder == 'Form.id');
 $trashed            = (-2 == $this->state->get('filter.published'));
 
-if (JInbound::version()->isCompatible('3.0')) {
+if (JInboundHelper::version()->isCompatible('3.0')) {
     JHtml::_('dropdown.init');
 }
 
@@ -58,7 +58,7 @@ if (!empty($this->items)) :
                         <?php echo JInboundHelperFilter::escape($item->title); ?>
                     <?php endif; ?>
                 </div>
-                <?php if (JInbound::version()->isCompatible('3.0')) : ?>
+                <?php if (JInboundHelper::version()->isCompatible('3.0')) : ?>
                     <div class="pull-left"><?php
 
                         JHtml::_('dropdown.edit', $item->id, 'form.');

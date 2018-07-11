@@ -284,7 +284,7 @@ class JInboundViewReports extends JInboundListView
 
             if ($layout != 'chart') {
                 $icon = 'export';
-                if (JInbound::version()->isCompatible('3.0.0')) {
+                if (JInboundHelper::version()->isCompatible('3.0.0')) {
                     $icon = 'download';
                 }
 

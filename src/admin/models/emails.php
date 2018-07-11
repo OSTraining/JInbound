@@ -62,12 +62,12 @@ class JInboundModelEmails extends JInboundListModel
         JPluginHelper::importPlugin('content');
 
         $db         = $this->getDbo();
-        $out        = JInbound::config("debug", 0);
+        $out        = JInboundHelper::config("debug", 0);
         $interval   = $out ? 'MINUTE' : 'DAY';
         $now        = JFactory::getDate();
         $params     = new JRegistry;
         $dispatcher = JEventDispatcher::getInstance();
-        $limit      = (int)JInbound::config("cron_max_campaign_mails", 0);
+        $limit      = (int)JInboundHelper::config("cron_max_campaign_mails", 0);
 
         // @TODO: add date column to contacts_campaigns to prevent contacts from slipping their email dates
         $query = $db->getQuery(true)
@@ -157,7 +157,7 @@ class JInboundModelEmails extends JInboundListModel
             $result->htmlbody  = $this->replaceTags($result->htmlbody, $result, $tags);
             $result->plainbody = $this->replaceTags($result->plainbody, $result, $tags);
 
-            if (JInbound::config('unsubscribe', 1)) {
+            if (JInboundHelper::config('unsubscribe', 1)) {
                 $unsubscribe       = JInboundHelperUrl::toFull(
                     JInboundHelperUrl::task('unsubscribe', false, array('email' => $result->email))
                 );

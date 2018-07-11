@@ -45,10 +45,10 @@ if (!defined('JINB_LOADED')) {
     $helpers = glob(JINB_HELPERS . '/*.php');
     foreach ($helpers as $file) {
         $baseName = basename($file, '.php');
-        if ($baseName == 'jinbound') {
-            $className = 'JInbound';
-        } else {
-            $className = 'JInboundHelper' . ucfirst($baseName);
+
+        $className = 'JInboundHelper';
+        if ($baseName != 'jinbound') {
+            $className .= ucfirst($baseName);
         }
         JLoader::register($className, $file);
     }

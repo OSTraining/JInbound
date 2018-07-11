@@ -267,7 +267,7 @@ class JInboundListModel extends JModelList
         // force some state based on user permissions
         $user = JFactory::getUser();
         // set the params in the state
-        $this->setState('params', JInbound::config());
+        $this->setState('params', JInboundHelper::config());
         // load the filter values
         $filters = (array)$this->getUserStateFromRequest($this->context . '.filter', 'filter', array(), 'array');
         $this->setState('filter', $filters);
@@ -275,8 +275,8 @@ class JInboundListModel extends JModelList
         $published = array_key_exists('published', $filters)
             ? $filters['published']
             : $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '', 'string');
-        if (!$user->authorise('core.edit.state', JInbound::COM)
-            && !$user->authorise('core.edit', JInbound::COM)) {
+        if (!$user->authorise('core.edit.state', JInboundHelper::COM)
+            && !$user->authorise('core.edit', JInboundHelper::COM)) {
             // filter on published for those who do not have edit or edit.state rights.
             $this->setState('filter.published', 1);
         } else {

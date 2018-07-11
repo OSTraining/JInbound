@@ -38,7 +38,7 @@ defined('JPATH_PLATFORM') or die;
                     } ?>
                         <tr>
                             <td><?php echo $this->escape($track->url); ?></td>
-                            <td><?php echo JInbound::userDate($track->created); ?></td>
+                            <td><?php echo JInboundHelper::userDate($track->created); ?></td>
                             <td>
                                 <i class="hasTip hasTooltip icon-<?php echo($track->current_user_id ? 'user' : 'warning'); ?>"
                                    title="<?php echo JText::_('COM_JINBOUND_' . ($track->current_user_id ? 'USER' : 'AUTHOR_GUEST')); ?>"> </i>

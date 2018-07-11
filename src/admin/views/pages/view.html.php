@@ -60,7 +60,7 @@ class JInboundViewPages extends JInboundListView
      */
     public function addToolBar()
     {
-        if (JFactory::getUser()->authorise('core.create', JInbound::COM . '.report')) {
+        if (JFactory::getUser()->authorise('core.create', JInboundHelper::COM . '.report')) {
             JToolBarHelper::custom(
                 'reports.exportpages',
                 'download.png',

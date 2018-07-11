@@ -25,7 +25,7 @@ $saveOrder      = ($listOrder == 'Email.id');
 $trashed        = (-2 == $this->state->get('filter.published'));
 $colors         = array('success', 'warning', 'info');
 
-if (JInbound::version()->isCompatible('3.0')) {
+if (JInboundHelper::version()->isCompatible('3.0')) {
     JHtml::_('dropdown.init');
 }
 
@@ -44,10 +44,10 @@ if (!empty($this->items)) :
 
         $canCheckin = $user->authorise('core.manage',
                 'com_checkin') || $item->checked_out == $userId || $item->checked_out == 0;
-        $canEdit    = $user->authorise('core.edit', JInbound::COM . '.email') && $canCheckin;
-        $canChange  = $user->authorise('core.edit.state', JInbound::COM . '.email') && $canCheckin;
+        $canEdit    = $user->authorise('core.edit', JInboundHelper::COM . '.email') && $canCheckin;
+        $canChange  = $user->authorise('core.edit.state', JInboundHelper::COM . '.email') && $canCheckin;
         $canEditOwn = $user->authorise('core.edit.own',
-                JInbound::COM . '.email') && $item->created_by == $userId && $canCheckin;
+                JInboundHelper::COM . '.email') && $item->created_by == $userId && $canCheckin;
 
         if ($lastCampaign !== $item->campaign_name) {
             $name = $this->escape($item->campaign_name);

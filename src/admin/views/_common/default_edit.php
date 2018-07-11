@@ -44,7 +44,7 @@ $app = JFactory::getApplication();
 <?php
 echo $this->loadTemplate('footer');
 
-if (JInbound::config("debug", 0)) :
+if (JInboundHelper::config("debug", 0)) :
     ?>
     <div class="row-fluid">
         <h3>Item:</h3>

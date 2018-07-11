@@ -58,7 +58,7 @@ class JInboundController extends JInboundBaseController
     public function cron()
     {
         try {
-            $out = JInbound::config("debug", 0);
+            $out = JInboundHelper::config("debug", 0);
             // send reports emails
             if ($out) {
                 echo "<h2>Sending reports</h2>\n";
@@ -75,14 +75,14 @@ class JInboundController extends JInboundBaseController
             if ($out) {
                 echo "<h2>Sending campaigns</h2>\n";
             }
-            
+
             /** @var JInboundModelEmails $emailsModel */
             $emailsModel = $this->getModel('Emails', 'JInboundModel');
             $emailsModel->send();
-            
+
             // handle old tracks
-            $debug    = (int)JInbound::config('debug', 0);
-            $history  = (int)JInbound::config('history', 365);
+            $debug    = (int)JInboundHelper::config('debug', 0);
+            $history  = (int)JInboundHelper::config('history', 365);
             $interval = $debug ? 'SECOND' : 'DAY';
             if (0 < $history) {
                 $db = JFactory::getDbo();

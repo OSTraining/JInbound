@@ -17,7 +17,7 @@
 
 defined('JPATH_PLATFORM') or die;
 
-abstract class JInbound
+abstract class JInboundHelper extends JHelperContent
 {
     /**
      * @deprecated v3.0.0
@@ -26,44 +26,35 @@ abstract class JInbound
 
     const VERSION = '@ant_version_number@';
 
-    private static $_actions = array(
-        'core.admin',
-        'core.manage',
-        'core.create',
-        'core.create.private',
-        'core.edit',
-        'core.edit.own',
-        'core.edit.state',
-        'core.delete',
-        'core.moderate'
-    );
+    public static $extension = 'com_jinbound';
 
     /**
-     * Loads jQuery and Bootstrap
+     * @return void
+     * @throws Exception
      */
     public static function loadJsFramework()
     {
         $app    = JFactory::getApplication();
         $doc    = JFactory::getDocument();
         $canAdd = method_exists($doc, 'addStyleSheet');
-        $ext    = (JInbound::config("debug", 0) ? '.min' : '');
-        $sfx    = $app->isAdmin() ? 'back' : 'front';
+        $ext    = (JInboundHelper::config("debug", 0) ? '.min' : '');
+        $sfx    = $app->isClient('administrator') ? 'back' : 'front';
         if ($canAdd) {
-            if (JInbound::version()->isCompatible('3.0.0')) {
+            if (JInboundHelper::version()->isCompatible('3.0.0')) {
                 JHtml::_('behavior.framework', true);
                 JHtml::_('jquery.ui', array('core', 'sortable', 'tabs'));
                 JHtml::_('bootstrap.tooltip');
             } else {
                 JHtml::_('behavior.tooltip', '.hasTip');
             }
-            if (JInbound::config("load_jquery_$sfx", 1)) {
+            if (JInboundHelper::config("load_jquery_$sfx", 1)) {
                 $doc->addScript(JInboundHelperUrl::media() . '/js/jquery-1.9.1.min.js');
             }
-            if (JInbound::config("load_jquery_ui_$sfx", 1)) {
+            if (JInboundHelper::config("load_jquery_ui_$sfx", 1)) {
                 $doc->addStyleSheet(JInboundHelperUrl::media() . '/ui/css/jinbound_component/jquery-ui-1.10.1.custom' . $ext . '.css');
                 $doc->addScript(JInboundHelperUrl::media() . '/ui/js/jquery-ui-1.10.1.custom' . $ext . '.js');
             }
-            if (JInbound::config("load_bootstrap_$sfx", 1)) {
+            if (JInboundHelper::config("load_bootstrap_$sfx", 1)) {
                 $doc->addStyleSheet(JInboundHelperUrl::media() . '/bootstrap/css/bootstrap.css');
                 $doc->addStyleSheet(JInboundHelperUrl::media() . '/bootstrap/css/bootstrap-responsive.css');
                 $doc->addScript(JInboundHelperUrl::media() . '/bootstrap/js/bootstrap' . $ext . '.js');
@@ -80,6 +71,7 @@ abstract class JInbound
      * @param  mixed  $val
      *
      * @return mixed
+     * @throws Exception
      */
     public static function config($key = null, $val = null)
     {
@@ -87,20 +79,24 @@ abstract class JInbound
         if (!isset($params)) {
             $app = JFactory::getApplication();
             // get the params, either from the helper or the application
-            if ($app->isAdmin() || JInbound::COM != $app->input->get('option', '', 'cmd')) {
-                $params = JComponentHelper::getParams(JInbound::COM);
+            if ($app->isClient('administrator') || $app->input->get('option', '', 'cmd') != 'com_jinbound') {
+                $params = JComponentHelper::getParams('com_jinbound');
+
             } else {
                 $params = $app->getParams();
             }
         }
+
         // if we don't have a key, return the entire params object
         if (is_null($key) || empty($key)) {
             return $params;
         }
+
         // return the param value, with optional def
         if (is_null($val)) {
             return $params->get($key);
         }
+
         return $params->def($key, $val);
     }
 
@@ -164,11 +160,12 @@ abstract class JInbound
      * @param  mixed  $data
      * @param  string $fin
      *
-     * @return mixed
+     * @return string
+     * @throws Exception
      */
     public static function debug($data, $fin = 'echo')
     {
-        if (!JInbound::config("debug", 0)) {
+        if (!JInboundHelper::config("debug", 0)) {
             return '';
         }
         $e      = new Exception;
@@ -176,28 +173,15 @@ abstract class JInbound
         switch ($fin) {
             case 'return':
                 return $output;
-            case 'die'   :
+            case 'die':
                 echo $output;
                 die();
-            case 'echo'  :
-            default      :
+            case 'echo':
+            default:
                 echo $output;
-                return;
-        }
-    }
-
-    public static function getActions($categoryId = 0)
-    {
-        $user   = JFactory::getUser();
-        $result = new JObject;
-
-        $assetName = JInbound::COM . (empty($categoryId) ? '' : '.category.' . (int)$categoryId);
-
-        foreach (self::$_actions as $action) {
-            $result->set($action, $user->authorise($action, $assetName));
         }
 
-        return $result;
+        return '';
     }
 
     public static function userDate($utc_date)
@@ -215,5 +199,25 @@ abstract class JInbound
         $date = JFactory::getDate($utc_date, 'UTC');
         $date->setTimezone(new DateTimeZone($timezone));
         return $date->format('Y-m-d H:i:s', true, false);
+    }
+
+    public static function getActions($component = 'com_jinbound', $section = '', $id = 0)
+    {
+        return parent::getActions($component, $section, $id);
+    }
+
+    /**
+     * Configure the Linkbar.
+     *
+     * @param   string $vName The name of the active view.
+     *
+     * @return  void
+     * @throws Exception
+     */
+    public static function addSubmenu($vName)
+    {
+        JInboundHelper::registerLibrary('JInboundView', 'views/baseview');
+        $comView = new JInboundView();
+        $comView->addMenuBar();
     }
 }

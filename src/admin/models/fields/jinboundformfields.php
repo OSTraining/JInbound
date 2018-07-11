@@ -137,7 +137,7 @@ class JFormFieldJInboundFormFields extends JFormField
         // end the main element
         $html[] = '</div>';
 
-        if (JInbound::version()->isCompatible('3.0.0')) {
+        if (JInboundHelper::version()->isCompatible('3.0.0')) {
             JHtml::_('jquery.ui', array('core', 'sortable'));
         }
         // load the javascript that controls the drag & drop

@@ -24,7 +24,7 @@ $listDirn  = $this->state->get('list.direction');
 $saveOrder = ($listOrder == 'Campaign.id');
 $trashed   = (-2 == $this->state->get('filter.published'));
 
-if (JInbound::version()->isCompatible('3.0')) {
+if (JInboundHelper::version()->isCompatible('3.0')) {
     JHtml::_('dropdown.init');
 }
 
@@ -35,10 +35,10 @@ if (!empty($this->items)) :
 
         $canCheckin = $user->authorise('core.manage',
                 'com_checkin') || $item->checked_out == $userId || $item->checked_out == 0;
-        $canEdit    = $user->authorise('core.edit', JInbound::COM . '.campaign') && $canCheckin;
-        $canChange  = $user->authorise('core.edit.state', JInbound::COM . '.campaign') && $canCheckin;
+        $canEdit    = $user->authorise('core.edit', JInboundHelper::COM . '.campaign') && $canCheckin;
+        $canChange  = $user->authorise('core.edit.state', JInboundHelper::COM . '.campaign') && $canCheckin;
         $canEditOwn = $user->authorise('core.edit.own',
-                JInbound::COM . '.campaign') && $item->created_by == $userId && $canCheckin;
+                JInboundHelper::COM . '.campaign') && $item->created_by == $userId && $canCheckin;
 
         ?>
         <tr class="row<?php echo $i % 2; ?>">
@@ -69,7 +69,7 @@ if (!empty($this->items)) :
                 <?php echo JHtml::_('jgrid.published', $item->published, $i, 'campaigns.', $canChange, 'cb'); ?>
             </td>
             <td class="hidden-phone">
-                <?php echo JInbound::userDate($item->created); ?>
+                <?php echo JInboundHelper::userDate($item->created); ?>
             </td>
         </tr>
     <?php endforeach;

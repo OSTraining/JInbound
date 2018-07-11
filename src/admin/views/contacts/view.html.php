@@ -37,7 +37,7 @@ class JInboundViewContacts extends JInboundListView
         if (1 >= count($campaigns)) {
             $this->app->enqueueMessage(JText::_('COM_JINBOUND_NO_CAMPAIGNS_YET'), 'warning');
         }
-        if (!JInbound::version()->isCompatible('3.0.0')) {
+        if (!JInboundHelper::version()->isCompatible('3.0.0')) {
             array_unshift($statuses, (object)array('value' => '', 'text' => JText::_('COM_JINBOUND_SELECT_STATUS')));
             array_unshift($priorities,
                 (object)array('value' => '', 'text' => JText::_('COM_JINBOUND_SELECT_PRIORITY')));
@@ -61,11 +61,11 @@ class JInboundViewContacts extends JInboundListView
     public function addToolBar()
     {
         $icon = 'export';
-        if (JInbound::version()->isCompatible('3.0.0')) {
+        if (JInboundHelper::version()->isCompatible('3.0.0')) {
             $icon = 'download';
         }
         // export icons
-        if (JFactory::getUser()->authorise('core.create', JInbound::COM . '.report')) {
+        if (JFactory::getUser()->authorise('core.create', JInboundHelper::COM . '.report')) {
             JToolBarHelper::custom('reports.exportleads', "{$icon}.png", "{$icon}_f2.png", 'COM_JINBOUND_EXPORT_LEADS',
                 false);
         }

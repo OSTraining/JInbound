@@ -254,14 +254,14 @@ JText::script('COM_JINBOUND_CANNOT_REMOVE_LAST_OPTION');
 
     <div>
         <input id="<?php echo $this->input->id; ?>_value" name="<?php echo $this->escape($this->input->name); ?>"
-               type="<?php echo (JInbound::config("debug", 0)) ? 'text' : 'hidden'; ?>" value=""/>
+               type="<?php echo (JInboundHelper::config("debug", 0)) ? 'text' : 'hidden'; ?>" value=""/>
         <input id="<?php echo $this->input->id; ?>_ordering"
                name="<?php echo $this->escape($this->input->name . '[__ordering]'); ?>"
-               type="<?php echo (JInbound::config("debug", 0)) ? 'text' : 'hidden'; ?>"
+               type="<?php echo (JInboundHelper::config("debug", 0)) ? 'text' : 'hidden'; ?>"
                value="<?php echo $this->escape((array_key_exists('__ordering',
                    $this->value) ? $this->value['__ordering'] : '')); ?>"/>
     </div>
-<?php if (JInbound::config("debug", 0)) : ?>
+<?php if (JInboundHelper::config("debug", 0)) : ?>
     <h4>Values:</h4>
     <pre><?php print_r($this->value); ?></pre>
 <?php endif; ?>

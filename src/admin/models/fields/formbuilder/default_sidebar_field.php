@@ -72,7 +72,7 @@ switch ($this->_currentField->id) {
             $name . '[required]', 'class="input-medium"', 'value', 'text', $value['required'], $id . '_required'); ?>
     </div>
     <div>
-        <input id="<?php echo $id; ?>_enabled" type="<?php echo(JInbound::config("debug", 0) ? 'text' : 'hidden'); ?>"
+        <input id="<?php echo $id; ?>_enabled" type="<?php echo(JInboundHelper::config("debug", 0) ? 'text' : 'hidden'); ?>"
                name="<?php echo $name; ?>[enabled]" value="<?php echo (int)$value['enabled']; ?>"/>
     </div>
 
@@ -91,7 +91,7 @@ $this->optionsInputName = 'attributes';
 echo $this->loadTemplate('sidebar_field_options');
 $this->optionsInputName = 'options';
 ?>
-<?php if (JInbound::config("debug", 0)) : ?>
+<?php if (JInboundHelper::config("debug", 0)) : ?>
     <div class="row-fluid">
         <h4>Value:</h4>
         <pre><?php print_r($value); ?></pre>

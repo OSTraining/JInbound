@@ -31,7 +31,7 @@ if (!empty($this->item->emails)) :
                 <div class="row-fluid">
                     <div class="span12">
                         <h5><?php echo $this->escape($email->subject); ?></h5>
-                        <h6><?php echo JInbound::userDate($email->sent); ?></h6>
+                        <h6><?php echo JInboundHelper::userDate($email->sent); ?></h6>
                     </div>
                 </div>
             <?php endforeach; ?>

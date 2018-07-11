@@ -23,9 +23,9 @@ $listOrder       = $this->state->get('list.ordering');
 $listDirn        = $this->state->get('list.direction');
 $saveOrder       = ($listOrder == 'Conversion.id');
 $trashed         = (-2 == $this->state->get('filter.published'));
-$canEditCampaign = $user->authorise('core.edit', JInbound::COM . '.campaign');
+$canEditCampaign = $user->authorise('core.edit', JInboundHelper::COM . '.campaign');
 
-if (JInbound::version()->isCompatible('3.0')) {
+if (JInboundHelper::version()->isCompatible('3.0')) {
     JHtml::_('dropdown.init');
 }
 
@@ -61,10 +61,10 @@ if (!empty($this->items)) :
 
         $canCheckin = $user->authorise('core.manage',
                 'com_checkin') || $item->checked_out == $userId || $item->checked_out == 0;
-        $canEdit    = $user->authorise('core.edit', JInbound::COM . '.contact') && $canCheckin;
-        $canChange  = $user->authorise('core.edit.state', JInbound::COM . '.contact') && $canCheckin;
+        $canEdit    = $user->authorise('core.edit', JInboundHelper::COM . '.contact') && $canCheckin;
+        $canChange  = $user->authorise('core.edit.state', JInboundHelper::COM . '.contact') && $canCheckin;
         $canEditOwn = $user->authorise('core.edit.own',
-                JInbound::COM . '.contact') && $item->created_by == $userId && $canCheckin;
+                JInboundHelper::COM . '.contact') && $item->created_by == $userId && $canCheckin;
         ?>
         <tr class="row<?php echo $i % 2; ?>">
             <td class="hidden-phone"<?php echo $rowSpan; ?>>
@@ -94,7 +94,7 @@ if (!empty($this->items)) :
                 <?php echo JHtml::_('jgrid.published', $item->published, $i, 'contacts.', $canChange, 'cb'); ?>
             </td>
             <td class="hidden-phone hidden-tablet"<?php echo $rowSpan; ?>>
-                <?php echo JInbound::userDate($item->created); ?>
+                <?php echo JInboundHelper::userDate($item->created); ?>
             </td>
             <td class="hidden-phone">
                 <?php echo empty($firstRow['priority'][0]) ? '' : JHtml::_('jinbound.priority', $item->id,

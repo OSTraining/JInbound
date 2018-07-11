@@ -584,9 +584,9 @@ class JInboundModelReports extends JInboundListModel
      */
     public function send()
     {
-        $out = JInbound::config("debug", 0);
+        $out = JInboundHelper::config("debug", 0);
         // only send if configured to
-        if (!JInbound::config('send_reports', 1)) {
+        if (!JInboundHelper::config('send_reports', 1)) {
             if ($out) {
                 echo "<p>Not sending reports - disabled in config</p>";
             }
@@ -662,7 +662,7 @@ class JInboundModelReports extends JInboundListModel
                 continue;
             }
 
-            $limit = (int)JInbound::config('cron_max_reports', 0);
+            $limit = (int)JInboundHelper::config('cron_max_reports', 0);
             $query = $db->getQuery(true)
                 ->select('email')
                 ->from('#__jinbound_reports_emails')
@@ -749,7 +749,7 @@ class JInboundModelReports extends JInboundListModel
      */
     public function getReportEmailData($email)
     {
-        $out        = JInbound::config("debug", 0);
+        $out        = JInboundHelper::config("debug", 0);
         $dispatcher = JEventDispatcher::getInstance();
         $start_date = new DateTime();
         $end_date   = new DateTime();

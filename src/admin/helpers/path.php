@@ -41,7 +41,7 @@ abstract class JInboundHelperPath
      */
     public static function site($file = '')
     {
-        return self::_buildPath(JPATH_ROOT . '/components/' . JInbound::COM, $file);
+        return self::_buildPath(JPATH_ROOT . '/components/' . JInboundHelper::COM, $file);
     }
 
     /**
@@ -73,7 +73,7 @@ abstract class JInboundHelperPath
      */
     public static function admin($file = '')
     {
-        return self::_buildPath(JPATH_ADMINISTRATOR . '/components/' . JInbound::COM, $file);
+        return self::_buildPath(JPATH_ADMINISTRATOR . '/components/' . JInboundHelper::COM, $file);
     }
 
     /**
