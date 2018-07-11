@@ -51,7 +51,7 @@ abstract class JHtmlJInbound
             }
         }
 
-        echo JHtmlJInboundHelper::_stateSelect('priority', $id, $campaign_id, $priority_id, $options, $canChange);
+        echo JHtmlJInbound::_stateSelect('priority', $id, $campaign_id, $priority_id, $options, $canChange);
     }
 
     static private function _stateSelect($state, $id, $campaign_id, $value, $options, $canChange)
@@ -90,7 +90,7 @@ abstract class JHtmlJInbound
             }
         }
 
-        echo JHtmlJInboundHelper::_stateSelect('status', $id, $campaign_id, $status_id, $options, $canChange);
+        echo JHtmlJInbound::_stateSelect('status', $id, $campaign_id, $status_id, $options, $canChange);
     }
 
     public static function leadupdate()
