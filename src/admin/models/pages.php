@@ -56,7 +56,7 @@ class JInboundModelPages extends JInboundListModel
             ->where(
                 array(
                     'Category.published = 1',
-                    'Category.extension = ' . $db->quote('com+jinbound')
+                    'Category.extension = ' . $db->quote('com_jinbound')
                 )
             )
             ->order(
