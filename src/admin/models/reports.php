@@ -77,6 +77,11 @@ class JInboundModelReports extends JInboundListModel
      */
     protected static $viewsToLeads = null;
 
+    public function getFilterForm($data = array(), $loadData = true)
+    {
+        // Disable this because there is no filter form for reports
+    }
+
     /**
      * @return object[]
      * @throws Exception
