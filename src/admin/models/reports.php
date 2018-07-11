@@ -471,7 +471,7 @@ class JInboundModelReports extends JInboundListModel
             static::$dateRange = $this->getDbo()->setQuery(
                 $this->getDbo()->getQuery(true)
                     ->select('MIN(t.created) AS start, NOW() AS end')
-                    ->from(sprintf('(%s)) as t', join(' UNION ', $unionQueries)))
+                    ->from(sprintf('(%s) as t', join(' UNION ', $unionQueries)))
             )->loadObject();
         }
 
