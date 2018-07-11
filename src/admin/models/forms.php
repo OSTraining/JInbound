@@ -30,13 +30,6 @@ class JInboundModelForms extends JInboundListModel
      */
     protected $context = 'com_jinbound.forms';
 
-    /**
-     * The category context (allows other extensions to derived from this model).
-     *
-     * @var        string
-     */
-    protected $_extension = 'com_jinbound';
-
     public function __construct($config = array())
     {
         if (empty($config['filter_fields'])) {
@@ -56,13 +49,19 @@ class JInboundModelForms extends JInboundListModel
 
     protected function getStoreId($id = '')
     {
-        $id .= ':' . $this->getState('filter.extension');
-        $id .= ':' . $this->getState('filter.published');
-        $id .= ':' . $this->getState('filter.access');
-        $id .= ':' . $this->getState('filter.parentId');
-        $id .= ':' . $this->getState('filter.formtype');
-        $id .= ':' . $this->getState('filter.default');
-        $id .= ':' . $this->getState('filter.search');
+        $id = join(
+            ':',
+            array(
+                $id,
+                'com_jinbound',
+                $this->getState('filter.published'),
+                $this->getState('filter.access'),
+                $this->getState('filter.parentId'),
+                $this->getState('filter.formtype'),
+                $this->getState('filter.default'),
+                $this->getState('filter.search')
+            )
+        );
 
         return parent::getStoreId($id);
     }

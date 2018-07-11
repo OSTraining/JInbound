@@ -31,13 +31,6 @@ class JInboundModelFields extends JInboundListModel
     protected $context = 'com_jinbound.fields';
 
     /**
-     * The category context (allows other extensions to derived from this model).
-     *
-     * @var string
-     */
-    protected $_extension = 'com_jinbound';
-
-    /**
      * Constructor.
      *
      * @param       array   An optional associative array of configuration settings.
@@ -85,10 +78,16 @@ class JInboundModelFields extends JInboundListModel
      */
     protected function getStoreId($id = '')
     {
-        $id .= ':' . $this->getState('filter.extension');
-        $id .= ':' . $this->getState('filter.published');
-        $id .= ':' . $this->getState('filter.access');
-        $id .= ':' . $this->getState('filter.parentId');
+        $id = join(
+            ':',
+            array(
+                $id,
+                'com_jinbound',
+                $this->getState('filter.published'),
+                $this->getState('filter.access'),
+                $this->getState('filter.parentId')
+            )
+        );
 
         return parent::getStoreId($id);
     }

@@ -31,13 +31,6 @@ class JInboundListModel extends JModelList
     protected $context = 'com_jinbound';
 
     /**
-     * The category context (allows other extensions to derived from this model).
-     *
-     * @var        string
-     */
-    protected $_extension = 'com_jinbound';
-
-    /**
      * @var string[]
      */
     protected $registryColumns = null;
@@ -48,11 +41,10 @@ class JInboundListModel extends JModelList
     public function getItems()
     {
         $items = parent::getItems();
-        // if we have no columns to alter, we're done
         if (!is_array($this->registryColumns) || empty($this->registryColumns)) {
             return $items;
         }
-        // alter items, if any, to convert json data to registries
+
         if (is_array($items) && !empty($items)) {
             foreach ($items as $idx => $item) {
                 foreach ($this->registryColumns as $col) {
@@ -65,6 +57,7 @@ class JInboundListModel extends JModelList
                 }
             }
         }
+
         return $items;
     }
 
@@ -75,14 +68,12 @@ class JInboundListModel extends JModelList
     public function getPublishedStatus()
     {
         $list = array(
-            JHtml::_('select.option', '', JText::_('COM_JINBOUND_SELECT_PUBLISHED'))
-        ,
-            JHtml::_('select.option', '1', JText::_('COM_JINBOUND_SELECT_PUBLISHED_OPTION_PUBLISHED'))
-        ,
-            JHtml::_('select.option', '0', JText::_('COM_JINBOUND_SELECT_PUBLISHED_OPTION_UNPUBLISHED'))
-        ,
+            JHtml::_('select.option', '', JText::_('COM_JINBOUND_SELECT_PUBLISHED')),
+            JHtml::_('select.option', '1', JText::_('COM_JINBOUND_SELECT_PUBLISHED_OPTION_PUBLISHED')),
+            JHtml::_('select.option', '0', JText::_('COM_JINBOUND_SELECT_PUBLISHED_OPTION_UNPUBLISHED')),
             JHtml::_('select.option', '-2', JText::_('COM_JINBOUND_SELECT_PUBLISHED_OPTION_TRASHED'))
         );
+
         return $list;
     }
 
@@ -125,9 +116,9 @@ class JInboundListModel extends JModelList
     {
         $db = JFactory::getDbo();
 
-        $tableName  = JFilterInput::getInstance()->clean($tableName, 'cmd');
-        $guest      = JText::_('COM_JINBOUND_AUTHOR_GUEST');
-        $system     = JText::_('COM_JINBOUND_AUTHOR_SYSTEM');
+        $tableName = JFilterInput::getInstance()->clean($tableName, 'cmd');
+        $guest     = JText::_('COM_JINBOUND_AUTHOR_GUEST');
+        $system    = JText::_('COM_JINBOUND_AUTHOR_SYSTEM');
 
         $column = $db->quoteName($tableName . '.' . $created_by);
 
@@ -254,35 +245,33 @@ class JInboundListModel extends JModelList
     }
 
     /**
-     * Method to auto-populate the model state.
+     * @param string $ordering
+     * @param string $direction
      *
-     * Note. Calling getState in this method will result in recursion.
+     * @throws Exception
      */
     protected function populateState($ordering = null, $direction = null)
     {
         parent::populateState($ordering, $direction);
 
-        // @deprecated
-        $this->setState('filter.extension', $this->_extension);
-        // force some state based on user permissions
         $user = JFactory::getUser();
-        // set the params in the state
         $this->setState('params', JInboundHelper::config());
-        // load the filter values
+
         $filters = (array)$this->getUserStateFromRequest($this->context . '.filter', 'filter', array(), 'array');
         $this->setState('filter', $filters);
-        // set the published status based on permissions and filters
+
         $published = array_key_exists('published', $filters)
             ? $filters['published']
             : $this->getUserStateFromRequest($this->context . '.filter.published', 'filter_published', '', 'string');
-        if (!$user->authorise('core.edit.state', JInboundHelper::COM)
-            && !$user->authorise('core.edit', JInboundHelper::COM)) {
-            // filter on published for those who do not have edit or edit.state rights.
+
+        if (!$user->authorise('core.edit.state', 'com_jinbound')
+            && !$user->authorise('core.edit', 'com_jinbound')) {
             $this->setState('filter.published', 1);
+
         } else {
             $this->setState('filter.published', $published);
         }
-        // set the search
+
         $search = array_key_exists('search', $filters)
             ? $filters['search']
             : $this->getUserStateFromRequest($this->context . '.filter.search', 'filter_search', '', 'string');
@@ -302,10 +291,16 @@ class JInboundListModel extends JModelList
      */
     protected function getStoreId($id = '')
     {
-        $id .= ':' . $this->getState('filter.extension');
-        $id .= ':' . $this->getState('filter.published');
-        $id .= ':' . $this->getState('filter.search');
-        $id .= ':' . serialize($this->getState('filter'));
+        $id = join(
+            ':',
+            array(
+                $id,
+                'com_jinbound',
+                $this->getState('filter.published'),
+                $this->getState('filter.search'),
+                serialize($this->getState('filter'))
+            )
+        );
 
         return parent::getStoreId($id);
     }
