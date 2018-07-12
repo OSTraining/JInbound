@@ -315,7 +315,7 @@ class JInboundControllerLead extends JInboundBaseController
         $dispatcher->trigger('onContentAfterSave', array('com_jinbound.contact', &$contact, $isNew));
 
         if (empty($contact->id)) {
-            //throw new RuntimeException('Error finding contact id', 500);
+            throw new RuntimeException('Error finding contact id', 500);
         }
 
         $priorityId = JInboundHelperPriority::getDefaultPriority();
@@ -334,10 +334,11 @@ class JInboundControllerLead extends JInboundBaseController
             ->execute();
 
         $insertObject = (object)array(
-            'contact_id'  => $db->quote($contact->id),
-            'campaign_id' => $db->quote($campaignId)
+            'contact_id'  => $contact->id,
+            'campaign_id' => $campaignId
         );
         $db->insertObject('#__jinbound_contacts_campaigns', $insertObject);
+
 
         JInboundHelperStatus::setContactStatusForCampaign($statusId, $contact->id, $campaignId, $userId);
         JInboundHelperPriority::setContactPriorityForCampaign($priorityId, $contact->id, $campaignId, $userId);
@@ -383,7 +384,7 @@ class JInboundControllerLead extends JInboundBaseController
 
         if (empty($sub)) {
             $insertObject = (object)array(
-                'contact_id' => (int)$contact->id,
+                'contact_id' => $contact->id,
                 'enabled'    => 1
             );
             $db->insertObject('#__jinbound_subscriptions', $insertObject);
