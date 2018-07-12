@@ -469,9 +469,7 @@ class JInboundControllerLead extends JInboundBaseController
 
         $app->setUserState('com_jinbound.page.data', array());
 
-        var_dump($message);
-        echo 'R: ' . $redirect;
-        //$app->redirect($redirect, $message, 'message');
+        $app->redirect($redirect, $message, 'message');
     }
 
     /**
