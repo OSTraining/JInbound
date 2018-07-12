@@ -46,6 +46,7 @@ class JInboundModelEmails extends JInboundListModel
      * Method to send all the emails that need to be sent
      *
      * @return void
+     * @throws Exception
      */
     public function send()
     {
@@ -56,6 +57,7 @@ class JInboundModelEmails extends JInboundListModel
 
     /**
      * @return void
+     * @throws Exception
      */
     public function sendCampaignEmails()
     {
