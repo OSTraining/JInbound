@@ -93,21 +93,21 @@ abstract class JInboundHelperStatus
         )->loadResult();
 
         if ((int)$current === (int)$status_id) {
-            // just pretend lol
             return true;
         }
 
-        // save the status
         $insertObject = (object)array(
-            'status_id' => $status_id,
+            'status_id'   => $status_id,
             'campaign_id' => $campaign_id,
-            'contact_id' => $contact_id,
-            'created' => JFactory::getDate()->toSql(),
-            'created_by' => JFactory::getUser($user_id)->get('id')
+            'contact_id'  => $contact_id,
+            'created'     => JFactory::getDate()->toSql(),
+            'created_by'  => JFactory::getUser($user_id)->get('id')
         );
-        $success = $db->insertObject('#__jinbound_contacts_statuses', $insertObject);
+        $success      = $db->insertObject('#__jinbound_contacts_statuses', $insertObject);
 
-        $result = $dispatcher->trigger('onJInboundChangeState', array(
+        $result = $dispatcher->trigger(
+            'onJInboundChangeState',
+            array(
                 'com_jinbound.contact.status',
                 $campaign_id,
                 array($contact_id),
@@ -115,12 +115,9 @@ abstract class JInboundHelperStatus
             )
         );
 
-        if (is_array($result) && !empty($result) && in_array(false, $result, true)) {
-            return false;
-        }
-
-        return $value;
+        return $success && !in_array(false, $result, true);
     }
+
 
     public static function getSelectOptions($final = false)
     {
