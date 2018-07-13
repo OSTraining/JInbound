@@ -37,8 +37,6 @@ class JInboundModelPage extends JInboundAdminModel
      */
     public function getForm($data = array(), $loadData = true)
     {
-        $app = JFactory::getApplication();
-
         // Get the form.
         $form = $this->loadForm(
             'com_jinbound.lead_front',
@@ -49,16 +47,27 @@ class JInboundModelPage extends JInboundAdminModel
             return false;
         }
 
-        $formid = intval($this->getItem($app->input->get('page_id', 0, 'int'))->formid);
+        $formId = (int)$this->getState('form.id');
+        if (!$formId) {
+            if ($pageId = (int)$this->getState('page.id')) {
+                if ($page = $this->getItem($pageId)) {
+                    $formId = $page->formid;
+                }
+            }
+        }
 
-        $fields = JInboundHelperForm::getFields($formid);
-        if (empty($fields)) {
+        if ($formId) {
+            $fields = JInboundHelperForm::getFields($formId);
+            if (empty($fields)) {
+                return $form;
+            }
+
+            $this->addFieldsToForm($fields, $form, JText::_('COM_JINBOUND_FIELDSET_LEAD'));
+
             return $form;
         }
 
-        $this->addFieldsToForm($fields, $form, JText::_('COM_JINBOUND_FIELDSET_LEAD'));
-
-        return $form;
+        throw new Exception(sprintf('Unable to find requested form (%s)', $formId));
     }
 
     /**
@@ -182,5 +191,18 @@ class JInboundModelPage extends JInboundAdminModel
         }
 
         return $this->data;
+    }
+
+    /**
+     * @throws Exception
+     */
+    protected function populateState()
+    {
+        $app = JFactory::getApplication();
+
+        $pageId = $app->input->getInt('page_id');
+        $this->setState('page.id', $pageId);
+
+        parent::populateState();
     }
 }

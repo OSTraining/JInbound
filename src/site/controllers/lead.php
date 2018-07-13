@@ -32,20 +32,28 @@ class JInboundControllerLead extends JInboundBaseController
      */
     public function save()
     {
+        /**
+         * @var JInboundModelPage $pageModel
+         * @var JApplicationSite  $app
+         */
         $app        = JFactory::getApplication();
         $db         = JFactory::getDbo();
         $dispatcher = JEventDispatcher::getInstance();
+        $pageModel  = $this->getModel('Page', 'JInboundModel');
+        $pageModel->getState();
 
-        $page_id = $app->input->post->getInt('page_id');
-        $rawForm = 'jform';
+        $redirect     = JUri::current();
+        $pageId       = $app->input->post->getInt('page_id');
+        $token        = $app->input->getCmd('token');
+        $userStateKey = $token ?: 'com_jinbound.page.data';
 
-        $token = $app->input->getCmd('token');
+        $formVar = 'jform';
         if (!empty($token)) {
-            $rawForm = preg_replace('/^(.*?)\.(.*?)\.(.*?)$/', '${1}_${3}', $token);
+            $formVar = preg_replace('/^(.*?)\.(.*?)\.(.*?)$/', '${1}_${3}', $token);
         }
-        $rawData        = $app->input->post->get($rawForm, array(), 'array');
+        $rawData        = $app->input->post->get($formVar, array(), 'array');
         $contactData    = array();
-        $conversionData = array('page_id' => $page_id);
+        $conversionData = $pageId ? array('page_id' => $pageId) : array();
 
         JPluginHelper::importPlugin('content');
 
@@ -66,15 +74,15 @@ class JInboundControllerLead extends JInboundBaseController
         }
 
         if ($token) {
-            // non-page form data comes from a token in the session
+            // non-page form info comes from a token in the session
 
-            $sessionData = JFactory::getSession()->get($token, false);
+            //$sessionData = JFactory::getSession()->get($token, false);
             if (!is_object($sessionData)) {
                 $tokenParts = explode('.', $token);
                 if (count($tokenParts) == 3) {
-                    list($module_name, $type, $module_id) = $token;
-                    $helper = JPATH_ROOT . '/modules/' . $module_name . '/helper.php';
-                    $class  = str_replace(' ', '', ucwords(str_replace('_', ' ', $module_name))) . 'Helper';
+                    list($moduleName, $type, $moduleId) = $tokenParts;
+                    $helper = JPATH_ROOT . '/modules/' . $moduleName . '/helper.php';
+                    $class  = str_replace(' ', '', ucwords(str_replace('_', ' ', $moduleName))) . 'Helper';
                     $method = 'get' . ucwords($type) . 'Data';
                     if (!class_exists($class)) {
                         if (file_exists($helper)) {
@@ -84,7 +92,7 @@ class JInboundControllerLead extends JInboundBaseController
 
                     if (class_exists($class) && method_exists($class, $method)) {
                         try {
-                            $module = JinboundHelperModule::getModuleObject($module_id);
+                            $module = JinboundHelperModule::getModuleObject($moduleId);
                             $params = $module->params instanceof Registry
                                 ? $module->params
                                 : new Registry($module->params);
@@ -102,6 +110,7 @@ class JInboundControllerLead extends JInboundBaseController
                 throw new RuntimeException("No data found for token", 404);
             }
 
+
             $after_submit_sendto = $sessionData->after_submit_sendto;
             $campaignId          = $sessionData->campaign_id;
             $formId              = $sessionData->form_id;
@@ -111,13 +120,21 @@ class JInboundControllerLead extends JInboundBaseController
             $send_to_url         = $sessionData->send_to_url;
             $sendto_message      = $sessionData->sendto_message;
 
+            $pageModel->setState('form.id', $formId);
+            $form = $pageModel->getForm();
+
         } else {
-            // Page oriented form data comes from the page model
-            /** @var JInboundModelPage $model */
-            $model    = $this->getModel('Page', 'JInboundModel');
-            $page     = $model->getItem($page_id);
-            $form     = $model->getForm();
-            $redirect = JRoute::_('index.php?option=com_jinbound&id=' . $page->id);
+            // Page oriented form comes from the page model
+            $page = $pageModel->getItem($pageId);
+            $form = $pageModel->getForm();
+
+            $redirectVars = array(
+                'option' => 'com_jinbound',
+                'view'   => 'page',
+                'id'     => $pageId,
+                'Itemid' => (int)$app->input->get('Itemid', 0)
+            );
+            $redirect     = JRoute::_('index.php?' . http_build_query($redirectVars));
 
             if (empty($page->id)) {
                 throw new Exception(JText::_('COM_JINBOUND_NO_PAGE_FOUND'), 404);
@@ -131,23 +148,14 @@ class JInboundControllerLead extends JInboundBaseController
             $page_name           = $page->formname;
             $send_to_url         = $page->send_to_url;
             $sendto_message      = $page->sendto_message;
+        }
 
-            if ($model->validate($form, $rawData) === false) {
-                if ($errors = $model->getErrors()) {
-                    $app->enqueueMessage(join('<br/>', $errors));
-                }
-                $app->setUserState('com_jinbound.page.data', $rawData);
-
-                $redirectVars = array(
-                    'option' => 'com_jinbound',
-                    'view'   => 'page',
-                    'id'     => $page_id,
-                    'Itemid' => (int)$app->input->get('Itemid', 0)
-                );
-                $app->redirect(JRoute::_('index.php?' . http_build_query($redirectVars)), false);
-                return;
+        if ($pageModel->validate($form, $rawData) === false) {
+            if ($errors = $pageModel->getErrors()) {
+                $app->enqueueMessage(join('<br/>', $errors));
             }
-
+            $app->setUserState($userStateKey, $rawData);
+            $app->redirect($redirect, false);
         }
 
         $formFields = JInboundHelperForm::getFields($formId);
@@ -362,13 +370,13 @@ class JInboundControllerLead extends JInboundBaseController
 
         $result = $dispatcher->trigger('onContentBeforeSave', array('com_jinbound.conversion', &$conversion, true));
         if (in_array(false, $result, true)) {
-            $this->throwError('Conversion Failed', $dispatcher->getErrors(), $page_id, $rawData);
+            $this->throwError('Conversion Failed', $dispatcher->getErrors(), $userStateKey, $rawData, $pageId);
             return;
         }
 
         // store the data
         if (!$conversion->store()) {
-            $this->throwError('Conversion data not saved', $conversion->getErrors(), $page_id, $rawData);
+            $this->throwError('Conversion data not saved', $conversion->getErrors(), $userStateKey, $rawData, $pageId);
             return;
         }
 
@@ -475,12 +483,13 @@ class JInboundControllerLead extends JInboundBaseController
     /**
      * @param string $text
      * @param array  $errors
-     * @param int    $pageId
+     * @param string $userStateKey
      * @param array  $pageData
+     * @param int    $pageId
      *
      * @throws Exception
      */
-    protected function throwError($text, array $errors, $pageId = null, $pageData = null)
+    protected function throwError($text, array $errors, $userStateKey = null, $pageData = null, $pageId = null)
     {
         $app = JFactory::getApplication();
 
@@ -489,8 +498,8 @@ class JInboundControllerLead extends JInboundBaseController
             'warning'
         );
 
-        if ($pageData) {
-            $app->setUserState('com_jinbound.page.data', $pageData);
+        if ($pageData && $userStateKey) {
+            $app->setUserState($userStateKey, $pageData);
         }
 
         if ($pageId) {
