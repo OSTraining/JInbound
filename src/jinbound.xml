@@ -101,12 +101,6 @@
                        element="allediaframework"
                        downgrade="false">AllediaFramework</extension>
 
-            <!-- @TODO: Resolve free vs Pro for form module -->
-            <!--extension type="module"
-                       element="jinbound_form"
-                       uninstall="true"
-                       client="site">mod_jinbound_form</extension-->
-
             <extension type="plugin"
                        group="content"
                        publish="true"
