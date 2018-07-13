@@ -99,8 +99,9 @@ class JInboundModelEmails extends JInboundListModel
             )
             ->from('#__jinbound_contacts AS Contact')
             ->leftJoin('#__jinbound_conversions AS Conversion ON Conversion.contact_id = Contact.id')
-            ->leftJoin('#__jinbound_pages AS Page ON Conversion.page_id = Page.id')
-            ->leftJoin('#__jinbound_campaigns AS Campaign ON Page.campaign = Campaign.id')
+            ->leftJoin('#__jinbound_contacts_campaigns AS ContactsCampaigns ON ContactsCampaigns.contact_id = Contact.id AND ContactsCampaigns.enabled = 1')
+            ->leftJoin('#__jinbound_campaigns AS Campaign ON ContactsCampaigns.campaign_id = Campaign.id')
+            ->leftJoin('#__jinbound_pages AS Page ON Conversion.page_id = Page.id AND Page.published = 1')
             ->leftJoin('#__jinbound_emails AS Email ON Email.campaign_id = Campaign.id')
             ->leftJoin('#__jinbound_emails_records AS Record ON Record.lead_id = Contact.id AND Record.email_id = Email.id')
             ->leftJoin('#__jinbound_subscriptions AS Sub ON Contact.id = Sub.contact_id')
@@ -111,7 +112,6 @@ class JInboundModelEmails extends JInboundListModel
                     'DATE_ADD(Conversion.created, INTERVAL Email.sendafter ' . $interval . ') < UTC_TIMESTAMP()',
                     'Email.type = ' . $db->quote('campaign'),
                     'Email.published = 1',
-                    'Page.published = 1',
                     'Campaign.published = 1',
                     'Sub.enabled <> 0'
                 )
