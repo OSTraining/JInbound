@@ -76,7 +76,7 @@ class JInboundControllerLead extends JInboundBaseController
         if ($token) {
             // non-page form info comes from a token in the session
 
-            //$sessionData = JFactory::getSession()->get($token, false);
+            $sessionData = JFactory::getSession()->get($token, false);
             if (!is_object($sessionData)) {
                 $tokenParts = explode('.', $token);
                 if (count($tokenParts) == 3) {
