@@ -245,7 +245,6 @@ class JInboundModelEmails extends JInboundListModel
                 }
                 $parts   = explode('.', $tag);
                 $context = array_shift($parts);
-                $params  = false;
                 $value   = false;
                 if ($out) {
                     echo('<h4>Context</h4><pre>' . print_r($context, 1) . '</pre>');
@@ -261,26 +260,27 @@ class JInboundModelEmails extends JInboundListModel
                         // arrays should have the key available
                         if (is_array($value) && array_key_exists($part, $value)) {
                             $value = $value[$part];
-                        } // JRegistry uses get() for values
-                        else {
+                        } else {
+                            // JRegistry uses get() for values
                             if (is_object($value) && $value instanceof JRegistry) {
                                 $value = $value->get($part);
-                            } // normal object
-                            else {
+                            } else {
+                                // normal object
                                 if (is_object($value) && property_exists($value, $part)) {
                                     $value = $value->{$part};
-                                } // object with this method
-                                else {
+                                } else {
+                                    // object with this method
                                     if (is_object($value) && method_exists($value, $part)) {
                                         $value = call_user_func(array($value, $part));
-                                    } // don't know what to do here...
-                                    else {
+                                    } else {
+                                        // don't know what to do here...
                                         $value = '';
                                         break;
                                     }
                                 }
                             }
                         }
+
                     } else {
                         $value = $object->{$part};
                     }
