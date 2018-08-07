@@ -15,10 +15,19 @@
  * may be added to this header as long as no information is deleted.
  */
 
+use Joomla\Utilities\ArrayHelper;
+
 defined('JPATH_PLATFORM') or die;
 
 class JInboundControllerContact extends JInboundFormController
 {
+    /**
+     * @param string $key
+     * @param string $urlVar
+     *
+     * @return bool
+     * @throws Exception
+     */
     public function edit($key = 'id', $urlVar = 'id')
     {
         if (!JFactory::getUser()->authorise('core.manage', 'com_jinbound.contact')) {
@@ -30,55 +39,59 @@ class JInboundControllerContact extends JInboundFormController
 
     public function status()
     {
-        $this->_changeContact('status');
+        $this->changeContact('status');
     }
 
-    private function _changeContact($how)
+    /**
+     * @param string $how
+     *
+     * @throws Exception
+     */
+    protected function changeContact($how)
     {
-        $app = JFactory::getApplication();
-        $id = $app->input->get('id');
+        $app      = JFactory::getApplication();
+        $id       = $app->input->get('id');
         $campaign = $app->input->get('campaign_id');
-        $value = $app->input->get('value');
-        $model = $this->getModel();
+        $value    = $app->input->get('value');
+        $model    = $this->getModel();
         $model->$how($id, $campaign, $value);
     }
 
     public function priority()
     {
-        $this->_changeContact('priority');
+        $this->changeContact('priority');
     }
 
     /**
-     * Saves campaign, status etc.
-     *
-     * (non-PHPdoc)
-     * @see JControllerForm::postSaveHook()
+     * @param JModelLegacy $model
+     * @param array        $validData
      */
-    protected function postSaveHook($model, $validData = array())
+    protected function postSaveHook(JModelLegacy $model, $validData = array())
     {
         // only operate on valid records
         $contact = (int)$model->getState('contact.id');
         if ($contact) {
             // clear this contact's campaigns
             $db = JFactory::getDbo();
-            $db->setQuery($db->getQuery(true)
-                ->delete('#__jinbound_contacts_campaigns')
-                ->where('contact_id = ' . $db->quote($contact))
-            )->query();
+            $db->setQuery(
+                $db->getQuery(true)
+                    ->delete('#__jinbound_contacts_campaigns')
+                    ->where('contact_id = ' . $db->quote($contact))
+            )
+                ->execute();
 
             // Get a list of all active campaign ID's
-            $query = $db->getQuery(true)
+            $query         = $db->getQuery(true)
                 ->select('id')
                 ->from('#__jinbound_campaigns')
                 ->where('published = 1');
-            $db->setQuery($query);
-            $all_campaigns = $db->loadColumn();
+            $all_campaigns = $db->setQuery($query)->loadColumn();
 
             // ensure campaigns is an array
-            $campaigns = is_array($validData['_campaigns']) ? $validData['_campaigns'] : (
-            empty($validData['_campaigns']) ? array() : array($validData['_campaigns'])
-            );
-            JArrayHelper::toInteger($campaigns);
+            $campaigns = is_array($validData['_campaigns'])
+                ? $validData['_campaigns']
+                : (empty($validData['_campaigns']) ? array() : array($validData['_campaigns']));
+            ArrayHelper::toInteger($campaigns);
 
             // Get a list of active campaign ID's to which the lead does not belong
             //  either because the lead never belonged to that campaign or was removed
@@ -94,23 +107,26 @@ class JInboundControllerContact extends JInboundFormController
                     $query->values($contact . ',' . $campaign);
                 }
 
-                $db->setQuery($query)->query();
+                $db->setQuery($query)->execute();
 
                 // find campaigns this contact has no status for yet
-                $new_campaigns = $db->setQuery($db->getQuery(true)
-                    ->select('campaign_id')
-                    ->from('#__jinbound_contacts_campaigns')
-                    ->where('campaign_id NOT IN(('
-                        . $db->getQuery(true)
-                            ->select('DISTINCT campaign_id')
-                            ->from('#__jinbound_contacts_statuses')
-                            ->where('contact_id = ' . $contact)
-                        . '))')
+                $new_campaigns = $db->setQuery(
+                    $db->getQuery(true)
+                        ->select('campaign_id')
+                        ->from('#__jinbound_contacts_campaigns')
+                        ->where(
+                            sprintf(
+                                'campaign_id NOT IN (%s)',
+                                $db->getQuery(true)
+                                    ->select('DISTINCT campaign_id')
+                                    ->from('#__jinbound_contacts_statuses')
+                                    ->where('contact_id = ' . $contact)
+                            )
+                        )
                 )->loadColumn();
 
-                // this user does not have a status for these campaigns - add a default status for each
                 if (!empty($new_campaigns)) {
-                    // the default status
+                    // this user does not have a status for these campaigns - add a default status for each
                     $status_id = JInboundHelperStatus::getDefaultStatus();
                     sort($new_campaigns);
 
@@ -120,16 +136,21 @@ class JInboundControllerContact extends JInboundFormController
                 }
 
                 // find campaigns this contact has no priority for yet
-                $new_campaigns = $db->setQuery($db->getQuery(true)
-                    ->select('campaign_id')
-                    ->from('#__jinbound_contacts_campaigns')
-                    ->where('campaign_id NOT IN(('
-                        . $db->getQuery(true)
-                            ->select('DISTINCT campaign_id')
-                            ->from('#__jinbound_contacts_priorities')
-                            ->where('contact_id = ' . $contact)
-                        . '))')
-                )->loadColumn();
+                $new_campaigns = $db->setQuery(
+                    $db->getQuery(true)
+                        ->select('campaign_id')
+                        ->from('#__jinbound_contacts_campaigns')
+                        ->where(
+                            sprintf(
+                                'campaign_id NOT IN (%s)',
+                                $db->getQuery(true)
+                                    ->select('DISTINCT campaign_id')
+                                    ->from('#__jinbound_contacts_priorities')
+                                    ->where('contact_id = ' . $contact)
+                            )
+                        )
+                )
+                    ->loadColumn();
 
                 // this user does not have a status for these campaigns - add a default status for each
                 if (!empty($new_campaigns)) {
@@ -155,17 +176,17 @@ class JInboundControllerContact extends JInboundFormController
                 // Get a list of active pages associated with each added campaign
                 //  along with a list of conversions associated with those pages
                 foreach ($campaigns as $campaign) {
-                    $pages = $this->_getPages($campaign);
+                    $pages = $this->getPages($campaign);
 
-                    $page_ids = array();
+                    $pageIds = array();
                     foreach ($pages as $page) {
-                        $page_ids[] = $page->id;
+                        $pageIds[] = $page->id;
                     }
 
-                    $conversions = $this->_getConversions($contact, $page_ids);
+                    $conversions = $this->getConversions($contact, $pageIds);
 
-                    // If there are no conversions, create 1
                     if (empty($conversions)) {
+                        // No conversions, create one
                         if (!empty($pages)) {
                             // We can only create a valid conversion record if there is
                             //  a page associated with this campaign
@@ -180,83 +201,101 @@ class JInboundControllerContact extends JInboundFormController
                             $never = "'0000-00-00 00:00:00'";
 
                             // Insert a new conversion record
-                            $query = $db->getQuery(true)
-                                ->insert('#__jinbound_conversions')
-                                ->columns(array(
-                                    'page_id',
-                                    'contact_id',
-                                    'published',
-                                    'created',
-                                    'created_by',
-                                    'modified',
-                                    'modified_by',
-                                    'checked_out',
-                                    'checked_out_time',
-                                    'formdata'
-                                ))
-                                ->values($page_id . ', ' . $contact . ', 1, ' . $now . ', ' . JFactory::getUser()->id . ', ' . $never . ', 0, 0, ' . $never . ', \'' . json_encode($formdata) . '\'');
-                            $db->setQuery($query)->query();
+                            $insertConversion = (object)array(
+                                'page_id'    => $page_id,
+                                'contact_id' => $contact,
+                                'published'  => 1,
+                                'created'    => $now,
+                                'created_by' => JFactory::getUser()->id,
+                                'formdata'   => json_encode($formdata)
+                            );
+                            $db->insertObject('#__jinbound_conversions', $insertConversion);
                         }
                     }
                 }
             }
-            // If there are removed campaigns, we need to also remove their conversions if they exist
-            if (!empty($removed_campaigns)) {
-                // Get a list of active pages associated with each added campaign
-                //  along with a list of conversions associated with those pages
-                foreach ($removed_campaigns as $campaign) {
-                    $pages = $this->_getPages($campaign);
 
-                    $page_ids = array();
+            if (!empty($removed_campaigns)) {
+                /*
+                 * There are removed campaigns, we need to also remove their conversions if they exist
+                 * Get a list of active pages associated with each added campaign
+                 * along with a list of conversions associated with those pages
+                 */
+                foreach ($removed_campaigns as $campaign) {
+                    $pages = $this->getPages($campaign);
+
+                    $pageIds = array();
                     foreach ($pages as $page) {
-                        $page_ids[] = $page->id;
+                        $pageIds[] = $page->id;
                     }
 
-                    $conversions = $this->_getConversions($contact, $page_ids);
+                    $conversions = $this->getConversions($contact, $pageIds);
 
                     if (!empty($conversions)) {
                         // Remove the conversions associated with the removed campaigns
-                        $db->setQuery($db->getQuery(true)
-                            ->delete('#__jinbound_conversions')
-                            ->where('id IN (' . implode(',', $conversions) . ')')
-                        )->query();
+                        $db->setQuery(
+                            $db->getQuery(true)
+                                ->delete('#__jinbound_conversions')
+                                ->where(
+                                    sprintf(
+                                        'id IN (%s)',
+                                        implode(',', $conversions)
+                                    )
+                                )
+                        )->execute();
                     }
                 }
             }
         }
     }
 
-    private function _getPages($campaign)
+    /**
+     * @param int $campaign
+     *
+     * @return object[]
+     */
+    protected function getPages($campaign)
     {
         $db = JFactory::getDbo();
 
         $query = $db->getQuery(true)
             ->select('id, formid')
             ->from('#__jinbound_pages')
-            ->where('campaign = ' . $campaign)
-            ->where('published = 1');
-        $db->setQuery($query);
-        $pages = $db->loadObjectList();
+            ->where(
+                array(
+                    'campaign = ' . (int)$campaign,
+                    'published = 1'
+                )
+            );
+        $pages = $db->setQuery($query)->loadObjectList();
 
         return $pages;
     }
 
-    private function _getConversions($contact, $page_ids)
+    /**
+     * @param int   $contact
+     * @param int[] $pageIds
+     *
+     * @return int[]
+     */
+    protected function getConversions($contact, array $pageIds)
     {
         $db = JFactory::getDbo();
 
-        if (!empty($page_ids)) {
-            $query = $db->getQuery(true)
+        if ($pageIds) {
+            $pageIds     = array_filter(array_map('intval', $pageIds));
+            $query       = $db->getQuery(true)
                 ->select('id')
                 ->from('#__jinbound_conversions')
-                ->where('contact_id = ' . $contact)
-                ->where('page_id IN (' . implode(',', $page_ids) . ')');
-            $db->setQuery($query);
-            $conversions = $db->loadColumn();
-        } else {
-            $conversions = array();
+                ->where(
+                    array(
+                        'contact_id = ' . (int)$contact,
+                        sprintf('page_id IN (%s)', implode(',', $pageIds))
+                    )
+                );
+            $conversions = $db->setQuery($query)->loadColumn();
         }
 
-        return $conversions;
+        return empty($conversions) ? $conversions : array();
     }
 }
