@@ -28,11 +28,6 @@ class JInboundViewContacts extends JInboundListView
      */
     public function display($tpl = null)
     {
-        $campaigns  = $this->get('CampaignsOptions');
-        $pages      = $this->get('PagesOptions');
-        $statuses   = JInboundHelperStatus::getSelectOptions();
-        $priorities = JInboundHelperPriority::getSelectOptions();
-        if (count($errors = $this->get('Errors'))) {
         /** @var JInboundModelContacts $model */
         $model = $this->getModel();
 
@@ -45,23 +40,6 @@ class JInboundViewContacts extends JInboundListView
         if (!$campaigns) {
             $this->app->enqueueMessage(JText::_('COM_JINBOUND_NO_CAMPAIGNS_YET'), 'warning');
         }
-        if (!JInboundHelper::version()->isCompatible('3.0.0')) {
-            array_unshift($statuses, (object)array('value' => '', 'text' => JText::_('COM_JINBOUND_SELECT_STATUS')));
-            array_unshift($priorities,
-                (object)array('value' => '', 'text' => JText::_('COM_JINBOUND_SELECT_PRIORITY')));
-        }
-
-        $filter = (array)$this->app->getUserStateFromRequest('com_jinbound.contacts.filter', 'filter', array(),
-            'array');
-
-        $this->addFilter(JText::_('COM_JINBOUND_SELECT_CAMPAIGN'), 'filter[campaign]', $campaigns,
-            array_key_exists('campaign', $filter) ? $filter['campaign'] : '');
-        $this->addFilter(JText::_('COM_JINBOUND_SELECT_PAGE'), 'filter[page]', $pages,
-            array_key_exists('page', $filter) ? $filter['page'] : '');
-        $this->addFilter(JText::_('COM_JINBOUND_SELECT_STATUS'), 'filter[status]', $statuses,
-            array_key_exists('status', $filter) ? $filter['status'] : '', false);
-        $this->addFilter(JText::_('COM_JINBOUND_SELECT_PRIORITY'), 'filter[priority]', $priorities,
-            array_key_exists('priority', $filter) ? $filter['priority'] : '', false);
 
         parent::display($tpl);
     }

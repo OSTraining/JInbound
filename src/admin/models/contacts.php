@@ -34,15 +34,13 @@ class JInboundModelContacts extends JInboundListModel
     {
         if (empty($config['filter_fields'])) {
             $config['filter_fields'] = array(
-                'Contact.published',
-                'latest',
-                'full_name',
-                'Contact.email',
-                'Contact.created',
-                'Priority.name',
-                'Priority.name',
-                'Campaign.name',
-                'Status.name'
+                'published',
+                'campaign',
+                'page',
+                'status',
+                'priority',
+                'start',
+                'end'
             );
         }
 
