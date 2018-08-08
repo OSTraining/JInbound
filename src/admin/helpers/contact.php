@@ -19,14 +19,14 @@ defined('JPATH_PLATFORM') or die;
 
 abstract class JInboundHelperContact
 {
-    public static function getContactEmails($contact_id)
+    public static function getContactEmails($contactId)
     {
         $db = JFactory::getDbo();
         try {
             $emails = $db->setQuery($db->getQuery(true)
                 ->select('Record.*, Version.subject, Version.htmlbody, Version.plainbody, Email.campaign_id')
                 ->from('#__jinbound_emails_records AS Record')
-                ->where('Record.lead_id = ' . $db->quote($contact_id))
+                ->where('Record.lead_id = ' . $db->quote($contactId))
                 ->leftJoin('#__jinbound_emails_versions AS Version ON Version.id = Record.version_id')
                 ->leftJoin('#__jinbound_emails AS Email ON Record.email_id = Email.id')
                 ->group('Record.id')
@@ -41,31 +41,42 @@ abstract class JInboundHelperContact
     /**
      * Load conversions for a given contact id
      *
-     * @param unknown_type $contact_id
+     * @param int $contactId
+     *
+     * @return object[]
      */
-    public static function getContactConversions($contact_id)
+    public static function getContactConversions($contactId)
     {
         $db = JFactory::getDbo();
         try {
-            $conversions = $db->setQuery($db->getQuery(true)
-                ->select('Conversion.*')
-                ->select('Page.name AS page_name')
-                ->select(sprintf('IF(Conversion.created_by = 0, %s, User.name) AS created_by_name',
-                    $db->quote('guest')))
-                ->from('#__jinbound_conversions AS Conversion')
-                ->leftJoin('#__jinbound_pages AS Page ON Page.id = Conversion.page_id')
-                ->leftJoin('#__users AS User ON User.id = Conversion.created_by')
-                ->where('Conversion.contact_id = ' . $db->quote($contact_id))
-                ->group('Conversion.id')
-            )->loadObjectList();
+            $conversions = $db->setQuery(
+                $db->getQuery(true)
+                    ->select(
+                        array(
+                            'Conversion.*',
+                            'Page.name AS page_name',
+                            sprintf(
+                                'IF(Conversion.created_by = 0, %s, User.name) AS created_by_name',
+                                $db->quote('guest')
+                            )
+                        )
+                    )
+                    ->from('#__jinbound_conversions AS Conversion')
+                    ->leftJoin('#__jinbound_pages AS Page ON Page.id = Conversion.page_id')
+                    ->leftJoin('#__users AS User ON User.id = Conversion.created_by')
+                    ->where('Conversion.contact_id = ' . (int)$contactId)
+                    ->group('Conversion.id')
+            )
+                ->loadObjectList();
+
+            if ($conversions) {
+                foreach ($conversions as &$conversion) {
+                    $conversion->formdata = (array)json_decode($conversion->formdata);
+                }
+            }
+
         } catch (Exception $e) {
             $conversions = array();
-        }
-
-        if (!empty($conversions)) {
-            foreach ($conversions as &$conversion) {
-                $conversion->formdata = (array)json_decode($conversion->formdata);
-            }
         }
 
         return $conversions;
@@ -74,10 +85,10 @@ abstract class JInboundHelperContact
     /**
      * Load campaigns for a given contact
      *
-     * @param int  $contact_id
+     * @param int  $contactId
      * @param bool $previous
      */
-    public static function getContactCampaigns($contact_id, $previous = false)
+    public static function getContactCampaigns($contactId, $previous = false)
     {
         $db    = JFactory::getDbo();
         $query = $db->getQuery(true)
@@ -90,14 +101,14 @@ abstract class JInboundHelperContact
                     . $db->getQuery(true)
                         ->select('DISTINCT ContactCampaigns.campaign_id')
                         ->from('#__jinbound_contacts_campaigns AS ContactCampaigns')
-                        ->where('ContactCampaigns.contact_id = ' . $db->quote($contact_id))
+                        ->where('ContactCampaigns.contact_id = ' . $db->quote($contactId))
                     . '))'
                 )
                 ->where('Campaign.id IN(('
                     . $db->getQuery(true)
                         ->select('DISTINCT ContactStatuses.campaign_id')
                         ->from('#__jinbound_contacts_statuses AS ContactStatuses')
-                        ->where('ContactStatuses.contact_id = ' . $db->quote($contact_id))
+                        ->where('ContactStatuses.contact_id = ' . $db->quote($contactId))
                     . '))'
                 );
         } // current campaigns
@@ -106,7 +117,7 @@ abstract class JInboundHelperContact
                 . $db->getQuery(true)
                     ->select('ContactCampaigns.campaign_id')
                     ->from('#__jinbound_contacts_campaigns AS ContactCampaigns')
-                    ->where('ContactCampaigns.contact_id = ' . $db->quote($contact_id))
+                    ->where('ContactCampaigns.contact_id = ' . $db->quote($contactId))
                 . '))'
             );
         }
@@ -118,7 +129,7 @@ abstract class JInboundHelperContact
         return $campaigns;
     }
 
-    public static function getContactStatuses($contact_id)
+    public static function getContactStatuses($contactId)
     {
         $db = JFactory::getDbo();
         try {
@@ -129,7 +140,7 @@ abstract class JInboundHelperContact
                 ->from('#__jinbound_contacts_statuses AS ContactStatus')
                 ->leftJoin('#__jinbound_lead_statuses AS Status ON Status.id = ContactStatus.status_id')
                 ->leftJoin('#__users AS User ON User.id = ContactStatus.created_by')
-                ->where('ContactStatus.contact_id = ' . $db->quote($contact_id))
+                ->where('ContactStatus.contact_id = ' . $db->quote($contactId))
                 ->order('ContactStatus.created DESC')
             )->loadObjectList();
             if (empty($statuses)) {
@@ -149,7 +160,7 @@ abstract class JInboundHelperContact
         return $list;
     }
 
-    public static function getContactPriorities($contact_id)
+    public static function getContactPriorities($contactId)
     {
         $db = JFactory::getDbo();
         try {
@@ -160,7 +171,7 @@ abstract class JInboundHelperContact
                 ->from('#__jinbound_contacts_priorities AS ContactPriority')
                 ->leftJoin('#__jinbound_priorities AS Priority ON Priority.id = ContactPriority.priority_id')
                 ->leftJoin('#__users AS User ON User.id = ContactPriority.created_by')
-                ->where('ContactPriority.contact_id = ' . $db->quote($contact_id))
+                ->where('ContactPriority.contact_id = ' . $db->quote($contactId))
                 ->order('ContactPriority.created DESC')
             )->loadObjectList();
             if (empty($priorities)) {

@@ -20,21 +20,29 @@ defined('JPATH_PLATFORM') or die;
 class JInboundViewContacts extends JInboundListView
 {
     /**
+     * @param string $tpl
+     * @param bool   $safeparams
      *
-     *
-     * (non-PHPdoc)
-     * @see JInboundListView::display()
+     * @return void
+     * @throws Exception
      */
-    function display($tpl = null, $safeparams = false)
+    public function display($tpl = null)
     {
         $campaigns  = $this->get('CampaignsOptions');
         $pages      = $this->get('PagesOptions');
         $statuses   = JInboundHelperStatus::getSelectOptions();
         $priorities = JInboundHelperPriority::getSelectOptions();
         if (count($errors = $this->get('Errors'))) {
+        /** @var JInboundModelContacts $model */
+        $model = $this->getModel();
+
+        $campaigns = $model->getCampaignsOptions();
+
+        if ($errors = $model->getErrors()) {
             throw new Exception(implode('<br />', $errors), 500);
         }
-        if (1 >= count($campaigns)) {
+
+        if (!$campaigns) {
             $this->app->enqueueMessage(JText::_('COM_JINBOUND_NO_CAMPAIGNS_YET'), 'warning');
         }
         if (!JInboundHelper::version()->isCompatible('3.0.0')) {
@@ -55,7 +63,7 @@ class JInboundViewContacts extends JInboundListView
         $this->addFilter(JText::_('COM_JINBOUND_SELECT_PRIORITY'), 'filter[priority]', $priorities,
             array_key_exists('priority', $filter) ? $filter['priority'] : '', false);
 
-        return parent::display($tpl, $safeparams);
+        parent::display($tpl);
     }
 
     public function addToolBar()

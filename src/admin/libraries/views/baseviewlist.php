@@ -72,6 +72,7 @@ class JInboundListView extends JInboundView
             throw new Exception(JText::_('JERROR_ALERTNOAUTHOR'), 403);
         }
 
+        /** @var JInboundListModel $model */
         $model = $this->getModel();
 
         $this->items         = $model->getItems();
