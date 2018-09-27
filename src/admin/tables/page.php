@@ -79,6 +79,18 @@ class JInboundTablePage extends JInboundTable
             return false;
         }
 
+        if (!empty($this->formid)) {
+            $db = $this->getDbo();
+
+            $this->formname = $db->setQuery(
+                $db->getQuery(true)
+                    ->select('title')
+                    ->from('#__jinbound_forms')
+                    ->where('id = ' . (int)$this->formid)
+            )
+                ->loadResult();
+        }
+
         return parent::store($updateNulls);
     }
 
