@@ -403,8 +403,9 @@ class JInboundModelReports extends JInboundListModel
             try {
                 $startdate = new DateTime($start);
                 $query->where('created > ' . $this->getDbo()->quote($startdate->format('Y-m-d H:i:s')));
+
             } catch (Exception $ex) {
-                // nothing
+                // ignore badly formed date string
             }
         }
 
@@ -412,8 +413,9 @@ class JInboundModelReports extends JInboundListModel
             try {
                 $enddate = new DateTime($end);
                 $query->where('created < ' . $this->getDbo()->quote($enddate->format('Y-m-d H:i:s')));
+
             } catch (Exception $ex) {
-                // nothing
+                // ignore badly formed date string
             }
         }
 
@@ -421,6 +423,7 @@ class JInboundModelReports extends JInboundListModel
         if (!empty($campaign)) {
             $inner->where('a.campaign_id = ' . (int)$campaign);
         }
+
         $page = $this->getState('filter.page');
         if (!empty($page)) {
             $inner->where(
