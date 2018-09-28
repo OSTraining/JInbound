@@ -19,10 +19,15 @@ defined('JPATH_PLATFORM') or die;
 
 class JInboundControllerReports extends JInboundBaseController
 {
+    /**
+     * @return void
+     */
     public function plot()
     {
-        $data  = array();
+        /** @var JInboundModelReports $model */
         $model = $this->getModel('Reports');
+
+        $data = array();
         try {
             $state               = $model->getState();
             $start               = $state->get('filter.start', null);
@@ -37,31 +42,47 @@ class JInboundControllerReports extends JInboundBaseController
         } catch (Exception $e) {
             $this->send403($e);
         }
-        // TODO the rest
-        $this->_json($data);
+
+        $this->sendJson($data);
     }
 
+    /**
+     * @param Exception $exception
+     */
     private function send403(Exception $exception)
     {
         if (!headers_sent()) {
             $protocol = (isset($_SERVER['SERVER_PROTOCOL']) ? $_SERVER['SERVER_PROTOCOL'] : 'HTTP/1.0');
             header($protocol . ' 403 Forbidden');
         }
-        $this->_json(array('error' => $exception->getMessage()));
+
+        $this->sendJson(array('error' => $exception->getMessage()));
     }
 
-    private function _json($data, $headers = true)
+    /**
+     * @param mixed $data
+     * @param bool  $headers
+     *
+     * @return void
+     */
+    private function sendJson($data, $headers = true)
     {
         if ($headers) {
             header('Content-Type: application/json');
         }
+
         echo json_encode($data);
-        die;
+        jexit();
     }
 
+    /**
+     * @return void
+     */
     public function glance()
     {
+        /** @var JinboundModelReports $model */
         $model = $this->getModel('Reports');
+
         try {
             $state       = $model->getState();
             $start       = $state->get('filter.start', null);
@@ -69,60 +90,46 @@ class JInboundControllerReports extends JInboundBaseController
             $hits        = $model->getLandingPageHits($start, $end);
             $leads       = $model->getLeadsByCreationDate($start, $end);
             $conversions = $model->getConversionsByDate($start, $end);
-            // initial data
+
             $data = array(
-                'views'            => 0
-            ,
-                'leads'            => 0
-            ,
-                'views-to-leads'   => 0
-            ,
-                'conversion-count' => 0
-            ,
-                'conversion-rate'  => 0
-            ,
+                'views'            => 0,
+                'leads'            => 0,
+                'views-to-leads'   => 0,
+                'conversion-count' => 0,
+                'conversion-rate'  => 0,
                 '__raw'            => array(
-                    'hits'        => $hits
-                ,
-                    'leads'       => $leads
-                ,
-                    'conversions' => $conversions
-                ,
-                    'start'       => $start
-                ,
+                    'hits'        => $hits,
+                    'leads'       => $leads,
+                    'conversions' => $conversions,
+                    'start'       => $start,
                     'end'         => $end
                 )
             );
-            // add values
+
             foreach ($hits as $hit) {
                 $data['views'] += (int)$hit[1];
             }
+
             foreach ($leads as $lead) {
                 $data['leads'] += (int)$lead[1];
             }
+
             foreach ($conversions as $conversion) {
                 $data['conversion-count'] += (int)$conversion[1];
             }
-            // calc percents
+
             if (0 < $data['views']) {
                 $data['views-to-leads']  = ($data['leads'] / $data['views']) * 100;
                 $data['conversion-rate'] = ($data['conversion-count'] / $data['views']) * 100;
             }
+
             $data['views-to-leads']  = number_format($data['views-to-leads'], 2) . '%';
             $data['conversion-rate'] = number_format($data['conversion-rate'], 2) . '%';
+
         } catch (Exception $e) {
             $this->send403($e);
         }
-        $this->_json($data);
-    }
 
-    private function _getDateTimeFromInput($string)
-    {
-        try {
-            $date = new DateTime(JFactory::getApplication()->input->get($string, ''));
-        } catch (Exception $e) {
-            return false;
-        }
-        return $date;
+        $this->sendJson($data);
     }
 }
