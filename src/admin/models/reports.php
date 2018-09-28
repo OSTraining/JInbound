@@ -451,7 +451,6 @@ class JInboundModelReports extends JInboundListModel
                     break;
                 }
             }
-            reset($days);
             $entry[] = $count;
             $data[]  = $entry;
         }
