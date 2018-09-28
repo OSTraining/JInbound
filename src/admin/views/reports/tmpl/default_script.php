@@ -478,7 +478,9 @@ JText::script('COM_JINBOUND_GOAL_COMPLETION_RATE');
                         return;
                     }
 
-                    for (var i = 0, a = ['views', 'leads', 'views-to-leads', 'conversion-count', 'conversion-rate'], n = a.length; n > i; i++) {
+                    var a = ['views', 'leads', 'views-to-leads', 'conversion-count', 'conversion-rate'];
+
+                    for (var i = 0; a.length > i; i++) {
                         $('#jinbound-reports-glance-' + a[i]).text(data[a[i]]);
                     }
                 }
