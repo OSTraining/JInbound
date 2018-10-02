@@ -62,7 +62,7 @@ class JInboundModelContacts extends JInboundListModel
                 $item->priorities         = JInboundHelperContact::getContactPriorities($item->id);
 
                 $item->forms = array();
-                if (!empty($item->conversions)) {
+                if ($item->conversions) {
                     foreach ($item->conversions as $conversion) {
                         $item->forms[$conversion->page_id] = $conversion->page_name;
                     }
@@ -91,6 +91,9 @@ class JInboundModelContacts extends JInboundListModel
         return $options;
     }
 
+    /**
+     * @return object[]
+     */
     public function getPagesOptions()
     {
         $query = $this->getDbo()->getQuery(true)
@@ -98,13 +101,16 @@ class JInboundModelContacts extends JInboundListModel
             ->from('#__jinbound_pages AS Page')
             ->where('Page.published = 1')
             ->group('Page.id');
+
         return $this->getOptionsFromQuery($query, JText::_('COM_JINBOUND_SELECT_PAGE'));
     }
 
     /**
-     * Method to auto-populate the model state.
+     * @param string $ordering
+     * @param string $direction
      *
-     * Note. Calling getState in this method will result in recursion.
+     * @return void
+     * @throws Exception
      */
     protected function populateState($ordering = null, $direction = null)
     {
@@ -126,160 +132,192 @@ class JInboundModelContacts extends JInboundListModel
     }
 
     /**
-     * Method to get a store id based on model configuration state.
+     * @param string $id
      *
-     * This is necessary because the model is used by the component and
-     * different modules that might need different sets of data or different
-     * ordering requirements.
-     *
-     * @param    string $id A prefix for the store id.
-     *
-     * @return    string        A store id.
+     * @return string
      */
     protected function getStoreId($id = '')
     {
-        // Compile the store id.
-        $id .= ':' . serialize($this->getState('filter.start'));
-        $id .= ':' . serialize($this->getState('filter.end'));
-        $id .= ':' . serialize($this->getState('filter.campaign'));
-        $id .= ':' . serialize($this->getState('filter.page'));
-        $id .= ':' . serialize($this->getState('filter.priority'));
-        $id .= ':' . serialize($this->getState('filter.status'));
+        $id = join(
+            ':',
+            array(
+                $id,
+                serialize($this->getState('filter.start')),
+                serialize($this->getState('filter.end')),
+                serialize($this->getState('filter.campaign')),
+                serialize($this->getState('filter.page')),
+                serialize($this->getState('filter.priority')),
+                serialize($this->getState('filter.status'))
+            )
+        );
 
         return parent::getStoreId($id);
     }
 
     protected function getListQuery()
     {
-        foreach (array('start', 'end', 'campaign', 'page', 'priority', 'status') as $filter) {
-            $$filter = $this->getState("filter.$filter");
-            if (is_object($$filter)) {
-                $$filter = '';
-            }
-        }
-        if (is_array($campaign)) {
-            JArrayHelper::toInteger($campaign);
-        }
+        $db = $this->getDbo();
 
-        $db           = $this->getDbo();
-        $join         = $db->getQuery(true);
         $listOrdering = $this->getState('list.ordering', 'Contact.created');
-        $listDirn     = $db->escape($this->getState('list.direction', 'ASC'));
+        $listDirn     = $this->getState('list.direction', 'ASC');
 
-        // start preparing a subquery that will be joined to the main query
-        // that determines the latest conversion by a contact
-        $on = array('c1.contact_id = c2.contact_id', 'c1.created < c2.created');
-        // add in page filter
+        $on = array(
+            'c1.contact_id = c2.contact_id',
+            'c1.created < c2.created'
+        );
         if (!empty($page)) {
             $on[] = 'c2.page_id = ' . (int)$page;
         }
-        if (!empty($campaign)) {
-            if (is_array($campaign)) {
-                $on[] = 'c2.page_id IN ((SELECT id FROM #__jinbound_pages WHERE campaign IN(' . implode(',',
-                        $campaign) . ')))';
-            } else {
-                $on[] = 'c2.page_id IN ((SELECT id FROM #__jinbound_pages WHERE campaign = ' . ((int)$campaign) . '))';
-            }
+
+        $campaign = array_filter(array_map('intval', (array)$this->getState('filter.campaign')));
+        if ($campaign) {
+            $on[] = sprintf(
+                'c2.page_id IN (SELECT id FROM #__jinbound_pages WHERE campaign IN (%s))',
+                join(',', $campaign)
+            );
         }
-        // create the join for latest
-        $join
+
+        $conversionQuery = $db->getQuery(true)
             ->select('c1.*')
             ->from('#__jinbound_conversions AS c1')
-            ->leftJoin('#__jinbound_conversions AS c2 ON ' . implode(' AND ', $on))
+            ->leftJoin('#__jinbound_conversions AS c2 ON ' . join(' AND ', $on))
             ->where('c2.contact_id IS NULL');
 
-        // select columns
         $query = $db->getQuery(true)
-            ->select('Contact.*')
-            ->select('CONCAT_WS(' . $db->quote(' ') . ', Contact.first_name, Contact.last_name) AS full_name')
+            ->select(
+                array(
+                    'Contact.*',
+                    sprintf('CONCAT_WS(%s, Contact.first_name, Contact.last_name) AS full_name', $db->quote(' ')),
+                    'Latest.created AS latest',
+                    'Latest.id AS latest_conversion_id',
+                    'Latest.page_id AS latest_conversion_page_id',
+                    'LatestPage.name AS latest_conversion_page_name',
+                    'LatestForm.title AS latest_conversion_page_formname'
+                )
+            )
             ->from('#__jinbound_contacts AS Contact')
-            // get the latest form
-            ->select('Latest.created AS latest')
-            ->select('Latest.id AS latest_conversion_id')
-            ->select('Latest.page_id AS latest_conversion_page_id')
-            ->select('LatestPage.name AS latest_conversion_page_name')
-            ->select('LatestForm.title AS latest_conversion_page_formname')
-            ->leftJoin('(' . $join . ') AS Latest ON (Latest.contact_id = Contact.id)')
+            ->leftJoin(sprintf('(%s) AS Latest ON (Latest.contact_id = Contact.id)', $conversionQuery))
             ->leftJoin('#__jinbound_pages AS LatestPage ON LatestPage.id = Latest.page_id')
             ->leftJoin('#__jinbound_forms AS LatestForm ON LatestPage.formid = LatestForm.id')
-            //->where('LatestPage.id IS NOT NULL') // causes leads made in admin to disappear
             ->group('Contact.id');
 
-        // filter pages
-        if (!empty($page)) {
-            $query->where('LatestPage.id = ' . (int)$page);
+        if ($page = (int)$this->getState('filter.page')) {
+            $query->where('LatestPage.id = ' . $page);
         }
 
-        // filter campaigns
-        if (!empty($campaign)) {
-            if (is_array($campaign)) {
-                $query->leftJoin('#__jinbound_contacts_campaigns AS ContactCampaign ON ContactCampaign.contact_id = Contact.id AND ContactCampaign.campaign_id IN(' . implode(',',
-                        $campaign) . ')');
-            } else {
-                $query->leftJoin('#__jinbound_contacts_campaigns AS ContactCampaign ON ContactCampaign.contact_id = Contact.id AND ContactCampaign.campaign_id = ' . (int)$campaign);
-            }
-            $query->where('ContactCampaign.campaign_id IS NOT NULL');
-        } else {
-            if ('Campaign.name' === $listOrdering) {
-                $query->leftJoin('#__jinbound_contacts_campaigns AS ContactCampaign ON ContactCampaign.contact_id = Contact.id');
-                $query->leftJoin('#__jinbound_campaigns AS Campaign ON ContactCampaign.campaign_id = Campaign.id');
-            }
+        // Campaign Filter
+        if ($campaign) {
+            $on = array(
+                'ContactCampaign.contact_id = Contact.id',
+                sprintf('ContactCampaign.campaign_id IN(%s)', join(',', $campaign))
+            );
+
+            $query->leftJoin(sprintf('#__jinbound_contacts_campaigns AS ContactCampaign ON %s', join(' AND ', $on)))
+                ->where('ContactCampaign.campaign_id IS NOT NULL');
+
+        } elseif ($listOrdering == 'Campaign.name') {
+            $query->leftJoin('#__jinbound_contacts_campaigns AS ContactCampaign'
+                . ' ON ContactCampaign.contact_id = Contact.id')
+                ->leftJoin('#__jinbound_campaigns AS Campaign ON ContactCampaign.campaign_id = Campaign.id');
         }
 
-        // filter by status
-        if (!empty($status)) {
-            $query->leftJoin('#__jinbound_contacts_statuses AS ContactStatus ON ContactStatus.contact_id = Contact.id AND ContactStatus.status_id = ' . (int)$status);
-            $query->where('ContactStatus.status_id IS NOT NULL');
-        } else {
-            if ('Status.name' === $listOrdering) {
-                $query->leftJoin('( SELECT s1.* FROM #__jinbound_contacts_statuses AS s1 LEFT JOIN #__jinbound_contacts_statuses AS s2 ON s1.contact_id = s2.contact_id AND s1.created < s2.created WHERE s2.contact_id IS NULL) AS ContactStatus ON ContactStatus.contact_id = Contact.id');
-                $query->leftJoin('#__jinbound_lead_statuses AS Status ON ContactStatus.status_id = Status.id');
-            }
+        // Status filter
+        if ($status = (int)$this->getState('filter.status')) {
+            $on = array(
+                'ContactStatus.contact_id = Contact.id',
+                'ContactStatus.status_id = ' . $status
+            );
+            $query->leftJoin(sprintf('#__jinbound_contacts_statuses AS ContactStatus ON %s', join(' AND ', $on)))
+                ->where('ContactStatus.status_id IS NOT NULL');
+
+        } elseif ($listOrdering == 'Status.name') {
+            $statusQuery = $db->getQuery(true)
+                ->select('s1.*')
+                ->from('#__jinbound_contacts_statuses AS s1')
+                ->leftJoin(
+                    '#__jinbound_contacts_statuses AS s2'
+                    . ' ON s1.contact_id = s2.contact_id AND s1.created < s2.created'
+                )
+                ->where('s2.contact_id IS NULL');
+
+            $query->leftJoin(
+                sprintf(
+                    '(%s) AS ContactStatus ON ContactStatus.contact_id = Contact.id',
+                    $statusQuery
+                )
+            )
+                ->leftJoin('#__jinbound_lead_statuses AS Status ON ContactStatus.status_id = Status.id');
         }
 
-        // filter by priority
-        if (!empty($priority)) {
-            $query->leftJoin('#__jinbound_contacts_priorities AS ContactPriority ON ContactPriority.contact_id = Contact.id AND ContactPriority.priority_id = ' . (int)$priority);
-            $query->where('ContactPriority.priority_id IS NOT NULL');
-        } else {
-            if ('Priority.name' === $listOrdering) {
-                $query->leftJoin('( SELECT p1.* FROM #__jinbound_contacts_priorities AS p1 LEFT JOIN #__jinbound_contacts_priorities AS p2 ON p1.contact_id = p2.contact_id AND p1.created < p2.created WHERE p2.contact_id IS NULL) AS ContactPriority ON ContactPriority.contact_id = Contact.id');
-                $query->leftJoin('#__jinbound_priorities AS Priority ON ContactPriority.priority_id = Priority.id');
-            }
+        // Priority Filter
+        if ($priority = (int)$this->getState('filter.priority')) {
+            $on = array(
+                'ContactPriority.contact_id = Contact.id',
+                'ContactPriority.priority_id = ' . $priority
+            );
+
+            $query->leftJoin(sprintf('#__jinbound_contacts_priorities AS ContactPriority ON %s', join(' AND ', $on)))
+                ->where('ContactPriority.priority_id IS NOT NULL');
+
+        } elseif ($listOrdering == 'Priority.name') {
+            $on = array(
+                'p1.contact_id = p2.contact_id',
+                'p1.created < p2.created'
+            );
+
+            $priorityQuery = $db->getQuery(true)
+                ->select('p1.*')
+                ->from('#__jinbound_contacts_priorities AS p1')
+                ->leftJoin(sprintf('#__jinbound_contacts_priorities AS p2 ON %s', join(' AND ', $on)))
+                ->where('p2.contact_id IS NULL');
+
+            $query->leftJoin(
+                sprintf(
+                    '(%s) AS ContactPriority ON ContactPriority.contact_id = Contact.id',
+                    $priorityQuery
+                )
+            )
+                ->leftJoin('#__jinbound_priorities AS Priority ON ContactPriority.priority_id = Priority.id');
         }
 
-        // add author to query
-        //$this->appendAuthorToQuery($query, 'Contact');
-        // filter query
-        $this->filterSearchQuery($query, $this->getState('filter.search'), 'Contact', 'id', array(
-            'first_name',
-            'last_name'
-        ));
+        $this->filterSearchQuery(
+            $query,
+            $this->getState('filter.search'),
+            'Contact',
+            'id',
+            array(
+                'first_name',
+                'last_name'
+            )
+        );
         $this->filterPublished($query, $this->getState('filter.published'), 'Contact');
 
-        if (!empty($start)) {
+        if ($start = $this->getState('filter.start')) {
             try {
                 $startdate = new DateTime($start);
+
+                if ($startdate) {
+                    $query->where('Contact.created > ' . $db->quote($startdate->format('Y-m-d h:i:s')));
+                }
+
             } catch (Exception $e) {
-                $startdate = false;
-            }
-            if ($startdate) {
-                $query->where('Contact.created > ' . $db->quote($startdate->format('Y-m-d h:i:s')));
+                // ignore badly formed date
             }
         }
 
-        if (!empty($end)) {
+        if ($end = $this->getState('filter.end')) {
             try {
                 $enddate = new DateTime($end);
+
+                if ($enddate) {
+                    $query->where('Contact.created < ' . $db->quote($enddate->format('Y-m-d h:i:s')));
+                }
+
             } catch (Exception $e) {
-                $enddate = false;
-            }
-            if ($enddate) {
-                $query->where('Contact.created < ' . $db->quote($enddate->format('Y-m-d h:i:s')));
+                // Ignore badly formed date
             }
         }
 
-        // Add the list ordering clause.
         $query->order($db->escape($listOrdering) . ' ' . $listDirn);
 
         return $query;
