@@ -288,11 +288,19 @@ class JInboundModelEmails extends JInboundListModel
                         echo('<h4>Value</h4><pre>' . print_r($value, 1) . '</pre>');
                     }
                 }
+
                 // last checks on value
-                if (is_array($value) || is_object($value)) {
-                    $value = print_r($value, 1);
+                if (is_object($value)) {
+                    $value = get_object_vars($value);
                 }
-                // replace tag
+                if (is_array($value)) {
+                    $isAssociative = function (array $array) {
+                        return count(array_filter(array_keys($array), 'is_string')) > 0;
+                    };
+
+                    $value = $isAssociative($value) ? print_r($value, 1) : join(', ', $value);
+                }
+
                 $string = str_ireplace("{%$tag%}", $value, $string);
             }
         }
