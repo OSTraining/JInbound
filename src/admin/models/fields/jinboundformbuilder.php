@@ -15,6 +15,8 @@
  * may be added to this header as long as no information is deleted.
  */
 
+use Joomla\Registry\Registry;
+
 defined('JPATH_PLATFORM') or die;
 
 if (!defined('JINB_LOADED')) {
@@ -184,8 +186,8 @@ class JFormFieldJinboundFormBuilder extends JFormField
      */
     public function getFormValue()
     {
-        if (!($this->value instanceof JRegistry)) {
-            $reg = new JRegistry();
+        if (!($this->value instanceof Registry)) {
+            $reg = new Registry();
             if (is_array($this->value)) {
                 $reg->loadArray($this->value);
             } else {
@@ -212,7 +214,7 @@ class JFormFieldJinboundFormBuilder extends JFormField
                     'required' => 1
                 ))));
             } else {
-                if (is_object($def) && $def instanceof JRegistry) {
+                if (is_object($def) && $def instanceof Registry) {
                     $def->set('enabled', 1);
                     $def->set('required', 1);
                 } else {
@@ -240,7 +242,7 @@ class JFormFieldJinboundFormBuilder extends JFormField
         }
 
         $unordered = $this->value->toArray();
-        $ordered   = new JRegistry();
+        $ordered   = new Registry();
         foreach ($ordering as $key) {
             if (array_key_exists($key, $unordered)) {
                 $ordered->set($key, $unordered[$key]);

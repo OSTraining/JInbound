@@ -15,6 +15,8 @@
  * may be added to this header as long as no information is deleted.
  */
 
+use Joomla\Registry\Registry;
+
 defined('JPATH_PLATFORM') or die;
 
 $user           = JFactory::getUser();
@@ -36,8 +38,8 @@ if (!empty($this->items)) :
     foreach ($this->items as $i => $item) :
         $this->_itemNum = $i;
         $params = $item->params;
-        if (!$params instanceof JRegistry) {
-            $reg = new JRegistry();
+        if (!$params instanceof Registry) {
+            $reg = new Registry();
             $reg->loadString($params);
             $params = $reg;
         }

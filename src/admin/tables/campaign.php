@@ -15,6 +15,8 @@
  * may be added to this header as long as no information is deleted.
  */
 
+use Joomla\Registry\Registry;
+
 defined('JPATH_PLATFORM') or die;
 
 class JInboundTableCampaign extends JInboundTable
@@ -38,7 +40,7 @@ class JInboundTableCampaign extends JInboundTable
     public function bind($array, $ignore = '')
     {
         if (isset($array['params'])) {
-            $registry = new JRegistry;
+            $registry = new Registry();
             if (is_array($array['params'])) {
                 $registry->loadArray($array['params']);
             } else {

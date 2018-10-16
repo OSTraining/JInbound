@@ -15,6 +15,8 @@
  * may be added to this header as long as no information is deleted.
  */
 
+use Joomla\Registry\Registry;
+
 defined('JPATH_PLATFORM') or die;
 
 class JInboundControllerEmail extends JInboundFormController
@@ -146,7 +148,7 @@ class JInboundControllerEmail extends JInboundFormController
                     break;
             }
 
-            $params = new JRegistry();
+            $params = new Registry();
 
             $dispatcher->trigger('onContentBeforeDisplay', array('com_jinbound.email', &$result, &$params, 0));
 

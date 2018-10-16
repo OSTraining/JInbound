@@ -15,6 +15,8 @@
  * may be added to this header as long as no information is deleted.
  */
 
+use Joomla\Registry\Registry;
+
 defined('JPATH_PLATFORM') or die;
 
 class JInboundTableConversion extends JInboundTable
@@ -35,7 +37,7 @@ class JInboundTableConversion extends JInboundTable
         // load
         $load = parent::load($keys, $reset);
         // convert formdata to an object
-        $registry = new JRegistry;
+        $registry = new Registry();
         if (is_string($this->formdata)) {
             $registry->loadString($this->formdata);
         } else {
@@ -61,7 +63,7 @@ class JInboundTableConversion extends JInboundTable
     public function bind($array, $ignore = '')
     {
         if (isset($array['formdata'])) {
-            $registry = new JRegistry;
+            $registry = new Registry();
             if (is_array($array['formdata'])) {
                 $registry->loadArray($array['formdata']);
             } else {
