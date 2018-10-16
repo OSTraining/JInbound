@@ -409,6 +409,7 @@ class JInboundControllerLead extends JInboundBaseController
             $html = array('<table>');
             foreach ($rawData['lead'] as $key => $val) {
                 $title = empty($formFields[$key]) ? $key : $formFields[$key]->title;
+                $val   = is_array($val) ? join(', ', $val) : $val;
                 $html  = array_merge(
                     $html,
                     array(
