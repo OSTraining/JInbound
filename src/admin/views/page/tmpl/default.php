@@ -66,7 +66,7 @@ echo $this->loadTemplate('edit');
                         row.show();
                         break;
                     default:
-                        row.hide();
+                        //row.hide();
                         break;
                 }
                 // check for tabs
