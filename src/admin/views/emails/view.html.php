@@ -58,6 +58,8 @@ class JInboundViewEmails extends JInboundListView
             'Email.published' => JText::_('COM_JINBOUND_CAMPAIGN_ACTIVE')
         ,
             'Email.sendafter' => JText::_('COM_JINBOUND_CAMPAIGN_SCHEDULE')
+        ,
+            'Email.subject' => JText::_('COM_JINBOUND_EMAIL_SUBJECT')
         );
     }
 }

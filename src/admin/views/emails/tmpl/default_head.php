@@ -29,8 +29,12 @@ $saveOrder = ($listOrder == 'Email.id');
         <?php echo JHtml::_($this->sortFunction, 'COM_JINBOUND_CAMPAIGN_NAME', 'Campaign.name', $listDirn,
             $listOrder); ?>
     </th>
-    <th>
+    <th width="15%">
         <?php echo JHtml::_($this->sortFunction, 'COM_JINBOUND_EMAIL_NAME', 'Email.name', $listDirn, $listOrder); ?>
+    </th>
+    <th width="15%" class="hidden-phone">
+        <?php echo JHtml::_($this->sortFunction, 'COM_JINBOUND_EMAIL_SUBJECT', 'Campaign.subject', $listDirn,
+            $listOrder); ?>
     </th>
     <th width="5%" class="nowrap hidden-phone">
         <?php echo JHtml::_($this->sortFunction, 'COM_JINBOUND_CAMPAIGN_ACTIVE', 'Email.published', $listDirn,
