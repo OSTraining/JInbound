@@ -68,7 +68,7 @@ if (!empty($this->items)) :
             <td class="hidden-phone">
                 <?php echo JHtml::_('grid.id', $i, $item->id); ?>
             </td>
-            <td class="">
+            <td>
                 <?php echo $name; ?>
             </td>
             <td class="nowrap has-context">
@@ -87,6 +87,9 @@ if (!empty($this->items)) :
                 </div>
                 <?php $this->currentItem = $item;
                 echo $this->loadTemplate('list_dropdown'); ?>
+            </td>
+            <td class="hidden-phone small">
+                <?php echo $item->subject; ?>
             </td>
             <td class="hidden-phone">
                 <?php echo JHtml::_('jgrid.published', $item->published, $i, 'emails.', $canChange, 'cb'); ?>
