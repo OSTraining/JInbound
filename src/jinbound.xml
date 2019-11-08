@@ -57,7 +57,7 @@
             <menu link="option=com_jinbound&amp;view=campaigns" view="campaigns">COM_JINBOUND_CAMPAIGNS_MANAGER</menu>
             <menu link="option=com_jinbound&amp;view=emails" view="emails">COM_JINBOUND_LEAD_NURTURING_MANAGER</menu>
             <menu link="option=com_jinbound&amp;view=pages" view="pages">COM_JINBOUND_PAGES</menu>
-            <menu link="option=com_jinbound&amp;view=contacts" view="contacts">COM_JINBOUND_LEADS</menu>
+            <menu link="option=com_jinbound&amp;view=contacts" view="contacts">COM_JINBOUND_LEADS_MANAGER</menu>
             <menu link="option=com_jinbound&amp;view=reports" view="reports">COM_JINBOUND_REPORTS</menu>
             <menu link="option=com_categories&amp;view=categories&amp;extension=com_jinbound" view="categories">JCATEGORIES</menu>
             <menu link="option=com_jinbound&amp;view=statuses" view="statuses">COM_JINBOUND_STATUSES</menu>
