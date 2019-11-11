@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <extension version="3.7" type="plugin" group="content" method="upgrade">
     <name>plg_content_jinbound</name>
-    <creationDate>January 16 2019</creationDate>
+    <creationDate>November 11 2019</creationDate>
     <author>Joomlashack</author>
     <authorEmail>help@joomlashack.com</authorEmail>
     <authorUrl>http://joomlashack.com</authorUrl>
     <copyright>Copyright (c) 2006-2012 Anything-Digital.com - 2016-2017 Open Source Training, LLC</copyright>
     <license>GNU/GPL</license>
-    <version>3.0.8b1</version>
+    <version>3.0.8</version>
     <description>PLG_CONTENT_JINBOUND_XML_DESCRIPTION</description>
 
     <files>
