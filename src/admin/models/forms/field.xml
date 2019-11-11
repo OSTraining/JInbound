@@ -41,6 +41,7 @@
               label="COM_JINBOUND_FIELD_FIELDSET_CONTENT">
         <field name="published"
                type="jinbound.published"
+               default="1"
                label="COM_JINBOUND_PUBLISHED"
                description="COM_JINBOUND_PUBLISHED_DESC"/>
 

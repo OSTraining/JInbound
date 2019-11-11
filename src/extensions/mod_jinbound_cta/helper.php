@@ -331,13 +331,13 @@ abstract class ModJInboundCTAHelper
     /**
      * Gets the adapter instance
      *
-     * @param JRegistry $params
+     * @param Registry $params
      * @param bool      $cached
      *
      * @return ModJInboundCTAAdapter
      * @throws Exception
      */
-    public static function getAdapter(JRegistry $params, $cached = true)
+    public static function getAdapter(Registry $params, $cached = true)
     {
         $app    = JFactory::getApplication();
         $filter = JFilterInput::getInstance();
@@ -382,12 +382,12 @@ abstract class ModJInboundCTAHelper
     }
 
     /**
-     * @param JRegistry $params
+     * @param Registry $params
      *
      * @return string
      * @throws Exception
      */
-    protected static function findAdapterType(JRegistry $params)
+    protected static function findAdapterType(Registry $params)
     {
         $app  = JFactory::getApplication();
         $pfxs = array('c1_', 'c2_', 'c3_');
@@ -443,7 +443,7 @@ abstract class ModJInboundCTAHelper
         )->loadResult();
     }
 
-    protected static function checkData($data, JRegistry $params, $pfx)
+    protected static function checkData($data, Registry $params, $pfx)
     {
         // init
         $app     = JFactory::getApplication();

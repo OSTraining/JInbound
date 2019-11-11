@@ -15,6 +15,8 @@
  * may be added to this header as long as no information is deleted.
  */
 
+use Joomla\Registry\Registry;
+
 defined('JPATH_PLATFORM') or die;
 
 /**
@@ -106,8 +108,8 @@ abstract class JHtmlJInbound
 
     public static function formdata($id, $formname, $formdata, $script = true)
     {
-        if (!is_a($formdata, 'JRegistry')) {
-            $registry = new JRegistry();
+        if (!$formdata instanceof Registry) {
+            $registry = new Registry();
             if (is_object($formdata)) {
                 $registry->loadObject($formdata);
             } else {

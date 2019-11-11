@@ -15,6 +15,8 @@
  * may be added to this header as long as no information is deleted.
  */
 
+use Joomla\Registry\Registry;
+
 defined('JPATH_PLATFORM') or die;
 
 if ($this->item->socialmedia) {
@@ -23,7 +25,7 @@ if ($this->item->socialmedia) {
 
     if (!empty($modules)) {
         foreach ($modules as $module) {
-            $mparams = new JRegistry;
+            $mparams = new Registry();
             $mparams->loadString($module->params);
             echo JModuleHelper::renderModule($module, $mparams->toArray());
         }

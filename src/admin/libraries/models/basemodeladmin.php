@@ -15,6 +15,8 @@
  * may be added to this header as long as no information is deleted.
  */
 
+use Joomla\Registry\Registry;
+
 defined('JPATH_PLATFORM') or die;
 
 class JInboundAdminModel extends JModelAdmin
@@ -111,7 +113,7 @@ class JInboundAdminModel extends JModelAdmin
                 continue;
             }
 
-            $registry = new JRegistry();
+            $registry = new Registry();
             $registry->loadString($item->$col);
             $item->$col = $registry;
         }

@@ -15,6 +15,8 @@
  * may be added to this header as long as no information is deleted.
  */
 
+use Joomla\Registry\Registry;
+
 defined('_JEXEC') or die;
 
 abstract class ModJInboundCTAAdapter
@@ -28,16 +30,16 @@ abstract class ModJInboundCTAAdapter
     /**
      * Module parameters
      *
-     * @var JRegistry
+     * @var Registry
      */
     protected $params;
 
     /**
      * Constructor
      *
-     * @param JRegistry $params
+     * @param Registry $params
      */
-    function __construct(JRegistry $params)
+    function __construct(Registry $params)
     {
         $this->params = $params;
     }

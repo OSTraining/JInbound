@@ -15,6 +15,8 @@
  * may be added to this header as long as no information is deleted.
  */
 
+use Joomla\Registry\Registry;
+
 defined('JPATH_PLATFORM') or die;
 
 /**
@@ -67,7 +69,7 @@ class JInboundModelEmails extends JInboundListModel
         $out        = JInboundHelper::config("debug", 0);
         $interval   = $out ? 'MINUTE' : 'DAY';
         $now        = JFactory::getDate();
-        $params     = new JRegistry;
+        $params     = new Registry();
         $dispatcher = JEventDispatcher::getInstance();
         $limit      = (int)JInboundHelper::config("cron_max_campaign_mails", 0);
 
@@ -141,7 +143,7 @@ class JInboundModelEmails extends JInboundListModel
         }
 
         foreach ($results as $result) {
-            $reg  = new JRegistry($result->form);
+            $reg  = new Registry($result->form);
             $arr  = $reg->toArray();
             $tags = array();
             foreach (array_keys($arr['lead']) as $tag) {
@@ -261,8 +263,8 @@ class JInboundModelEmails extends JInboundListModel
                         if (is_array($value) && array_key_exists($part, $value)) {
                             $value = $value[$part];
                         } else {
-                            // JRegistry uses get() for values
-                            if (is_object($value) && $value instanceof JRegistry) {
+                            // Registry uses get() for values
+                            if (is_object($value) && $value instanceof Registry) {
                                 $value = $value->get($part);
                             } else {
                                 // normal object
@@ -288,11 +290,19 @@ class JInboundModelEmails extends JInboundListModel
                         echo('<h4>Value</h4><pre>' . print_r($value, 1) . '</pre>');
                     }
                 }
+
                 // last checks on value
-                if (is_array($value) || is_object($value)) {
-                    $value = print_r($value, 1);
+                if (is_object($value)) {
+                    $value = get_object_vars($value);
                 }
-                // replace tag
+                if (is_array($value)) {
+                    $isAssociative = function (array $array) {
+                        return count(array_filter(array_keys($array), 'is_string')) > 0;
+                    };
+
+                    $value = $isAssociative($value) ? print_r($value, 1) : join(', ', $value);
+                }
+
                 $string = str_ireplace("{%$tag%}", $value, $string);
             }
         }

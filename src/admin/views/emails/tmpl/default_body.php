@@ -15,6 +15,8 @@
  * may be added to this header as long as no information is deleted.
  */
 
+use Joomla\Registry\Registry;
+
 defined('JPATH_PLATFORM') or die;
 
 $user           = JFactory::getUser();
@@ -36,8 +38,8 @@ if (!empty($this->items)) :
     foreach ($this->items as $i => $item) :
         $this->_itemNum = $i;
         $params = $item->params;
-        if (!$params instanceof JRegistry) {
-            $reg = new JRegistry();
+        if (!$params instanceof Registry) {
+            $reg = new Registry();
             $reg->loadString($params);
             $params = $reg;
         }
@@ -66,7 +68,7 @@ if (!empty($this->items)) :
             <td class="hidden-phone">
                 <?php echo JHtml::_('grid.id', $i, $item->id); ?>
             </td>
-            <td class="">
+            <td>
                 <?php echo $name; ?>
             </td>
             <td class="nowrap has-context">
@@ -85,6 +87,9 @@ if (!empty($this->items)) :
                 </div>
                 <?php $this->currentItem = $item;
                 echo $this->loadTemplate('list_dropdown'); ?>
+            </td>
+            <td class="hidden-phone small">
+                <?php echo $item->subject; ?>
             </td>
             <td class="hidden-phone">
                 <?php echo JHtml::_('jgrid.published', $item->published, $i, 'emails.', $canChange, 'cb'); ?>

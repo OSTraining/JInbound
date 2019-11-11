@@ -15,6 +15,8 @@
  * may be added to this header as long as no information is deleted.
  */
 
+use Joomla\Registry\Registry;
+
 defined('JPATH_PLATFORM') or die;
 
 class JInboundViewPage extends JInboundItemView
@@ -96,7 +98,7 @@ class JInboundViewPage extends JInboundItemView
             $this->item->text = $this->item->$text;
             // get dispatcher and trigger the event
             $dispatcher = JDispatcher::getInstance();
-            $params     = new JRegistry;
+            $params     = new Registry();
             $dispatcher->trigger('onContentPrepare', array('com_jinbound.page', &$this->item, &$params, 0));
             $this->item->$text = $this->item->text;
             unset($this->item->text);

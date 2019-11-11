@@ -15,6 +15,8 @@
  * may be added to this header as long as no information is deleted.
  */
 
+use Joomla\Registry\Registry;
+
 defined('JPATH_PLATFORM') or die;
 
 /**
@@ -51,7 +53,7 @@ class JInboundListModel extends JModelList
                     if (!property_exists($item, $col)) {
                         continue;
                     }
-                    $registry = new JRegistry();
+                    $registry = new Registry();
                     $registry->loadString($items[$idx]->$col);
                     $items[$idx]->$col = $registry;
                 }

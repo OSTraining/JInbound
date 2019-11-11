@@ -75,7 +75,6 @@ class JInboundControllerLead extends JInboundBaseController
 
         if ($token) {
             // non-page form info comes from a token in the session
-
             $sessionData = JFactory::getSession()->get($token, false);
             if (!is_object($sessionData)) {
                 $tokenParts = explode('.', $token);
@@ -176,8 +175,11 @@ class JInboundControllerLead extends JInboundBaseController
                 $userId = array_shift($userId);
             }
         }
-        // this user either has no account or has not been tracked yet
-        // determine from the user's email if they exist
+
+        /**
+         * this user either has no account or has not been tracked yet
+         * determine from the user's email if they exist
+         */
         if (empty($userId)) {
             // found a core contact for this user
             $userId = (int)$db->setQuery(
@@ -282,19 +284,17 @@ class JInboundControllerLead extends JInboundBaseController
         }
 
         // some of these may not be set
-        foreach (
-            array(
-                'address'   => array('address'),
-                'suburb'    => array('suburb', 'city'),
-                'state'     => array('state'),
-                'country'   => array('country'),
-                'postcode'  => array('postcode', 'zip', 'zipcode', 'zip_code'),
-                'telephone' => array('telephone', 'phone', 'phone_number', 'phonenumber', 'number'),
-                'company'   => array('company', 'companyname', 'company_name'),
-                'website'   => array('webpage', 'website', 'web', 'url')
-            )
-            as $var => $keys
-        ) {
+        $expectedFields = array(
+            'address'   => array('address'),
+            'suburb'    => array('suburb', 'city'),
+            'state'     => array('state'),
+            'country'   => array('country'),
+            'postcode'  => array('postcode', 'zip', 'zipcode', 'zip_code'),
+            'telephone' => array('telephone', 'phone', 'phone_number', 'phonenumber', 'number'),
+            'company'   => array('company', 'companyname', 'company_name'),
+            'website'   => array('webpage', 'website', 'web', 'url')
+        );
+        foreach ($expectedFields as $var => $keys) {
             foreach ($keys as $key) {
                 if (array_key_exists($key, $rawData['lead']) && !empty($rawData['lead'][$key])) {
                     $contactData[$var] = $lead->getString($key);
@@ -409,6 +409,7 @@ class JInboundControllerLead extends JInboundBaseController
             $html = array('<table>');
             foreach ($rawData['lead'] as $key => $val) {
                 $title = empty($formFields[$key]) ? $key : $formFields[$key]->title;
+                $val   = is_array($val) ? join(', ', $val) : $val;
                 $html  = array_merge(
                     $html,
                     array(

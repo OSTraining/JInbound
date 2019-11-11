@@ -58,7 +58,7 @@ echo $this->loadTemplate('edit');
             });
             <?php endif; ?>
             var hideSidebar = function() {
-                var row = $('#jform_sidebartext').closest('.row-fluid'), d = [4], hide = true, tabs, tab;
+                var row = $('#jform_sidebartext-lbl').closest('.row-fluid'), d = [4], hide = true, tabs, tab;
                 switch ($('#jform_layout').find(':checked').val()) {
                     case '0':
                         d = [];

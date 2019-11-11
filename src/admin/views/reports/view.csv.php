@@ -15,6 +15,8 @@
  * may be added to this header as long as no information is deleted.
  */
 
+use Joomla\Registry\Registry;
+
 defined('JPATH_PLATFORM') or die;
 
 class JInboundViewReports extends JInboundCsvView
@@ -46,7 +48,7 @@ class JInboundViewReports extends JInboundCsvView
                 $extra = array();
                 if (!empty($leads)) {
                     foreach ($leads as $idx => $lead) {
-                        $formdata = new JRegistry();
+                        $formdata = new Registry();
                         $formdata->loadString($lead->formdata);
                         $leads[$idx]->formdata = $formdata->toArray();
                         if (array_key_exists('lead', $lead->formdata)

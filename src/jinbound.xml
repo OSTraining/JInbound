@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" version="3.7" method="upgrade">
     <name>COM_JINBOUND</name>
-    <creationDate>October 01 2018</creationDate>
+    <creationDate>November 11 2019</creationDate>
     <author>Joomlashack</author>
     <authorEmail>help@joomlashack.com</authorEmail>
     <authorUrl>http://joomlashack.com</authorUrl>
     <copyright>Copyright (c) 2006-2012 Anything-Digital.com - 2016-2017 Open Source Training, LLC</copyright>
     <license>GNU/GPL</license>
-    <version>3.0.7</version>
+    <version>3.0.8</version>
     <description>COM_JINBOUND_XML_DESCRIPTION</description>
     <variant>FREE</variant>
 
@@ -57,7 +57,7 @@
             <menu link="option=com_jinbound&amp;view=campaigns" view="campaigns">COM_JINBOUND_CAMPAIGNS_MANAGER</menu>
             <menu link="option=com_jinbound&amp;view=emails" view="emails">COM_JINBOUND_LEAD_NURTURING_MANAGER</menu>
             <menu link="option=com_jinbound&amp;view=pages" view="pages">COM_JINBOUND_PAGES</menu>
-            <menu link="option=com_jinbound&amp;view=contacts" view="contacts">COM_JINBOUND_LEADS</menu>
+            <menu link="option=com_jinbound&amp;view=contacts" view="contacts">COM_JINBOUND_LEADS_MANAGER</menu>
             <menu link="option=com_jinbound&amp;view=reports" view="reports">COM_JINBOUND_REPORTS</menu>
             <menu link="option=com_categories&amp;view=categories&amp;extension=com_jinbound" view="categories">JCATEGORIES</menu>
             <menu link="option=com_jinbound&amp;view=statuses" view="statuses">COM_JINBOUND_STATUSES</menu>
