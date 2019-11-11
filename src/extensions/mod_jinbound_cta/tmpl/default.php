@@ -1,18 +1,25 @@
 <?php
 /**
- * @package             jInbound
- * @subpackage          mod_jinbound_cta
- **********************************************
- * jInbound
- * Copyright (c) 2013 Anything-Digital.com
- * Copyright (c) 2018 Open Source Training, LLC
- **********************************************
- * This program is free software; you can redistribute it and/or modify
+ * @package   jInbound
+ * @contact   www.joomlashack.com, help@joomlashack.com
+ * @copyright 2013-2015 Anything-Digital.com
+ * @copyright 2016-2019 Joomlashack.com. All rights reserved
+ * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
+ *
+ * This file is part of jInbound.
+ *
+ * jInbound is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.n *
- * This header must not be removed. Additional contributions/changes
- * may be added to this header as long as no information is deleted.
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * jInbound is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with jInbound.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 defined('_JEXEC') or die;

@@ -1,30 +1,26 @@
 <?php
 /**
- * @package             jInbound
- * @subpackage          com_jinbound
- **********************************************
- * jInbound
- * Copyright (c) 2013 Anything-Digital.com
- * Copyright (c) 2018 Open Source Training, LLC
- **********************************************
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.n *
- * This header must not be removed. Additional contributions/changes
- * may be added to this header as long as no information is deleted.
+ * @package   jInbound
+ * @contact   www.joomlashack.com, help@joomlashack.com
+ * @copyright 2007-2010 Johan Janssens and Mathias Verraes. All rights reserved. (as Koowa_Inflector)
+ * @copyright 2013-2015 Anything-Digital.com
+ * @copyright 2016-2019 Joomlashack.com. All rights reserved
+ * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
  *
- * Class derived from Koowa Inflector class
- * Original headers below
- */
-
-/**
- * @version        $Id$
- * @category       Koowa
- * @package        Koowa_Inflector
- * @copyright      Copyright (C) 2007 - 2010 Johan Janssens and Mathias Verraes. All rights reserved.
- * @license        GNU GPLv2 <http://www.gnu.org/licenses/old-licenses/gpl-2.0.html>
- * @link           http://www.koowa.org
+ * This file is part of jInbound.
+ *
+ * jInbound is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * jInbound is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with jInbound.  If not, see <http://www.gnu.org/licenses/>.
  */
 
 /**
@@ -32,9 +28,7 @@
  *
  * @author         Johan Janssens <johan@koowa.org>
  * @author         Mathias Verraes <mathias@koowa.org>
- * @category       Koowa
  * @package        Koowa_Inflector
- * @static
  */
 class JInboundInflector
 {
