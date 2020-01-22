@@ -26,5 +26,13 @@ defined('JPATH_PLATFORM') or die;
 
 class JInboundFieldView extends JInboundBaseView
 {
+    /**
+     * @var string[]
+     */
+    public $errors = array();
 
+    /**
+     * @var string
+     */
+    public $field = null;
 }
