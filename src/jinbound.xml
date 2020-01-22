@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" version="3.7" method="upgrade">
     <name>COM_JINBOUND</name>
-    <creationDate>November 11 2019</creationDate>
+    <creationDate>January 22 2020</creationDate>
     <author>Joomlashack</author>
     <authorEmail>help@joomlashack.com</authorEmail>
     <authorUrl>http://joomlashack.com</authorUrl>
     Copyright 2016-2020 Joomlashack.com
     <license>GNU/GPL</license>
-    <version>3.0.8</version>
+    <version>3.0.9</version>
     <description>COM_JINBOUND_XML_DESCRIPTION</description>
     <variant>FREE</variant>
 
