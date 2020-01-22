@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="module" position="default" client="site" method="upgrade" version="3.2">
+<extension type="module" position="default" client="site" method="upgrade" version="3.9">
     <name>jInbound Smart CTA</name>
     <creationDate>March 19 2018</creationDate>
     <author>Joomlashack</author>
