@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <extension version="3.9" type="plugin" group="system" method="upgrade">
     <name>plg_system_jinbound</name>
-    <creationDate>January 22 2020</creationDate>
+    <creationDate>March 11 2020</creationDate>
     <author>Joomlashack</author>
     <authorEmail>help@joomlashack.com</authorEmail>
     <authorUrl>http://joomlashack.com</authorUrl>
     Copyright 2016-2020 Joomlashack.com
     <license>GNU/GPL</license>
-    <version>3.0.9</version>
+    <version>3.0.10</version>
     <description>PLG_SYSTEM_JINBOUND_XML_DESCRIPTION</description>
 
     <files>
