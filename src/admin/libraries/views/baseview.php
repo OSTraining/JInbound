@@ -24,6 +24,7 @@
 
 use Alledia\Framework\Factory;
 use Alledia\Framework\Joomla\Extension\Licensed;
+use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\Registry\Registry;
 
 defined('JPATH_PLATFORM') or die;
@@ -341,12 +342,13 @@ class JInboundView extends JInboundBaseView
         // if we're in admin, just load the stylesheet and bail
         if ($this->app->isClient('administrator')) {
             if ($canAdd) {
-                $doc->addStyleSheet(JInboundHelperUrl::media() . '/css/admin.stylesheet.css');
+                HTMLHelper::_('stylesheet', 'jinbound/admin.stylesheet.css', array('relative' => true));
             }
+
             return;
         }
 
-        $doc->addStyleSheet(JInboundHelperUrl::media() . '/css/stylesheet.css');
+        HTMLHelper::_('stylesheet', 'jinbound/stylesheet.css', array('relative' => true));
 
         $menus   = $this->app->getMenu();
         $pathway = $this->app->getPathway();

@@ -22,6 +22,8 @@
  * along with jInbound.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+use Joomla\CMS\HTML\HTMLHelper;
+
 defined('JPATH_PLATFORM') or die;
 
 if (!defined('JINB_LOADED')) {
@@ -81,11 +83,13 @@ class JFormFieldModJInboundCTACondition extends JFormField
         // only add main script once
         if (is_null($mod_jinbound_cta_script_loaded)) {
             JHtml::_('jquery.framework');
-            $doc->addScript(JUri::root() . 'media/mod_jinbound_cta/js/admin.js');
+            HTMLHelper::_('script', 'mod_jinbound_cta/admin.js', array('relative' => true));
+
             $mod_jinbound_cta_script_loaded = true;
         }
         if (is_null($mod_jinbound_cta_css_loaded)) {
-            $doc->addStyleSheet(JUri::root() . 'media/mod_jinbound_cta/css/modjinboundctacondition.css');
+            HTMLHelper::_('stylesheet', 'mod_jinbound_cta/modjinboundctacondition.css', array('relative' => true));
+
             $mod_jinbound_cta_css_loaded = true;
         }
         if (is_null($mod_jinbound_cta_url_set)) {

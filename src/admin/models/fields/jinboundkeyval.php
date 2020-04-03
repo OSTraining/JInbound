@@ -22,6 +22,8 @@
  * along with jInbound.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+use Joomla\CMS\HTML\HTMLHelper;
+
 defined('JPATH_PLATFORM') or die;
 
 jimport('joomla.form.formfield');
@@ -102,10 +104,10 @@ class JFormFieldJInboundKeyVal extends JFormField
         $html[] = '</div>';
         // end the main element
         $html[] = '</div>';
-        // load the javascript that controls the field
-        JFactory::getDocument()->addScript(rtrim(JUri::root(), '/') . '/media/jinbound/js/keyval.js');
-        // load the stylesheet that controls the display of this field
-        JFactory::getDocument()->addStyleSheet(rtrim(JUri::root(), '/') . '/media/jinbound/css/keyval.css');
+
+        HTMLHelper::_('script', 'jinbound/keyval.js', array('relative' => true));
+        HTMLHelper::_('stylesheet', 'jinbound/keyval.css', array('relative' => true));
+
         return implode("\n", $html);
     }
 

@@ -22,6 +22,8 @@
  * along with jInbound.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+use Joomla\CMS\HTML\HTMLHelper;
+
 defined('JPATH_PLATFORM') or die;
 
 abstract class JInboundHelper extends JHelperContent
@@ -55,16 +57,20 @@ abstract class JInboundHelper extends JHelperContent
                 JHtml::_('behavior.tooltip', '.hasTip');
             }
             if (JInboundHelper::config("load_jquery_$sfx", 1)) {
-                $doc->addScript(JInboundHelperUrl::media() . '/js/jquery-1.9.1.min.js');
+                HTMLHelper::_('script', 'jinbound/jquery-1.9.1.min.js', array('relative' => true));
             }
             if (JInboundHelper::config("load_jquery_ui_$sfx", 1)) {
-                $doc->addStyleSheet(JInboundHelperUrl::media() . '/ui/css/jinbound_component/jquery-ui-1.10.1.custom' . $ext . '.css');
-                $doc->addScript(JInboundHelperUrl::media() . '/ui/js/jquery-ui-1.10.1.custom' . $ext . '.js');
+                HTMLHelper::_('stylesheet', 'jinbound/ui/jquery-ui-1.10.1.custom.min.css', array('relative' => true));
+                HTMLHelper::_('script', 'jinbound/jquery-ui-1.10.1.custom.min.js', array('relative' => true));
             }
             if (JInboundHelper::config("load_bootstrap_$sfx", 1)) {
-                $doc->addStyleSheet(JInboundHelperUrl::media() . '/bootstrap/css/bootstrap.css');
-                $doc->addStyleSheet(JInboundHelperUrl::media() . '/bootstrap/css/bootstrap-responsive.css');
-                $doc->addScript(JInboundHelperUrl::media() . '/bootstrap/js/bootstrap' . $ext . '.js');
+                HTMLHelper::_('stylesheet', 'jinbound/bootstrap/bootstrap.min.css', array('relative' => true));
+                HTMLHelper::_(
+                    'stylesheet',
+                    'jinbound/bootstrap/bootstrap-responsive.min.css',
+                    array('relative' => true)
+                );
+                HTMLHelper::_('script', 'jinbound/bootstrap.min.js', array('relative' => true));
             }
         }
     }
