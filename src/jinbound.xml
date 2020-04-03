@@ -42,12 +42,10 @@
     </files>
 
     <media destination="jinbound" folder="media">
-        <folder>bootstrap</folder>
         <folder>css</folder>
         <folder>images</folder>
         <folder>jqplot</folder>
         <folder>js</folder>
-        <folder>ui</folder>
     </media>
 
     <administration>
@@ -128,6 +126,8 @@
             <folder>administrator/components/com_jinbound/views/leads</folder>
             <folder>administrator/components/com_jinbound/views/stage</folder>
             <folder>administrator/components/com_jinbound/views/stages</folder>
+            <folder>media/jinbound/bootstrap</folder>
+            <folder>media/jinbound/ui</folder>
 
             <file>administrator/components/com_jinbound/helpers/access.php</file>
             <file>administrator/components/com_jinbound/models/fields/jinboundpublished.php</file>
