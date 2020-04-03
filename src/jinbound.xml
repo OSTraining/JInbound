@@ -153,6 +153,7 @@
             <file>administrator/language/en-GB/en-GB.plg_system_jinboundsalesforce.sys.ini</file>
             <file>administrator/language/en-GB/en-GB.plg_user_jinbound.sys.ini</file>
             <file>administrator/manifests/packages/pkg_jinbound.xml</file>
+            <file>media/jinbound/js/formbuilder.js</file>
         </obsolete>
     </alledia>
 
