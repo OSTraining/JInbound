@@ -22,6 +22,8 @@
  * along with jInbound.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+use Joomla\CMS\HTML\HTMLHelper;
+
 defined('JPATH_PLATFORM') or die;
 
 if (!defined('JINB_LOADED')) {
@@ -88,11 +90,9 @@ class JFormFieldJInboundFields extends JFormField
         // load scripts
         JText::script('COM_JINBOUND_JINBOUNDFORMFIELD_ERROR');
         JText::script('COM_JINBOUND_JINBOUNDFORMFIELD_NOSORTABLE');
-        $doc = JFactory::getDocument();
-        $doc->addScript(JUri::root() . '/media/jinbound/js/field.js');
-        // load the stylesheet that controls the display of this field
-        $doc->addStyleSheet(JUri::root() . '/media/jinbound/css/field.css');
-        // load the view
+
+        HTMLHelper::_('script', 'jinbound/field.js', array('relative' => true));
+
         $view             = $this->getView();
         $view->input_id   = $this->id;
         $view->input_name = $this->name;

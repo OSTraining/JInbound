@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="component" version="3.9" method="upgrade">
     <name>COM_JINBOUND</name>
-    <creationDate>March 11 2020</creationDate>
+    <creationDate>April 03 2020</creationDate>
     <author>Joomlashack</author>
     <authorEmail>help@joomlashack.com</authorEmail>
     <authorUrl>http://joomlashack.com</authorUrl>
-    Copyright 2016-2020 Joomlashack.com
+    <copyright>Copyright 2016-2020 Joomlashack.com</copyright>
     <license>GNU/GPL</license>
-    <version>3.0.10</version>
+    <version>3.0.11b1</version>
     <description>COM_JINBOUND_XML_DESCRIPTION</description>
     <variant>FREE</variant>
 
@@ -42,12 +42,10 @@
     </files>
 
     <media destination="jinbound" folder="media">
-        <folder>bootstrap</folder>
         <folder>css</folder>
         <folder>images</folder>
         <folder>jqplot</folder>
         <folder>js</folder>
-        <folder>ui</folder>
     </media>
 
     <administration>
@@ -128,6 +126,8 @@
             <folder>administrator/components/com_jinbound/views/leads</folder>
             <folder>administrator/components/com_jinbound/views/stage</folder>
             <folder>administrator/components/com_jinbound/views/stages</folder>
+            <folder>media/jinbound/bootstrap</folder>
+            <folder>media/jinbound/ui</folder>
 
             <file>administrator/components/com_jinbound/helpers/access.php</file>
             <file>administrator/components/com_jinbound/models/fields/jinboundpublished.php</file>
@@ -153,6 +153,7 @@
             <file>administrator/language/en-GB/en-GB.plg_system_jinboundsalesforce.sys.ini</file>
             <file>administrator/language/en-GB/en-GB.plg_user_jinbound.sys.ini</file>
             <file>administrator/manifests/packages/pkg_jinbound.xml</file>
+            <file>media/jinbound/js/formbuilder.js</file>
         </obsolete>
     </alledia>
 

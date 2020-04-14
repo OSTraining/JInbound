@@ -147,11 +147,7 @@ class JFormFieldJInboundFormFields extends JFormField
         if (JInboundHelper::version()->isCompatible('3.0.0')) {
             JHtml::_('jquery.ui', array('core', 'sortable'));
         }
-        // load the javascript that controls the drag & drop
-        JFactory::getDocument()->addScript(rtrim(JUri::root(), '/') . '/media/jinbound/js/formfield.js');
-        // load the stylesheet that controls the display of this field
-        JFactory::getDocument()->addStyleSheet(rtrim(JUri::root(), '/') . '/media/jinbound/css/formfield.css');
-        // return the html to the form
+
         return implode("\n", $html);
     }
 
