@@ -3,7 +3,7 @@
  * @package   jInbound
  * @contact   www.joomlashack.com, help@joomlashack.com
  * @copyright 2013-2015 Anything-Digital.com
- * @copyright 2016-2020 Joomlashack.com. All rights reserved
+ * @copyright 2016-2021.com. All rights reserved
  * @license   http://www.gnu.org/licenses/gpl.html GNU/GPL
  *
  * This file is part of jInbound.
